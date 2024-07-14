@@ -1,4 +1,3 @@
-import Albums from "./_components/organisms/Albums.organism";
 import Stack from "./_components/layouts/Stack.layout";
 import Group from "./_components/layouts/Group.layout";
 
@@ -18,7 +17,7 @@ export default async function Home() {
         <DrawerMenu />
       </Group>
       <div className="full-width mb-4 h-[420px] overflow-hidden border-y-[1px] border-white sm:h-[600px]">
-        <Albums />
+        <p>stuff</p>
       </div>
       <Stack className="min-h-[400px] gap-4">
         <Events />

@@ -1,9 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import type { NextFetchEvent } from "next/server";
 import { z } from "zod";
-import { join } from "path";
 import { fetchPostJSON, getBaseUrl } from "@/utils/common";
-import { getFilesFromUrls, saveFilesFromUrls } from "@/server/utils.server";
+import { getFilesFromUrls } from "@/server/utils.server";
 
 const SyncEventsSchema = z.object({
   secret: z.string().optional(),
