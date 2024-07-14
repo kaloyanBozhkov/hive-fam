@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Rex-Bold";
+  src: url("/fonts/Rex-Bold.eot");
+  src:
+    url("/fonts/Rex-Bold.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/Rex-Bold.woff2") format("woff2"),
+    url("/fonts/Rex-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Rex-BoldInline";
+  src: url("/fonts/Rex-BoldInline.eot");
+  src:
+    url("/fonts/Rex-BoldInline.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/Rex-BoldInline.woff2") format("woff2"),
+    url("/fonts/Rex-BoldInline.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Rex-Light";
+  src: url("/fonts/Rex-Light.eot");
+  src:
+    url("/fonts/Rex-Light.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/Rex-Light.woff2") format("woff2"),
+    url("/fonts/Rex-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}

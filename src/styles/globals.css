@@ -1,0 +1,179 @@
+@import "./fonts.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .clip-circlele-44perc {
+    clip-path: circle(44% at center);
+  }
+
+  .mask-image-circle {
+    mask-image: radial-gradient(circle, transparent 6%, black 0%);
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  .font-rex-bold {
+    top: 3px;
+    position: relative;
+  }
+
+  .grid-page {
+    --padding-inline: 1rem;
+    --content-max-width: 900px;
+    --breakout-max-width: 1200px;
+    --breakout-size: calc(
+      (var(--breakout-max-width) - var(--content-max-width)) / 2
+    );
+    display: grid;
+    grid-template-columns:
+      [full-width-start] minmax(var(--padding-inline), 1fr)
+      [breakout-start] minmax(0, var(--breakout-size))
+      [content-start] min(
+        100% - (var(--padding-inline) * 2),
+        var(--content-max-width)
+      )
+      [content-end]
+      minmax(0, var(--breakout-size)) [breakout-end]
+      minmax(var(--padding-inline), 1fr) [full-width-end];
+    grid-auto-flow: dense;
+    grid-template-rows: min-content;
+
+    > :not(.breakout, .full-width) {
+      grid-column: content-start / content-end;
+    }
+
+    > .breakout {
+      grid-column: breakout-start / breakout-end;
+    }
+
+    > .full-width {
+      grid-column: full-width-start / full-width-end;
+    }
+  }
+
+  /* safari on ios cant handle complex template columns */
+  @supports (-webkit-touch-callout: none) {
+    @media (max-width: 800px) {
+      .grid-page {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
+  /* @TODO fix autoprefixer for tailwind to output automatically */
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  .loading-img {
+    background-repeat: repeat;
+    background: url(/assets/loading-img.png);
+  }
+
+  .pause {
+    animation-play-state: paused;
+  }
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-green-800);
+}
+
+* {
+  /* for desktop show the scrollbar but make it thin! */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #a3a3a3;
+    border-radius: 4px;
+  }
+
+  &:not(:hover) {
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+  }
+}
