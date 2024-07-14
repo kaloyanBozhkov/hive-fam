@@ -177,3 +177,13 @@ body {
     }
   }
 }
+
+.p-text {
+  font-size: clamp(14px, 3vw + 0.4rem, 18px);
+  line-height: clamp(16px, 3vw + 0.8rem, 22px);
+}
+
+.h1-0 {
+  font-size: clamp(22px, 3vw + 0.4rem, 48px);
+  line-height: clamp(22px, 3vw + 0.4rem, 48px);
+}
