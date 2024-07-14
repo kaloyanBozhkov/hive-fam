@@ -10,7 +10,7 @@ export default async function commitAndPushToMaster(
       { data: branchRef } = await octokit.git.getRef({
         owner: repoOwner,
         repo: repoName,
-        ref: "heads/master",
+        ref: "heads/main",
       }),
       // Step 2: Get the current tree of the master branch
       { data: baseTree } = await octokit.git.getTree({
@@ -48,15 +48,15 @@ export default async function commitAndPushToMaster(
         parents: [branchRef.object.sha], // Include the previous commit as a parent
       });
 
-    // Step 6: Update the reference of the master branch to point to the new commit
+    // Step 6: Update the reference of the main branch to point to the new commit
     await octokit.git.updateRef({
       owner: repoOwner,
       repo: repoName,
-      ref: "heads/master",
+      ref: "heads/main",
       sha: newCommit.sha,
     });
 
-    console.log("File updated and committed to the master branch.");
+    console.log("File updated and committed to the main branch.");
 
     return { success: true };
   } catch (error) {
