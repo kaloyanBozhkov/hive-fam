@@ -95,38 +95,44 @@ export default async function syncEventsServerless(
             ({ cover }) => !existingEventCoverImgUrls.includes(cover),
           );
 
-          // pull images & save to public/images/events
-          const base64sOfEventsWithNewCovers = await getFilesFromUrls(
-            eventsWithNewCovers.map(({ cover }) => cover),
-          );
-
-          if (!base64sOfEventsWithNewCovers) {
-            console.error("Failed to save cover base64s to project");
-          } else {
-            const updatedEventCoversBase64s = {
-              ...EVENTS_COVERS,
-              ...base64sOfEventsWithNewCovers,
-            };
-            const resp = await fetchPostJSON<{ success: boolean }>(
-              `${getBaseUrl()}/api/github/update-file`,
-              {
-                filePath: "src/automated/event-covers.json",
-                contents: JSON.stringify(updatedEventCoversBase64s),
-                secret: process.env.SENSITIVE_CRUD_SECRET,
-              },
+          if (eventsWithNewCovers.length > 0) {
+            // pull images & save to public/images/events
+            const base64sOfEventsWithNewCovers = await getFilesFromUrls(
+              eventsWithNewCovers.map(({ cover }) => cover),
             );
 
-            if (!("success" in resp)) {
-              console.error({
-                statusCode: 500,
-                message: "Could not update event covers JSON properly",
-              });
+            if (!base64sOfEventsWithNewCovers) {
+              console.error("Failed to save cover base64s to project");
+            } else {
+              const updatedEventCoversBase64s = {
+                ...EVENTS_COVERS,
+                ...base64sOfEventsWithNewCovers,
+              };
+              const resp = await fetchPostJSON<{ success: boolean }>(
+                `${getBaseUrl()}/api/github/update-file`,
+                {
+                  filePath: "src/automated/event-covers.json",
+                  contents: JSON.stringify(updatedEventCoversBase64s),
+                  secret: process.env.SENSITIVE_CRUD_SECRET,
+                },
+              );
 
-              return;
+              if (!("success" in resp)) {
+                console.error({
+                  statusCode: 500,
+                  message: "Could not update event covers JSON properly",
+                });
+
+                return;
+              }
             }
-          }
 
-          console.log("Saved cover images to disk, gonna commit");
+            console.log("Saved cover images to disk, gonna commit");
+          } else {
+            console.log(
+              "No covers to update as no new events or no updated covers",
+            );
+          }
 
           console.log("sync-events serverless completed successfully");
         } catch (err) {
