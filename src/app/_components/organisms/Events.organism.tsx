@@ -35,7 +35,7 @@ const Events = () => {
       </h2>
       <Tabs
         defaultValue={upcoming.length === 0 ? "past" : "upcoming"}
-        className="flex w-[420px] max-w-full flex-col gap-4"
+        className="flex w-[420px] max-w-full flex-col gap-4 md:w-[500px]"
       >
         <TabsList className="bg-transparent">
           <TabsTrigger value="upcoming" asChild>
@@ -143,9 +143,8 @@ const EventsList = ({
     return (
       <Card key={index} className="bg-white">
         <CardHeader className={isGoodDate ? "block" : ""}>
-          {/* <Group className="items-start gap-[10px]"> */}
           {isGoodDate && (
-            <div className="float-left mr-2">
+            <div className="float-left mr-3">
               <DateCard date={date as Date} />
             </div>
           )}
@@ -170,7 +169,7 @@ const EventsList = ({
                 {/* eslint-disable-next-line */}
                 <img
                   src={`/assets/covers/${getCoverImgFileNameFromEventTitle(event.title)}.png`}
-                  className="h-auto w-full transition-all"
+                  className="bg-loading-img h-auto min-h-[150px] w-full transition-all"
                   alt="Cover"
                 />
               </div>
