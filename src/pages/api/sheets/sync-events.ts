@@ -3,6 +3,7 @@ import type { NextFetchEvent } from "next/server";
 import { z } from "zod";
 import { fetchPostJSON, getBaseUrl } from "@/utils/common";
 import { getFilesFromUrls } from "@/server/utils.server";
+import EVENTS_COVERS from "@/automated/event-covers.json";
 
 const SyncEventsSchema = z.object({
   secret: z.string().optional(),
@@ -87,20 +88,30 @@ export default async function syncEventsServerless(
           }
 
           console.log("Starting to save cover images");
+          const existingEventCoverImgUrls = Object.keys(EVENTS_COVERS);
 
-          // pull images & save to public/images/events
-          const base64s = await getFilesFromUrls(
-            events.map(({ cover }) => cover),
+          // get only new events' images
+          const eventsWithNewCovers = events.filter(
+            ({ cover }) => !existingEventCoverImgUrls.includes(cover),
           );
 
-          if (!base64s) {
+          // pull images & save to public/images/events
+          const base64sOfEventsWithNewCovers = await getFilesFromUrls(
+            eventsWithNewCovers.map(({ cover }) => cover),
+          );
+
+          if (!base64sOfEventsWithNewCovers) {
             console.error("Failed to save cover base64s to project");
           } else {
+            const updatedEventCoversBase64s = {
+              ...EVENTS_COVERS,
+              ...base64sOfEventsWithNewCovers,
+            };
             const resp = await fetchPostJSON<{ success: boolean }>(
               `${getBaseUrl()}/api/github/update-file`,
               {
                 filePath: "src/automated/event-covers.json",
-                contents: JSON.stringify(base64s),
+                contents: JSON.stringify(updatedEventCoversBase64s),
                 secret: process.env.SENSITIVE_CRUD_SECRET,
               },
             );
