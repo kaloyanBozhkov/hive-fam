@@ -25,6 +25,12 @@ const SyncEventsSchema = z.object({
 
 export const config = {
   runtime: "edge",
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+    maxDuration: 10,
+  },
 };
 
 type SyncCurrenciesPayload = (typeof SyncEventsSchema)["_output"];
