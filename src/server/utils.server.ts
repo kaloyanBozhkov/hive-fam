@@ -31,12 +31,21 @@ export const saveFilesFromUrls = async (urls: string[], path: string) => {
   }
 };
 
-export const getFilesFromUrls = async (urls: string[]) => {
+type FileName = string;
+type ImgUrl = string;
+type Base64 = string;
+
+export const getFilesFromUrls = async (urls: Record<FileName, ImgUrl>) => {
   try {
     const fetched = await Promise.all(
-      urls.map(async (url) => ({ [url]: await getFileFromUrl(url) })),
+      Object.entries(urls).map(async ([fileName, url]) => ({
+        [fileName]: await getFileFromUrl(url),
+      })),
     );
-    return fetched.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    return fetched.reduce(
+      (acc, curr) => ({ ...acc, ...curr }),
+      {} as Record<FileName, Base64 | undefined>,
+    );
   } catch (err) {
     console.error("Failed to fetch & convert files to base64s", err);
   }

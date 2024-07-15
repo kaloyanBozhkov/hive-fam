@@ -1,9 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
 import type { NextFetchEvent } from "next/server";
 import { z } from "zod";
-import { fetchPostJSON, getBaseUrl } from "@/utils/common";
-import { getFilesFromUrls } from "@/server/utils.server";
-import EVENTS_COVERS from "@/automated/event-covers.json";
+import {
+  fetchPostJSON,
+  getBaseUrl,
+  getCoverImgFileNameFromEventTitle,
+} from "@/utils/common";
+import EVENTS from "@/automated/events.json";
 
 const SyncEventsSchema = z.object({
   secret: z.string().optional(),
@@ -94,7 +97,8 @@ export default async function syncEventsServerless(
           }
 
           console.log("Starting to save cover images");
-          const existingEventCoverImgUrls = Object.keys(EVENTS_COVERS);
+
+          const existingEventCoverImgUrls = EVENTS.map(({ cover }) => cover);
 
           // get only new events' images
           const eventsWithNewCovers = events.filter(
@@ -102,35 +106,29 @@ export default async function syncEventsServerless(
           );
 
           if (eventsWithNewCovers.length > 0) {
-            // pull images & save to public/images/events
-            const base64sOfEventsWithNewCovers = await getFilesFromUrls(
-              eventsWithNewCovers.map(({ cover }) => cover),
+            const coverImagesToSave = eventsWithNewCovers.reduce(
+              (acc, { cover, title }) => ({
+                ...acc,
+                [getCoverImgFileNameFromEventTitle(title)]: cover,
+              }),
+              {},
             );
 
-            if (!base64sOfEventsWithNewCovers) {
-              console.error("Failed to save cover base64s to project");
-            } else {
-              const updatedEventCoversBase64s = {
-                ...EVENTS_COVERS,
-                ...base64sOfEventsWithNewCovers,
-              };
-              const resp = await fetchPostJSON<{ success: boolean }>(
-                `${getBaseUrl()}/api/github/update-file`,
-                {
-                  filePath: "src/automated/event-covers.json",
-                  contents: JSON.stringify(updatedEventCoversBase64s),
-                  secret: process.env.SENSITIVE_CRUD_SECRET,
-                },
-              );
+            const resp = await fetchPostJSON<{ success: boolean }>(
+              `${getBaseUrl()}/api/github/update-images`,
+              {
+                imgUrls: coverImagesToSave,
+                secret: process.env.SENSITIVE_CRUD_SECRET,
+              },
+            );
 
-              if (!("success" in resp)) {
-                console.error({
-                  statusCode: 500,
-                  message: "Could not update event covers JSON properly",
-                });
+            if (!("success" in resp)) {
+              console.error({
+                statusCode: 500,
+                message: "Could not update event covers JSON properly",
+              });
 
-                return;
-              }
+              return;
             }
 
             console.log("Saved cover images to disk, gonna commit");

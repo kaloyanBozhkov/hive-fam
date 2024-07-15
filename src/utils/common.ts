@@ -100,3 +100,6 @@ export const capitalizeSentence = (s: string) =>
         )
         .join(" ")
     : "";
+
+export const getCoverImgFileNameFromEventTitle = (eventTitle: string) =>
+  eventTitle.replaceAll(" ", "_").replaceAll("//", "-").toLowerCase();

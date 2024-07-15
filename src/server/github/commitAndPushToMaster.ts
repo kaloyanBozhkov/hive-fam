@@ -6,7 +6,7 @@ export default async function commitAndPushToMaster(
   commitM?: string,
 ) {
   try {
-    const commitMessage = commitM ?? `Update automatedly in ${filePath}`,
+    const commitMessage = commitM ?? `Update atuomatically in ${filePath}`,
       { data: branchRef } = await octokit.git.getRef({
         owner: repoOwner,
         repo: repoName,

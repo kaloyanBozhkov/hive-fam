@@ -8,7 +8,6 @@ import Center from "../layouts/Center.layour";
 import Stack from "../layouts/Stack.layout";
 
 import EVENTS from "@/automated/events.json";
-import COVERS from "@/automated/event-covers.json";
 
 import {
   Card,
@@ -25,9 +24,10 @@ import { Fragment } from "react";
 import DateCard from "../molecules/DateCard.molecule";
 import { twMerge } from "tailwind-merge";
 import BuyTickets from "./BuyTickets.organism";
+import { getCoverImgFileNameFromEventTitle } from "@/utils/common";
 
 const Events = () => {
-  const { upcoming, past } = categorizeAndSortEvents(EVENTS, COVERS);
+  const { upcoming, past } = categorizeAndSortEvents(EVENTS);
   return (
     <Stack className="items-center gap-4">
       <h2 className="font-rex-bold text-[22px] leading-[100%] text-white">
@@ -73,17 +73,13 @@ const Events = () => {
 export default Events;
 
 type Event = (typeof EVENTS)[0];
-type Covers = typeof COVERS;
 
 interface CategorizedEvents {
   upcoming: Event[];
   past: Event[];
 }
 
-function categorizeAndSortEvents(
-  events: Event[],
-  covers: Covers,
-): CategorizedEvents {
+function categorizeAndSortEvents(events: Event[]): CategorizedEvents {
   const eventsParsed = events
     .map((event) => {
       const d = (() => {
@@ -93,7 +89,7 @@ function categorizeAndSortEvents(
           return null;
         }
       })();
-      const cover = covers[event.cover as keyof typeof covers];
+      const cover = "-";
 
       if (!cover) {
         console.warn(`No cover found in covers JSON for event: ${event.title}`);
@@ -101,7 +97,6 @@ function categorizeAndSortEvents(
 
       return {
         ...event,
-        cover: `data:image/png;base64,${cover}`,
         date: d,
       };
     })
@@ -174,7 +169,7 @@ const EventsList = ({
               <div className="overflow-hidden rounded-md [&:hover_img]:scale-[1.05]">
                 {/* eslint-disable-next-line */}
                 <img
-                  src={event.cover}
+                  src={`/assets/covers/${getCoverImgFileNameFromEventTitle(event.title)}.png`}
                   className="h-auto w-full transition-all"
                   alt="Cover"
                 />
