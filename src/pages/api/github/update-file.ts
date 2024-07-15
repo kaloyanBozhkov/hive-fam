@@ -7,6 +7,7 @@ type Payload = {
   contents: string;
   commitMessage?: string;
 };
+
 export const config = {
   api: {
     bodyParser: {
