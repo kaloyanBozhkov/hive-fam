@@ -30,12 +30,9 @@ export default async function commitImagesToRepo(
     const blobsPromises = Object.entries(imgs)
       .filter(([, base64]) => Boolean(base64))
       .map(([fileName, base64]) => {
-        const content = base64!.startsWith("data:image/png;base64,")
-          ? base64!
-          : `data:image/png;base64,${base64}`;
         return octokit.git
           .createBlob({
-            content,
+            content: base64!,
             owner: repoOwner,
             repo: repoName,
             encoding: "base64",

@@ -102,7 +102,8 @@ export default async function syncEventsServerless(
 
           // get only new events' images
           const eventsWithNewCovers = events.filter(
-            ({ cover }) => !existingEventCoverImgUrls.includes(cover),
+            // rm
+            ({ cover }) => true || !existingEventCoverImgUrls.includes(cover),
           );
 
           if (eventsWithNewCovers.length > 0) {
