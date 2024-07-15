@@ -7,6 +7,14 @@ type Payload = {
   contents: string;
   commitMessage?: string;
 };
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+    maxDuration: 10,
+  },
+};
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const oops = () => res.status(405).send({ message: "Something went wrong" });
