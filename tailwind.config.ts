@@ -3,6 +3,7 @@ import colors from "./tailwind/colors";
 import backgroundImage from "./tailwind/backgroundImages";
 import keyframes from "./tailwind/keyframes";
 import animation from "./tailwind/animation";
+import screens from "./tailwind/screens";
 
 export default {
   content: {
@@ -10,6 +11,7 @@ export default {
     files: ["./src/**/*.{js,ts,jsx,tsx}"],
   },
   theme: {
+    screens,
     container: {
       center: true,
       padding: "2rem",

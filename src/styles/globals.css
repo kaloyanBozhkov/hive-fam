@@ -179,8 +179,8 @@ body {
 }
 
 .p-text {
-  font-size: clamp(14px, 3vw + 0.4rem, 18px);
-  line-height: clamp(16px, 3vw + 0.8rem, 22px);
+  font-size: clamp(14px, 1.4vw + 0.4rem, 18px);
+  line-height: clamp(16px, 1.4vw + 0.8rem, 22px);
 }
 
 .h1-0 {
