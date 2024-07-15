@@ -18,6 +18,7 @@ export async function fetchPostJSON<T>(
   headers: NonNullable<Parameters<typeof fetch>["1"]>["headers"] = undefined,
 ): Promise<T> {
   try {
+    console.log(url, data);
     // Default options are marked with *
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
