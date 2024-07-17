@@ -20,7 +20,6 @@ const SyncEventsSchema = z.object({
       cover: z.string(),
       link: z.string(),
       price: z.string(),
-      venue: z.string(),
       drivePhotos: z.string(),
     }),
   ),
