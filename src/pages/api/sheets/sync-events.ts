@@ -13,10 +13,9 @@ const SyncEventsSchema = z.object({
   events: z.array(
     z.object({
       date: z.string(),
-      time: z.string(),
+      location: z.string(),
       title: z.string(),
       description: z.string(),
-      location: z.string(),
       cover: z.string(),
       link: z.string(),
       price: z.string(),
