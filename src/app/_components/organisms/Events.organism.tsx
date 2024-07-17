@@ -25,6 +25,8 @@ import DateCard from "../molecules/DateCard.molecule";
 import { twMerge } from "tailwind-merge";
 import BuyTickets from "./BuyTickets.organism";
 import { getCoverImgFileNameFromEventTitle } from "@/utils/common";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 const Events = () => {
   const { upcoming, past } = categorizeAndSortEvents(EVENTS);
@@ -180,7 +182,7 @@ const EventsList = ({
           <Stack className="w-full gap-4">
             <Group className="w-full items-center justify-between">
               {isPast ? null : (
-                <p className="font-rex-bold text-[24px]">{event.price}</p>
+                <p className="font-rex-bold text-[24px]">{event.time}</p>
               )}
               {event.drivePhotos && event.drivePhotos !== "-" ? (
                 <Link
@@ -206,6 +208,16 @@ const EventsList = ({
               )}
             </Group>
             {!isPast && <BuyTickets />}
+            {!isPast && (
+              <Link href={event.location} target="_blank">
+                <Button className="w-full shadow-md" variant="secondary">
+                  <Group className="items-center gap-[12px]">
+                    <FontAwesomeIcon icon={faLocationDot} />
+                    <span>Check Location</span>
+                  </Group>
+                </Button>
+              </Link>
+            )}
           </Stack>
         </CardFooter>
       </Card>
