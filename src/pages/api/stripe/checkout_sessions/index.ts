@@ -1,4 +1,3 @@
-import { MIN_AMOUNT, MAX_AMOUNT } from "@/utils/front-end/stripe/constants";
 import type Stripe from "stripe";
 
 import { type NextApiRequest, type NextApiResponse } from "next";
@@ -11,15 +10,9 @@ export type CartCheckoutPayloadBody = {
   currency: "BGN";
   onCancelRedirectTo: string;
   items: {
-    price: number;
-    img: string;
-    id: string;
-    color: string;
-    size: string;
-    layoutType: LayoutType;
-    prompt: string;
-    desc: string;
-    title: string;
+    eventName: string;
+    ticketPrice: number;
+    accessType: "regular";
   }[];
 };
 
@@ -43,30 +36,21 @@ export default async function handler(
 
       if (!onCancelRedirectTo) onCancelRedirect = `/`;
 
-      const { shippingCosts } = getShippingCosts(currency),
-        // Create Checkout Sessions from body params.
-        params: Stripe.Checkout.SessionCreateParams = {
+      const params: Stripe.Checkout.SessionCreateParams = {
           mode: "payment",
           submit_type: "pay",
           payment_method_types: ["card"],
           phone_number_collection: {
             enabled: true,
           },
-          metadata: items.reduce(
-            (acc, item) => ({
-              ...acc,
-              [item.id]: `${item.prompt}\n\n\n${item.color}\n\n\n${item.layoutType}`,
-            }),
-            {},
-          ),
           line_items: items.map((p) => ({
             price_data: {
-              unit_amount: formatAmountForStripe(p.price, currency),
+              unit_amount: formatAmountForStripe(p.ticketPrice, currency),
               currency,
               product_data: {
-                images: [p.img],
-                name: p.title,
-                description: p.desc,
+                images: [],
+                name: `Tiket - ${p.eventName}`,
+                description: "Regular access",
               },
             },
             quantity: 1,
@@ -76,10 +60,10 @@ export default async function handler(
           success_url: `${req.headers.origin!}/order?session_id={CHECKOUT_SESSION_ID}`,
           custom_text: {
             submit: {
-              message: `Ready to be surprised?!`,
+              message: `Ready to claim these tickets?!`,
             },
             shipping_address: {
-              message: "For more info, contact us at contact@socksai.io",
+              message: "For more info, contact us at EMAILHERE",
             },
           },
           customer_creation: "always",
@@ -138,7 +122,6 @@ export default async function handler(
               "VA",
             ],
           },
-          shipping_options: shippingCosts,
           allow_promotion_codes: true,
         },
         checkoutSession: Stripe.Checkout.Session =

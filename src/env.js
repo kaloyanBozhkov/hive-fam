@@ -15,6 +15,7 @@ export const env = createEnv({
     SENSITIVE_CRUD_SECRET: z.string(),
     ADMIN_SECRET: z.string(),
     ADMIN_PAGE: z.string().url(),
+    STRIPE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -24,6 +25,7 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
   },
 
   /**
@@ -37,6 +39,9 @@ export const env = createEnv({
     SENSITIVE_CRUD_SECRET: process.env.SENSITIVE_CRUD_SECRET,
     ADMIN_SECRET: process.env.ADMIN_SECRET,
     ADMIN_PAGE: process.env.ADMIN_PAGE,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

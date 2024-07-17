@@ -7,6 +7,7 @@ import {
   getCoverImgFileNameFromEventTitle,
 } from "@/utils/common";
 import EVENTS from "@/automated/events.json";
+import { env } from "@/env";
 
 const SyncEventsSchema = z.object({
   secret: z.string().optional(),
@@ -61,7 +62,7 @@ export default async function syncEventsServerless(
       payload = JSON.parse(string) as SyncCurrenciesPayload,
       { secret, events } = SyncEventsSchema.parse(payload);
 
-    if (!secret || secret !== process.env.SENSITIVE_CRUD_SECRET) return oops();
+    if (!secret || secret !== env.SENSITIVE_CRUD_SECRET) return oops();
 
     event.waitUntil(
       (async () => {

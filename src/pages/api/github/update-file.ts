@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import commitAndPushToMaster from "@/server/github/commitAndPushToMaster";
 import { type NextApiRequest, type NextApiResponse } from "next";
 
@@ -24,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { secret, filePath, contents, commitMessage } = req.body as Payload;
 
-  if (secret !== process.env.SENSITIVE_CRUD_SECRET || !filePath || !contents)
+  if (secret !== env.SENSITIVE_CRUD_SECRET || !filePath || !contents)
     return oops();
 
   try {

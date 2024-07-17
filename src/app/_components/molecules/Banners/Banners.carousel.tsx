@@ -14,7 +14,7 @@ import Another from "./Another";
 
 const Banners = ({ className }: { className?: string }) => {
   const [active, setActive] = useState(0);
-  const [startAnim, setStartAnim] = useState(false);
+  const [_, setStartAnim] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => {

@@ -1,5 +1,4 @@
 import { writeFileSync } from "fs";
-import { url } from "inspector";
 
 export const saveFileFromUrl = async (url: string, path: string) => {
   try {

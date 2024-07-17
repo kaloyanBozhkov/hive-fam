@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import commitImagesToRepo from "@/server/github/update-image";
 import { getFilesFromUrls } from "@/server/utils.server";
 import { type NextApiRequest, type NextApiResponse } from "next";
@@ -26,7 +27,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { secret, imgUrls } = req.body as Payload;
 
-  if (secret !== process.env.SENSITIVE_CRUD_SECRET) return oops();
+  if (secret !== env.SENSITIVE_CRUD_SECRET) return oops();
 
   try {
     const base64s = await getFilesFromUrls(imgUrls);
