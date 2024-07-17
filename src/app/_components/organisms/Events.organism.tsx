@@ -182,7 +182,7 @@ const EventsList = ({
           <Stack className="w-full gap-4">
             <Group className="w-full items-center justify-between">
               {isPast ? null : (
-                <p className="font-rex-bold text-[24px]">{event.time}</p>
+                <p className="font-rex-bold text-[24px]">{event?.price}</p>
               )}
               {event.drivePhotos && event.drivePhotos !== "-" ? (
                 <Link
