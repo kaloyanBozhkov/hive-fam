@@ -2,8 +2,10 @@ import type Stripe from "stripe";
 
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { stripeCli } from "../../../../server/stripe/stripe";
-import { formatAmountForStripe } from "../../../../server/stripe/stripe.helpers";
+import { stripeCli } from "@/server/stripe/stripe";
+import { formatAmountForStripe } from "@/server/stripe/stripe.helpers";
+
+import EVENTS from "@/automated/events.json";
 
 export type CartCheckoutPayloadBody = {
   amount: number;
@@ -36,6 +38,22 @@ export default async function handler(
 
       if (!onCancelRedirectTo) onCancelRedirect = `/`;
 
+      // validate costs with ticket cost on sheets
+      if (items.length < 1) throw new Error("No items in cart");
+
+      console.log(
+        items,
+        EVENTS.map((e) => [e.title, e.price]),
+      );
+
+      const eventPrices: Record<string, number> = EVENTS.reduce(
+        (acc, e) => ({ ...acc, [e.title]: parseFloat(e.price) }),
+        {},
+      );
+
+      if (items.some((p) => eventPrices[p.eventName] !== p.ticketPrice))
+        throw new Error("Not matching prices for all items");
+
       const params: Stripe.Checkout.SessionCreateParams = {
           mode: "payment",
           submit_type: "pay",
@@ -62,66 +80,8 @@ export default async function handler(
             submit: {
               message: `Ready to claim these tickets?!`,
             },
-            shipping_address: {
-              message: "For more info, contact us at EMAILHERE",
-            },
           },
           customer_creation: "always",
-          shipping_address_collection: {
-            allowed_countries: [
-              "GB",
-              "SE",
-              "CH",
-              "BG",
-              "NL",
-              "AD",
-              "AL",
-              "AT",
-              "BA",
-              "BE",
-              "BY",
-              "CY",
-              "CZ",
-              "DE",
-              "DK",
-              "EE",
-              "ES",
-              "FI",
-              "FO",
-              "FR",
-              "GG",
-              "GI",
-              "GR",
-              "HR",
-              "HU",
-              "IE",
-              "IM",
-              "IS",
-              "IT",
-              "JE",
-              "LI",
-              "LT",
-              "LU",
-              "LV",
-              "MC",
-              "MD",
-              "ME",
-              "MK",
-              "MT",
-              "NO",
-              "PL",
-              "PT",
-              "RO",
-              "RS",
-              "RU",
-              "SI",
-              "SJ",
-              "SK",
-              "SM",
-              "UA",
-              "VA",
-            ],
-          },
           allow_promotion_codes: true,
         },
         checkoutSession: Stripe.Checkout.Session =

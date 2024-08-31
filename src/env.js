@@ -13,6 +13,7 @@ export const env = createEnv({
       .default("development"),
     GITHUB_ACCESS_TOKEN: z.string(),
     SENSITIVE_CRUD_SECRET: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
     ADMIN_SECRET: z.string(),
     ADMIN_PAGE: z.string().url(),
     STRIPE_SECRET_KEY: z.string(),
@@ -42,6 +43,7 @@ export const env = createEnv({
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

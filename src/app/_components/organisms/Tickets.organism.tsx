@@ -1,3 +1,4 @@
+"use client";
 import { z } from "zod";
 import Group from "../layouts/Group.layout";
 import Stack from "../layouts/Stack.layout";
@@ -16,9 +17,11 @@ import {
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
+import { useCallback, useState } from "react";
+import DotsLoader from "../atoms/DotsLoader.atom";
+import { cartCheckout } from "@/utils/stripe/checkout.helpers";
 
 const cart = z.object({
-  eventName: z.string(),
   regularQuantity: z.number(),
 });
 
@@ -33,19 +36,41 @@ const Tickets = ({
   className?: string;
   eventCurrency: string;
 }) => {
+  const [checkoutProcessing, setCheckoutProcessing] = useState(false);
   const form = useForm<z.infer<typeof cart>>({
     resolver: zodResolver(cart),
     defaultValues: {
-      eventName,
       regularQuantity: 0,
     },
   });
+  const total = (form.watch("regularQuantity") * eventPrice).toFixed(2);
 
-  const onSubmit = (values: z.infer<typeof cart>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  };
+  const onSubmit = useCallback(
+    (values: z.infer<typeof cart>) => {
+      // Do something with the form values.
+      // ✅ This will be type-safe and validated.
+      console.log(values);
+
+      setCheckoutProcessing(true);
+      const formVals = form.getValues();
+      const total = formVals.regularQuantity * eventPrice;
+      const items: { eventName: string; ticketPrice: number }[] = Array.from(
+        { length: formVals.regularQuantity },
+        () => ({ eventName, ticketPrice: eventPrice }),
+      );
+
+      cartCheckout({
+        total,
+        currency: "BGN",
+        productsInCart: items,
+      })
+        .catch(() => {
+          console.error("failed to checkout");
+        })
+        .finally(() => setCheckoutProcessing(false));
+    },
+    [eventName, form, eventPrice],
+  );
 
   return (
     <Form {...form}>
@@ -53,11 +78,6 @@ const Tickets = ({
         onSubmit={form.handleSubmit(onSubmit)}
         className={twMerge("w-full space-y-8", className)}
       >
-        <input
-          type="hidden"
-          {...form.register("eventName")}
-          value={eventName}
-        />
         <Stack className="gap-[20px]">
           <FormField
             control={form.control}
@@ -79,6 +99,7 @@ const Tickets = ({
                           newVal < 0 ? 0 : newVal,
                         );
                       }}
+                      type="button"
                     >
                       -
                     </Button>
@@ -100,6 +121,7 @@ const Tickets = ({
                           newVal > 99 ? 99 : newVal,
                         );
                       }}
+                      type="button"
                     >
                       +
                     </Button>
@@ -113,15 +135,18 @@ const Tickets = ({
           <div className="grid w-full grid-cols-2 gap-[20px]">
             <p className="mr-auto font-rex-bold text-[20px]">Total</p>
             <p className="ml-auto font-rex-bold text-[20px]">
-              {(form.getValues().regularQuantity * eventPrice).toFixed(2)}{" "}
-              {eventCurrency}
+              {total} {eventCurrency}
             </p>
           </div>
-          <Button disabled={form.getValues().regularQuantity <= 0}>
-            <Group className="items-center gap-[12px]">
-              <FontAwesomeIcon icon={faCreditCard} />
-              <span>CHECKOUT</span>
-            </Group>
+          <Button disabled={form.watch("regularQuantity") <= 0} type="submit">
+            {checkoutProcessing ? (
+              <DotsLoader modifier="primary" />
+            ) : (
+              <Group className="items-center gap-[12px]">
+                <FontAwesomeIcon icon={faCreditCard} />
+                <span>CHECKOUT</span>
+              </Group>
+            )}
           </Button>
         </Stack>
       </form>

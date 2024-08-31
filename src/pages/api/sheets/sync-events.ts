@@ -57,8 +57,11 @@ export default async function syncEventsServerless(
   try {
     const input = await req.body.getReader().read(),
       decoder = new TextDecoder(),
-      string = decoder.decode(input.value),
-      payload = JSON.parse(string) as SyncCurrenciesPayload,
+      string = decoder.decode(input.value);
+    
+    console.log("decoded", string);
+
+    const payload = JSON.parse(string) as SyncCurrenciesPayload,
       { secret, events } = SyncEventsSchema.parse(payload);
 
     if (!secret || secret !== env.SENSITIVE_CRUD_SECRET) return oops();

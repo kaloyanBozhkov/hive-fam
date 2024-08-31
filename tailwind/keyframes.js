@@ -53,7 +53,6 @@ const keyframes = {
       transform: "rotate(360deg)",
     },
   },
-
   // shadcn
   "accordion-down": {
     from: { height: "0" },

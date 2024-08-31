@@ -106,7 +106,7 @@ function categorizeAndSortEvents(events: Event[]): CategorizedEvents {
 
   const eventsSorted = eventsParsed.sort(
     // @TODO Update to TS 5.5. and drop !
-    (a, b) => b.date!.getTime() - a.date!.getTime(),
+    (a, b) => a.date!.getTime() - b.date!.getTime(),
   );
   const rightNow = Date.now();
 
@@ -171,7 +171,7 @@ const EventsList = ({
                 {/* eslint-disable-next-line */}
                 <img
                   src={`/assets/covers/${getCoverImgFileNameFromEventTitle(event.title)}.png`}
-                  className="bg-loading-img h-auto min-h-[150px] w-full transition-all"
+                  className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
                   alt="Cover"
                 />
               </div>
@@ -207,7 +207,9 @@ const EventsList = ({
                 </Link>
               )}
             </Group>
-            {!isPast && <BuyTickets />}
+            {!isPast && (
+              <BuyTickets eventName={event.title} eventPrice={event.price} />
+            )}
             {!isPast && (
               <Link href={event.location} target="_blank">
                 <Button className="w-full shadow-md" variant="secondary">

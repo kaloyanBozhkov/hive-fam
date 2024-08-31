@@ -1,14 +1,13 @@
-import { env } from "@/env";
 import { type Stripe, loadStripe } from "@stripe/stripe-js";
 
-// eslint-disable-next-line
-let stripePromise: Promise<Stripe | null> | undefined;
+let stripePromise: Promise<Stripe> | undefined;
 
 const getStripe = () => {
   if (!stripePromise)
     // eslint-disable-next-line
-    stripePromise = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-
+    // @ts-expect-error
+    // eslint-disable-next-line
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
   return stripePromise;
 };
 

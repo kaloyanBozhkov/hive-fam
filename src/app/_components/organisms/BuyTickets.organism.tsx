@@ -16,7 +16,15 @@ import {
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
 
-const BuyTickets = ({ className = "" }: { className?: string }) => {
+const BuyTickets = ({
+  className = "",
+  eventName,
+  eventPrice,
+}: {
+  className?: string;
+  eventName: string;
+  eventPrice: string;
+}) => {
   return (
     <div className={twMerge("w-full", className)}>
       <Dialog>
@@ -33,8 +41,8 @@ const BuyTickets = ({ className = "" }: { className?: string }) => {
             <DialogTitle className="text-left">Choose tickets</DialogTitle>
             <DialogDescription></DialogDescription>
             <Tickets
-              eventPrice={10}
-              eventName="Some event"
+              eventPrice={parseFloat(eventPrice)}
+              eventName={eventName}
               eventCurrency="BGN"
             />
           </DialogHeader>

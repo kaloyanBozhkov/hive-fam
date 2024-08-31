@@ -4,11 +4,11 @@ import { twMerge } from "tailwind-merge";
 const dots = cva("", {
   variants: {
     modifier: {
-      primary: ["bg-cherry-grape"],
+      primary: ["bg-white"],
       primaryBordered: [
-        "bg-cherry-grape -mb-[2px] shadow-[0_0_0_1px_rgba(255,255,255,0.5)]",
+        "bg-white -mb-[2px] shadow-[0_0_0_1px_rgba(255,255,255,0.5)]",
       ],
-      secondary: ["bg-white"],
+      secondary: ["bg-black"],
       tertiary: ["bg-neutral-550"],
     },
     size: {
