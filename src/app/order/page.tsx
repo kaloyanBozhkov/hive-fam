@@ -350,7 +350,7 @@ const retrieveSessionOrRedirect = async (sessionId?: string | null) => {
 };
 
 const getSignedUrl = (sessionId: string, lineItemId: string) => {
-  return `${getBaseUrl()}/api/validate?sessionId=${sessionId}&lineItemId=${lineItemId}`;
+  return `${getBaseUrl()}/api/ticket/validate?sessionId=${sessionId}&lineItemId=${lineItemId}`;
 };
 
 const formatSignedUrls = (
