@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import AOS from "@/app/_components/next-components/AOS.next";
 import CSSVaraibles from "../../tailwind/plugins";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Header from "./_components/organisms/Header.organism";
 export const metadata = {
   title: "HiveFam",
   description: "Bringing back the 00s sound. SOFIA | BULGARIA",
@@ -27,7 +28,12 @@ export default function RootLayout({
       </head>
       <body>
         <TRPCReactProvider>
-          <AOS>{children}</AOS>
+          <AOS>
+            <div className="grid-page min-h-screen w-full pb-4">
+              <Header />
+              {children}
+            </div>
+          </AOS>
         </TRPCReactProvider>
       </body>
     </html>

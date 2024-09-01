@@ -151,7 +151,7 @@ const EventsList = ({
             </div>
           )}
           <div className={twMerge(isGoodDate ? "!mt-0" : "")}>
-            <CardTitle className={twMerge("break-words")}>
+            <CardTitle className="break-words">
               {event.title}
             </CardTitle>
           </div>

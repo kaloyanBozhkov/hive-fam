@@ -18,7 +18,6 @@ export async function fetchPostJSON<T>(
   headers: NonNullable<Parameters<typeof fetch>["1"]>["headers"] = undefined,
 ): Promise<T> {
   try {
-    console.log(url, data);
     // Default options are marked with *
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -103,3 +102,25 @@ export const capitalizeSentence = (s: string) =>
 
 export const getCoverImgFileNameFromEventTitle = (eventTitle: string) =>
   eventTitle.replaceAll(" ", "_").replaceAll("//", "-").toLowerCase();
+
+export const fetchFileFromUrlFE = async (url: string) => {
+  const res = await fetch(url);
+
+  if (res.status !== 200) return null;
+
+  const blob = await res.blob(),
+    arrBuffer = await blob.arrayBuffer(),
+    buffer = Buffer.from(arrBuffer);
+
+  return buffer;
+};
+
+
+export const forceDownload = (dataURL: string, filename: string) => {
+  const a = document.createElement("a");
+  a.download = filename;
+  a.href = dataURL;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
