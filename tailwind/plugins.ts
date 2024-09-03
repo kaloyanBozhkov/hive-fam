@@ -63,4 +63,6 @@ const extractCSSColors = ({
   }`;
   };
 
-export default getRootCSSVariables();
+const cssVariables = getRootCSSVariables();
+
+export default cssVariables;

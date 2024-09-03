@@ -7,15 +7,13 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().url(),
+    STAFF:  z.array(z.array(z.string(), z.string())), 
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
     GITHUB_ACCESS_TOKEN: z.string(),
     SENSITIVE_CRUD_SECRET: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
-    ADMIN_SECRET: z.string(),
-    ADMIN_PAGE: z.string().url(),
     STRIPE_SECRET_KEY: z.string(),
   },
 
@@ -34,12 +32,10 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
+    STAFF: JSON.parse(process.env.STAFF || '{}'),
     NODE_ENV: process.env.NODE_ENV,
     GITHUB_ACCESS_TOKEN: process.env.GITHUB_ACCESS_TOKEN,
     SENSITIVE_CRUD_SECRET: process.env.SENSITIVE_CRUD_SECRET,
-    ADMIN_SECRET: process.env.ADMIN_SECRET,
-    ADMIN_PAGE: process.env.ADMIN_PAGE,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
