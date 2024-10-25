@@ -34,8 +34,11 @@ export default function RootLayout({
             <div className="grid-page min-h-screen w-full pb-4">
               <Header />
               {children}
+<<<<<<< HEAD
               <Toaster />
               <URLToasts />
+=======
+>>>>>>> f3fb6be1da6876d7d8db7efbbd91fe90e89bde5c
             </div>
           </AOS>
         </TRPCReactProvider>

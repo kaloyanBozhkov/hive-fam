@@ -1,0 +1,1 @@
+export const ORDER_METADATA_TICKET_SCANNED = "ticketScanned";
