@@ -13,6 +13,9 @@ export default function ManagePage() {
         <Button asChild>
           <Link href="/staff/manage/event/event-list">Events List</Link>
         </Button>
+        <Button asChild>
+          <Link href="/staff/manage/event/venue-list">Venues List</Link>
+        </Button>
       </Stack>
     </Stack>
   );

@@ -16,7 +16,7 @@ type Event = event & {
 const Events = ({ events }: { events: Event[] }) => {
   const { upcoming, past } = categorizeAndSortEvents(events);
   return (
-    <Stack className="items-center gap-4">
+    <Stack className="items-center gap-6">
       <h2 className="font-rex-bold text-[22px] leading-[100%] text-white">
         - Our Events -
       </h2>
@@ -49,7 +49,15 @@ const Events = ({ events }: { events: Event[] }) => {
         </TabsContent>
         <TabsContent value="past">
           <Stack className="gap-6">
-            <EventsList events={past} isPast />
+            {past.length === 0 ? (
+              <p className="text-center font-rex-bold text-[18px] leading-[110%] text-white">
+                No past events, come back later.
+              </p>
+            ) : (
+              <Stack className="gap-6">
+                <EventsList events={past} isPast />
+              </Stack>
+            )}
           </Stack>
         </TabsContent>
       </Tabs>
