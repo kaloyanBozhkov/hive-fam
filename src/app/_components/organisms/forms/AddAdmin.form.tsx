@@ -86,11 +86,7 @@ const AddAdminForm = ({
             name="organization_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="mr-auto">
-                  <Stack>
-                    <p className="text-[18px] leading-[120%]">Organization</p>
-                  </Stack>
-                </FormLabel>
+                <FormLabel className="mr-auto">Organization</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -117,11 +113,7 @@ const AddAdminForm = ({
             name="email"
             render={({ field }) => (
               <FormItem className="mt-0r">
-                <FormLabel className="mr-auto">
-                  <Stack>
-                    <p className="text-[18px] leading-[120%]">Email</p>
-                  </Stack>
-                </FormLabel>
+                <FormLabel className="mr-auto">Email</FormLabel>
                 <FormControl>
                   <Input type="email" {...field} />
                 </FormControl>
@@ -135,11 +127,7 @@ const AddAdminForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem className="mt-0 flex-1">
-                  <FormLabel className="mr-auto">
-                    <Stack>
-                      <p className="text-[18px] leading-[120%]">Name</p>
-                    </Stack>
-                  </FormLabel>
+                  <FormLabel className="mr-auto">Name</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -152,11 +140,7 @@ const AddAdminForm = ({
               name="surname"
               render={({ field }) => (
                 <FormItem className="mt-0 flex-1">
-                  <FormLabel className="mr-auto">
-                    <Stack>
-                      <p className="text-[18px] leading-[120%]">Surname</p>
-                    </Stack>
-                  </FormLabel>
+                  <FormLabel className="mr-auto">Surname</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -170,11 +154,7 @@ const AddAdminForm = ({
             name="phone"
             render={({ field }) => (
               <FormItem className="mt-0">
-                <FormLabel className="mr-auto">
-                  <Stack>
-                    <p className="text-[18px] leading-[120%]">Phone</p>
-                  </Stack>
-                </FormLabel>
+                <FormLabel className="mr-auto">Phone</FormLabel>
                 <FormControl>
                   <Input type="tel" {...field} />
                 </FormControl>
@@ -187,11 +167,7 @@ const AddAdminForm = ({
             name="password"
             render={({ field }) => (
               <FormItem className="mt-0">
-                <FormLabel className="mr-auto">
-                  <Stack>
-                    <p className="text-[18px] leading-[120%]">Password</p>
-                  </Stack>
-                </FormLabel>
+                <FormLabel className="mr-auto">Password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>

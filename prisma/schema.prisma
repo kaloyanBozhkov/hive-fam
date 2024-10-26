@@ -21,6 +21,7 @@ model organization {
 
   events event[]
   staff  staff[]
+  venue  venue[]
 }
 
 model event {
@@ -28,10 +29,11 @@ model event {
   title              String
   description        String
   date               DateTime
-  poster_url         String
+  poster_data_url    String
   poster_type        PosterType @default(IMAGE)
   external_event_url String?
   event_photos_url   String? // when event is completed
+  is_published       Boolean    @default(false)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String
@@ -40,6 +42,8 @@ model event {
   updated_at      DateTime      @updatedAt
   organization    organization? @relation(fields: [organization_id], references: [id])
   organization_id String?
+
+  sold_tickets ticket[]
 }
 
 model venue {
@@ -52,6 +56,9 @@ model venue {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+
   events event[]
 }
 
@@ -63,6 +70,9 @@ model ticket {
 
   owner    participant @relation(fields: [owner_id], references: [id])
   owner_id String
+
+  event    event  @relation(fields: [event_id], references: [id])
+  event_id String
 
   order_session_id String
 }

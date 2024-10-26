@@ -2,7 +2,7 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 
-export default async function Manage() {
+export default async function KokoPage() {
   return (
     <Stack className="gap-2">
       <p>Actions</p>

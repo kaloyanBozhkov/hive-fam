@@ -11,21 +11,21 @@ import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function KokoLayout({
+export default function ManageLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <Stack className="min-h-[400px] gap-4">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
             <Group className="align-between w-full justify-between">
-              <p>Koko's area</p>
-              {pathname !== "/staff/manage/koko" ? (
+              <p>Management area</p>
+              {pathname !== "/staff/manage/event" ? (
                 <Button
                   onClick={() =>
                     pathname

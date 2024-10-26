@@ -47,7 +47,7 @@ export default async function Manage() {
             ) && (
               <>
                 <Button asChild>
-                  <Link href="/staff/manage/events">Manage Events</Link>
+                  <Link href="/staff/manage/event">Manage Events</Link>
                 </Button>
               </>
             )}
