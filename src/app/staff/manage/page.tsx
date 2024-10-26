@@ -32,7 +32,7 @@ export default async function Manage() {
             <p>Actions</p>
             {user.role === Role.KOKO && (
               <Button asChild>
-                <Link href="/staff/manage/koko">Koko's dashboard</Link>
+                <Link href="/staff/manage/koko">Koko&apos;s dashboard</Link>
               </Button>
             )}
             {([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role) && (

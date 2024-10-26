@@ -1,7 +1,17 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 
-import Events from "@/app/_components/organisms/Events.organism";
+import EventsList from "@/app/_components/organisms/EventsList.organism";
 import LandingBanner from "@/app/_components/molecules/LandingBanner.molecule";
+import { db } from "@/server/db";
+
+const getEvents = async () => {
+  const events = await db.event.findMany({
+    include: {
+      venue: true,
+    },
+  });
+  return events;
+};
 
 export default async function Home() {
   return (
@@ -10,7 +20,7 @@ export default async function Home() {
         <LandingBanner />
       </div>
       <Stack className="min-h-[400px] gap-4">
-        <Events />
+        <EventsList events={await getEvents()} />
       </Stack>
     </>
   );

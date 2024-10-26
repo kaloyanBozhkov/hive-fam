@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAuth } from "./server/auth/verifyAuth";
-import { JWT_COOKIE_NAME, PATHNAME_HEADER } from "./server/auth/constants";
+import { JWT_COOKIE_NAME } from "./server/auth/constants";
 import { getJWTUser } from "./server/auth/getJWTUser";
 import { Role } from "@prisma/client";
 

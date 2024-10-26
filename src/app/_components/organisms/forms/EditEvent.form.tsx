@@ -222,7 +222,7 @@ const EditEventForm = ({
               <FormItem>
                 <FormLabel>External Event URL</FormLabel>
                 <FormControl>
-                  <Input type="url" {...field} value={field.value || ""} />
+                  <Input type="url" {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

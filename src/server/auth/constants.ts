@@ -1,7 +1,6 @@
 import { Role } from "@prisma/client";
 
 export const JWT_COOKIE_NAME = "auth-token";
-export const PATHNAME_HEADER = "x-current-path";
 
 export const ERRORS = {
   UNAUTHORIZED: "unauthorized",

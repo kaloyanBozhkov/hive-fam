@@ -9,11 +9,11 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { TRPCError } from "@trpc/server";
+// import { TRPCError } from "@trpc/server";
 
 import { db } from "@/server/db";
-import { STAFF_EMAIL_COOKIE, STAFF_ROLES } from "../auth/constants";
-import { Role } from "@prisma/client";
+// import { STAFF_EMAIL_COOKIE, STAFF_ROLES } from "../auth/constants";
+// import { Role } from "@prisma/client";
 
 /**
  * 1. CONTEXT
@@ -28,10 +28,8 @@ import { Role } from "@prisma/client";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const userEmail = opts.headers.get(STAFF_EMAIL_COOKIE);
   return {
     db,
-    user: userEmail ? { email: userEmail } : null,
     ...opts,
   };
 };
@@ -87,43 +85,43 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
-const getStaffUserFromContext = async (
-  ctx: Awaited<ReturnType<typeof createTRPCContext>>,
-  mustHaveRole?: Role,
-) => {
-  if (!ctx.user) return false;
-  const user = await ctx.db.staff.findUnique({
-    where: { email: ctx.user.email, role: mustHaveRole },
-  });
-  if (!user) return false;
-  return {
-    ...user,
-    isStaff: STAFF_ROLES.includes(user.role) || user.role === Role.KOKO,
-  };
-};
+// const getStaffUserFromContext = async (
+//   ctx: Awaited<ReturnType<typeof createTRPCContext>>,
+//   mustHaveRole?: Role,
+// ) => {
+//   if (!ctx.user) return false;
+//   const user = await ctx.db.staff.findUnique({
+//     where: { email: ctx.user.email, role: mustHaveRole },
+//   });
+//   if (!user) return false;
+//   return {
+//     ...user,
+//     isStaff: STAFF_ROLES.includes(user.role) || user.role === Role.KOKO,
+//   };
+// };
 
-const isStaff = (mustHaveRole?: Role) =>
-  t.middleware(async ({ ctx, next }) => {
-    const user = await getStaffUserFromContext(ctx, mustHaveRole);
-    if (!user || !user?.isStaff)
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized" });
+// const isStaff = (mustHaveRole?: Role) =>
+//   t.middleware(async ({ ctx, next }) => {
+//     const user = await getStaffUserFromContext(ctx, mustHaveRole);
+//     if (!user || !user?.isStaff)
+//       throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized" });
 
-    return next({
-      ctx: {
-        ...ctx,
-        user,
-      },
-    });
-  });
+//     return next({
+//       ctx: {
+//         ...ctx,
+//         user,
+//       },
+//     });
+//   });
 
-// any staff
-export const staffProcedure = t.procedure.use(isStaff());
-export const adminProcedure = t.procedure.use(isStaff(Role.ADMIN));
-export const eventManagerProcedure = t.procedure.use(
-  isStaff(Role.EVENT_MANAGER),
-);
+// // any staff
+// export const staffProcedure = t.procedure.use(isStaff());
+// export const adminProcedure = t.procedure.use(isStaff(Role.ADMIN));
+// export const eventManagerProcedure = t.procedure.use(
+//   isStaff(Role.EVENT_MANAGER),
+// );
 
-// likely wont be used
-export const ticketScannerProcedure = t.procedure.use(
-  isStaff(Role.TICKET_SCANNER),
-);
+// // likely wont be used
+// export const ticketScannerProcedure = t.procedure.use(
+//   isStaff(Role.TICKET_SCANNER),
+// );

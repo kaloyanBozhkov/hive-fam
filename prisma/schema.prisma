@@ -24,6 +24,11 @@ model organization {
   venue  venue[]
 }
 
+enum Currency {
+  BGN
+  EUR
+}
+
 model event {
   id                 String     @id @default(uuid())
   title              String
@@ -34,6 +39,8 @@ model event {
   external_event_url String?
   event_photos_url   String? // when event is completed
   is_published       Boolean    @default(false)
+  ticket_price       Float      @default(10)
+  price_currency     Currency   @default(BGN)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String

@@ -37,7 +37,7 @@ export async function addAdmin(staffData: {
 
     let errorMessage = errorMessages.default;
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      errorMessage = errorMessages[error.code] || errorMessages.default;
+      errorMessage = errorMessages[error.code] ?? errorMessages.default;
     }
 
     return { success: false, error: errorMessage };

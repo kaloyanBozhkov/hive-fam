@@ -26,7 +26,7 @@ export default async function EditVenuePage({
 }: {
   params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = await (params as unknown as Promise<{ id: string }>);
   return (
     <Stack className="gap-y-8">
       <h1 className="text-[22px] font-semibold leading-[120%]">Edit Admin</h1>

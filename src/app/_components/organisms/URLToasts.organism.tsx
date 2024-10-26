@@ -17,7 +17,7 @@ export const URLToasts = () => {
         description: "Check your credentials and try again.",
       });
     }
-  }, [error]);
+  }, [error, toast]);
 
   return null;
 };

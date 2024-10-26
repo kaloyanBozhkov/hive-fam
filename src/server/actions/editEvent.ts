@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma, Role, PosterType } from "@prisma/client";
+import { Prisma, Role, type PosterType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -56,7 +56,7 @@ export async function editEvent(eventData: {
 
     let errorMessage = errorMessages.default;
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      errorMessage = errorMessages[error.code] || errorMessages.default;
+      errorMessage = errorMessages[error.code] ?? errorMessages.default;
     }
 
     return { success: false, error: errorMessage };

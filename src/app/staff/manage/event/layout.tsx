@@ -24,7 +24,7 @@ export default function ManageLayout({
         <CardHeader>
           <CardTitle>
             <Group className="align-between w-full justify-between">
-              <p>Management area</p>
+              <p>Events area</p>
               {pathname !== "/staff/manage/event" ? (
                 <Button
                   onClick={() =>

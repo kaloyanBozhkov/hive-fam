@@ -24,7 +24,7 @@ export default function KokoLayout({
         <CardHeader>
           <CardTitle>
             <Group className="align-between w-full justify-between">
-              <p>Koko's area</p>
+              <p>Koko&apos;s area</p>
               {pathname !== "/staff/manage/koko" ? (
                 <Button
                   onClick={() =>
