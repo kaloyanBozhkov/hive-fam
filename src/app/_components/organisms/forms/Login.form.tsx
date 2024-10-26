@@ -16,7 +16,7 @@ import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
 
 const login = z.object({
-  username: z.string(),
+  email: z.string().email(),
   password: z.string(),
 });
 
@@ -30,7 +30,7 @@ const LoginForm = ({
   const form = useForm<z.infer<typeof login>>({
     resolver: zodResolver(login),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -44,16 +44,16 @@ const LoginForm = ({
         <Stack className="gap-[20px]">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem className="mt-0r">
                 <FormLabel className="mr-auto">
                   <Stack>
-                    <p className="text-[18px] leading-[120%]">Username</p>
+                    <p className="text-[18px] leading-[120%]">Email</p>
                   </Stack>
                 </FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} />
+                  <Input type="email" {...field} />
                 </FormControl>
                 <FormMessage className="col-span-2 w-full" />
               </FormItem>
@@ -78,7 +78,7 @@ const LoginForm = ({
           />
           <Button
             type="submit"
-            disabled={!form.watch("username") || !form.watch("password")}
+            disabled={!form.watch("email") || !form.watch("password")}
           >
             Login
           </Button>

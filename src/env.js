@@ -15,6 +15,7 @@ export const env = createEnv({
     SENSITIVE_CRUD_SECRET: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     STRIPE_SECRET_KEY: z.string(),
+    JWT_SECRET: z.string(),
   },
 
   /**
@@ -40,6 +41,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    JWT_SECRET: process.env.JWT_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

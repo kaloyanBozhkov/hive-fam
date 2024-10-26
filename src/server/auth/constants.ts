@@ -1,5 +1,13 @@
-export const AUTH_COOKIE_NAME = "user_authed";
+import { Role } from "@prisma/client";
+
+export const JWT_COOKIE_NAME = "auth-token";
+export const PATHNAME_HEADER = "x-current-path";
 
 export const ERRORS = {
   UNAUTHORIZED: "unauthorized",
 };
+export const STAFF_ROLES: Role[] = [
+  Role.ADMIN,
+  Role.EVENT_MANAGER,
+  Role.TICKET_SCANNER,
+];

@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PosterType {
+  VIDEO
+  IMAGE
+}
+
+model organization {
+  id   String @id @default(uuid())
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  events event[]
+  staff  staff[]
+}
+
+model event {
+  id                 String     @id @default(uuid())
+  title              String
+  description        String
+  date               DateTime
+  poster_url         String
+  poster_type        PosterType @default(IMAGE)
+  external_event_url String?
+  event_photos_url   String? // when event is completed
+
+  venue    venue  @relation(fields: [venue_id], references: [id])
+  venue_id String
+
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  organization    organization? @relation(fields: [organization_id], references: [id])
+  organization_id String?
+}
+
+model venue {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  maps_url    String
+  max_guests  Int    @default(400)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  events event[]
+}
+
+model ticket {
+  id          String    @id @default(uuid())
+  price       Float
+  consumed    Boolean   @default(false)
+  consumed_at DateTime?
+
+  owner    participant @relation(fields: [owner_id], references: [id])
+  owner_id String
+
+  order_session_id String
+}
+
+model participant {
+  id         String   @id @default(uuid())
+  email      String
+  name       String
+  surname    String
+  phone      String?
+  tickets    ticket[]
+  role       Role     @default(GUEST)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model staff {
+  id       String @id @default(uuid())
+  email    String @unique
+  name     String
+  surname  String
+  password String
+  role     Role
+  phone    String
+
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+}
+
+enum Role {
+  KOKO
+  ADMIN
+  EVENT_MANAGER
+  TICKET_SCANNER
+  VIP
+  FREQUENT_GUEST
+  GUEST
+}
