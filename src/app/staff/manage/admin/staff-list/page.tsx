@@ -9,6 +9,9 @@ import Group from "@/app/_components/layouts/Group.layout";
 
 const getStaff = async () => {
   const user = await getJWTUser();
+  if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))
+    throw Error("Unauthorized");
+
   const staff = await db.staff.findMany({
     where: {
       organization_id: user.organization_id,

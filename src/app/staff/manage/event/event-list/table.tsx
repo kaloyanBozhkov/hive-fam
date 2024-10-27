@@ -13,7 +13,7 @@ import {
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
 import { deleteEvent } from "@/server/actions/deleteEvent";
-import { type PosterType } from "@prisma/client";
+import { Currency, type PosterType } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
@@ -34,6 +34,8 @@ export type Event = {
   };
   created_at: Date;
   is_published: boolean;
+  ticket_price: number;
+  price_currency: Currency;
 };
 
 export const EventList = ({ data }: { data: Event[] }) => {
@@ -53,9 +55,11 @@ export const EventList = ({ data }: { data: Event[] }) => {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <p className="max-w-[100px] overflow-auto whitespace-nowrap">
-          {row.original.id}
-        </p>
+        <Link href={`/event/${row.original.id}?as=view`}>
+          <p className="max-w-[100px] overflow-auto whitespace-nowrap">
+            {row.original.id}
+          </p>
+        </Link>
       ),
     },
     {
@@ -89,6 +93,17 @@ export const EventList = ({ data }: { data: Event[] }) => {
     //   accessorKey: "poster_type",
     //   header: "Poster Type",
     // },
+    {
+      accessorKey: "ticket_price",
+      header: "Price",
+      cell: ({ row }) => {
+        return (
+          <p>
+            {row.original.ticket_price} {row.original.price_currency}
+          </p>
+        );
+      },
+    },
     {
       accessorKey: "is_published",
       header: "Published",

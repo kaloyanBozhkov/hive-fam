@@ -18,7 +18,7 @@ import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
-import { PosterType } from "@prisma/client";
+import { Currency, PosterType } from "@prisma/client";
 import {
   Select,
   SelectContent,
@@ -39,6 +39,8 @@ const event = z.object({
   external_event_url: z.string().url("Invalid URL").optional(),
   venue_id: z.string().uuid("Invalid venue ID"),
   is_published: z.boolean(),
+  ticket_price: z.number().min(0, "Ticket price must be greater than 1"),
+  price_currency: z.nativeEnum(Currency),
 });
 
 const EditEventForm = ({
@@ -228,7 +230,51 @@ const EditEventForm = ({
               </FormItem>
             )}
           />
-          <input type="hidden" {...form.register("id")} />
+          <FormField
+            control={form.control}
+            name="ticket_price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ticket Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === "" ? "" : Number(e.target.value),
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price_currency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Currency</FormLabel>
+                <FormControl>
+                  <Select {...field}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(Currency).map((currency) => (
+                        <SelectItem key={currency} value={currency}>
+                          {currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button
             type="submit"
             disabled={!form.formState.isValid}

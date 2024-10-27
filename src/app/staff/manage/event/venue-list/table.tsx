@@ -66,6 +66,17 @@ export const VenueList = ({ data }: { data: Venue[] }) => {
       header: "Max Guests",
     },
     {
+      accessorKey: "maps_url",
+      header: "Maps URL",
+      cell: ({ row }) => (
+        <Link href={row.original.maps_url}>
+          <p className="w-[100px] overflow-auto whitespace-nowrap hover:text-black/50">
+            {row.original.maps_url}
+          </p>
+        </Link>
+      ),
+    },
+    {
       accessorKey: "created_at",
       header: "Created At",
       cell: ({ row }) => {

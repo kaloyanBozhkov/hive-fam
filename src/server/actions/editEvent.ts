@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma, Role, type PosterType } from "@prisma/client";
+import { Currency, Prisma, Role, type PosterType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -23,6 +23,8 @@ export async function editEvent(eventData: {
   external_event_url?: string;
   venue_id: string;
   is_published: boolean;
+  ticket_price: number;
+  price_currency: Currency;
 }) {
   try {
     const user = await getJWTUser();
@@ -44,6 +46,8 @@ export async function editEvent(eventData: {
         external_event_url: eventData.external_event_url,
         venue_id: eventData.venue_id,
         is_published: eventData.is_published,
+        ticket_price: eventData.ticket_price,
+        price_currency: eventData.price_currency,
       },
     });
 

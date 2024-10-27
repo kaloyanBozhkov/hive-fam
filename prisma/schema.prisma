@@ -35,6 +35,7 @@ model organization {
   name                String
   brand_logo_data_url String? // used for ticket branding
   description         String?
+  display_name        String?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
