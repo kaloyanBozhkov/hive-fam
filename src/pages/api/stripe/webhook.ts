@@ -54,7 +54,7 @@ const cors = Cors({
           console.log("session completed ran");
           const session = event.data.object;
           console.log(session);
-          const checkoutSessionId = session.id!;
+          const checkoutSessionId = session.id;
           const customerDetails = session.customer_details as CustomerDetails;
           const currency = session.currency!.toUpperCase() as Currency;
           // const amountDiscount = session.total_details?.amount_discount;
@@ -129,5 +129,5 @@ export type CustomerDetails = {
   name: string;
   phone: string;
   tax_exempt: "none" | "exempt" | "reverse";
-  tax_ids: any[]; // You might want to define a more specific type for tax_ids if needed
+  tax_ids: unknown[]; // You might want to define a more specific type for tax_ids if needed
 };

@@ -42,7 +42,7 @@ export async function editOrg(orgData: {
 
     let errorMessage = errorMessages.default;
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      errorMessage = errorMessages[error.code] || errorMessages.default;
+      errorMessage = errorMessages[error.code] ?? errorMessages.default;
     }
 
     return { success: false, error: errorMessage };

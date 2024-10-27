@@ -33,7 +33,9 @@ const QRScan = ({
   >("not-yet");
   const [file, setFile] = useState<File | null>(null);
   const [decodedQR, setDecodedQR] = useState<string | null>(null);
-  const onCancelTakePic = useRef(() => {});
+  const onCancelTakePic = useRef(() => {
+    console.log("cancelling");
+  });
 
   const onScanSuccess: QrcodeSuccessCallback = useCallback((decodedText) => {
     setDecodedQR(decodedText);
@@ -46,10 +48,15 @@ const QRScan = ({
   const validateDecoded = useCallback(
     (str: string) => {
       setStep("validating-qr");
-      validateDecodedString(str).then((success) => {
-        if (success) setDecodedQR(str);
-        else setStep("error");
-      });
+      validateDecodedString(str)
+        .then((success) => {
+          if (success) setDecodedQR(str);
+          else setStep("error");
+        })
+        .catch(() => {
+          console.log("failed to vlaidate qr");
+          setStep("error");
+        });
     },
     [validateDecodedString],
   );
@@ -65,10 +72,17 @@ const QRScan = ({
         onScanSuccess,
         onScanFailure,
       )
-      .then(() => setStep("started"));
+      .then(() => setStep("started"))
+      .catch(() => {
+        console.log("failed to start qr scanner");
+      });
 
     onCancelTakePic.current = () => {
-      if (qrScanner.isScanning) qrScanner.stop();
+      if (qrScanner.isScanning)
+        qrScanner
+          .stop()
+          .then(() => console.log("stopped"))
+          .catch(() => console.log("failed to stop qr scanner"));
     };
 
     setOnCloseModalRef?.(onCancelTakePic.current);
@@ -76,7 +90,10 @@ const QRScan = ({
     // Cleanup function
     return () => {
       if (qrScanner.isScanning) {
-        qrScanner.stop().catch(console.error);
+        qrScanner
+          .stop()
+          .then(() => console.log("stopped"))
+          .catch(() => console.log("failed to stop qr scanner"));
       }
     };
   }, [step, onScanFailure, onScanSuccess, setOnCloseModalRef]);
@@ -146,7 +163,7 @@ const QRScan = ({
             <CardContent className="w-full p-6">
               <h3 className="text-lg font-semibold">QR Code Not Detected</h3>
               <p className="w-full text-sm text-muted-foreground">
-                The QR code couldn't be read.
+                The QR code couldn&apos;t be read.
                 <br />
                 Please try again.
               </p>

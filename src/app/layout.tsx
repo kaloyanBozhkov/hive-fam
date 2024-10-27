@@ -10,7 +10,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Header from "./_components/organisms/Header.organism";
 import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
-import { getOrg, getOrgId } from "@/server/actions/org";
+import { getOrg } from "@/server/actions/org";
 
 export async function generateMetadata() {
   const org = await getOrg();

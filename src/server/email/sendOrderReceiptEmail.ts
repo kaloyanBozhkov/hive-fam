@@ -32,7 +32,7 @@ export async function sendOrderReceiptEmail({
   const brandName = data?.event.organization.name;
 
   // Create a transporter using SMTP
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: env.EMAIL_SERVER_HOST,
     port: parseInt(env.EMAIL_SERVER_PORT),
     secure: env.EMAIL_SERVER_PORT === "465", // true for 465, false for other ports
@@ -54,7 +54,7 @@ export async function sendOrderReceiptEmail({
   `;
 
   // Send email
-  let info = await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: env.EMAIL_FROM,
     to: customerDetails.email,
     subject: `Your Order Receipt | ${brandName}`,

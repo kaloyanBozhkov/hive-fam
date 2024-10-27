@@ -22,7 +22,7 @@ const getInitialData = async (id: string) => {
       id,
     },
   });
-  const { password, ...rest } = staff;
+  const { password: _, ...rest } = staff;
   return rest;
 };
 

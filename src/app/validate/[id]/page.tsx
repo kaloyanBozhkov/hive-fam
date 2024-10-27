@@ -24,7 +24,8 @@ const validateTicket = async (ticketId: string) => {
   const user = await getJWTUser();
   if (!user.isStaff) return redirect(`/event/${ticket.event.id}`);
 
-  let alreadyScanned = ticket.scanned;
+  const alreadyScanned = ticket.scanned;
+
   if (!ticket.scanned)
     ticket = await db.ticket.update({
       where: {

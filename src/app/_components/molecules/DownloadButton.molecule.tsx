@@ -29,16 +29,20 @@ export const DownloadButton = ({
     }
     const ticket = document.querySelector(selector);
     if (!ticket) return;
-    html2canvas(ticket as HTMLElement, { useCORS: true }).then((canvas) => {
-      forceDownload(canvas.toDataURL(), fileName);
-      btn.style.display = "block";
-      if (alsoHideSelector) {
-        const alsoHide = document.querySelectorAll(alsoHideSelector);
-        alsoHide.forEach((el) => {
-          (el as HTMLElement).style.display = "block";
-        });
-      }
-    });
+    html2canvas(ticket as HTMLElement, { useCORS: true })
+      .then((canvas) => {
+        forceDownload(canvas.toDataURL(), fileName);
+        btn.style.display = "block";
+        if (alsoHideSelector) {
+          const alsoHide = document.querySelectorAll(alsoHideSelector);
+          alsoHide.forEach((el) => {
+            (el as HTMLElement).style.display = "block";
+          });
+        }
+      })
+      .catch(() => {
+        console.log("Failed to download");
+      });
   };
 
   return (

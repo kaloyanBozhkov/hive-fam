@@ -1,7 +1,6 @@
 import { LogoutBtnClient } from "@/app/_components/client/LogoutBtn.client";
 import Group from "@/app/_components/layouts/Group.layout";
 import Stack from "@/app/_components/layouts/Stack.layout";
-import LabelCard from "@/app/_components/molecules/LabelCard.molecule";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import {
   Card,
