@@ -1,5 +1,5 @@
 "use server";
-import { type PosterType, Role } from "@prisma/client";
+import { Currency, type PosterType, Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -12,6 +12,8 @@ type EventData = {
   poster_type: PosterType;
   external_event_url?: string | null;
   venue_id: string;
+  ticket_price: number;
+  price_currency: Currency;
 };
 
 export async function addEvent(data: EventData) {
