@@ -4,7 +4,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/_components/shadcn/Tabs.shadcn";
-import Center from "../layouts/Center.layour";
+import Center from "../layouts/Center.layout";
 import Stack from "../layouts/Stack.layout";
 import { type event, type venue } from "@prisma/client";
 import EventCard from "./Event.organism";

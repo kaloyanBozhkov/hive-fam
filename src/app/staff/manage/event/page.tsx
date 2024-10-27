@@ -9,7 +9,7 @@ export default function ManagePage() {
         Welcome to the Events Management
       </h2>
       <p>Select an action from the buttons above or use the navigation menu.</p>
-      <Stack className="max-w-[300px] gap-4">
+      <Stack className="w-full gap-4 sm:max-w-[300px]">
         <Button asChild>
           <Link href="/staff/manage/event/event-list">Events List</Link>
         </Button>

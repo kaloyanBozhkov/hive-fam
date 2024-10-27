@@ -1,9 +1,8 @@
 import Group from "@/app/_components/layouts/Group.layout";
-
 import DrawerMenu from "@/app/_components/organisms/DrawerMenu.organism";
 import Link from "next/link";
 
-const Header = ({ brandName }: { brandName: string }) => {
+const Header = async ({ brandName }: { brandName: string }) => {
   return (
     <Group className="w-full items-center justify-between py-4">
       <Link href="/">

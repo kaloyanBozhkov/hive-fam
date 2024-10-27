@@ -10,7 +10,11 @@ export const setCookie = async (org_id: string) => {
 
 export const getOrgId = async () => {
   const cookieStore = await cookies();
-  const orgId = cookieStore.get(ORG_ID_COOKIE_NAME)?.value;
+  let orgId = cookieStore.get(ORG_ID_COOKIE_NAME)?.value;
+
+  // disable for not
+  orgId = orgId ?? "95b5ea5b-101c-4c41-9d34-e395ba933973";
+
   if (!orgId) {
     throw new Error("Org ID not found");
   }

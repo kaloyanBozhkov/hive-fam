@@ -13,13 +13,13 @@ import {
 import { Button } from "../shadcn/Button.shadcn";
 import Stack from "../layouts/Stack.layout";
 import Link from "next/link";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import Group from "../layouts/Group.layout";
 
-const DrawerMenu = () => {
+const DrawerMenu = ({ extraChild }: { extraChild?: ReactNode }) => {
   const [s, toggleS] = useState(false);
 
   return (
@@ -37,7 +37,7 @@ const DrawerMenu = () => {
             </DrawerTitle>
             <DrawerDescription asChild>
               <Stack className="w-full items-start justify-between gap-1">
-                <Button variant="link">
+                <Button variant="link" asChild>
                   <Link href="https://www.instagram.com/hive.home.bg/">
                     <Group className="jusitfy-center items-center gap-3">
                       <FontAwesomeIcon
@@ -50,6 +50,7 @@ const DrawerMenu = () => {
                     </Group>
                   </Link>
                 </Button>
+                {extraChild}
               </Stack>
             </DrawerDescription>
           </Stack>

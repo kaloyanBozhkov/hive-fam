@@ -1,26 +1,21 @@
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
+"use client";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import type {
   QrcodeErrorCallback,
   QrcodeSuccessCallback,
 } from "html5-qrcode/esm/core";
-
 import {
   faArrowLeft,
   faCamera,
-  faFile,
-  faFileCircleCheck,
-  faFileCircleExclamation,
   faPowerOff,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Stack from "../layouts/Stack.layout";
+import Center from "../layouts/Center.layout";
+import { Button } from "../shadcn/Button.shadcn";
+import { Card, CardContent } from "../shadcn/Card.shadcn";
+import { Input } from "../shadcn/Input.shadcn";
 
 const QRScan = ({
   onDecodedQR,
@@ -31,31 +26,33 @@ const QRScan = ({
   onDecodedQR: (text: string) => void;
   doneChildren: ReactNode;
   validateDecodedString: (str: string) => Promise<boolean>;
-  // allow cleanup when component is not unmounted but hidden by parent
-  setOnCloseModalRef: (cb: () => void) => void;
+  setOnCloseModalRef?: (cb: () => void) => void;
 }) => {
   const [step, setStep] = useState<
-      "not-yet" | "started" | "in-progress" | "error" | "validating-qr" | "done"
-    >("not-yet"),
-    onScanSuccess: QrcodeSuccessCallback = useCallback((decodedText) => {
-      //   console.log(`Code matched = ${decodedText}`, decodedResult)
-      setDecodedQR(decodedText);
-    }, []),
-    onScanFailure: QrcodeErrorCallback = useCallback((error) => {
-      console.warn(`Code scan error = ${error}`);
-    }, []),
-    [decodedQR, setDecodedQR] = useState<string | null>(null),
-    validateDecoded = useCallback(
-      (str: string) => {
-        setStep("validating-qr");
-        validateDecodedString(str).then((success) => {
-          if (success) setDecodedQR(str);
-          else setStep("error");
-        });
-      },
-      [setDecodedQR, validateDecodedString],
-    ),
-    onCancelTakePic = useRef(() => {});
+    "not-yet" | "started" | "in-progress" | "error" | "validating-qr" | "done"
+  >("not-yet");
+  const [file, setFile] = useState<File | null>(null);
+  const [decodedQR, setDecodedQR] = useState<string | null>(null);
+  const onCancelTakePic = useRef(() => {});
+
+  const onScanSuccess: QrcodeSuccessCallback = useCallback((decodedText) => {
+    setDecodedQR(decodedText);
+  }, []);
+
+  const onScanFailure: QrcodeErrorCallback = useCallback((error) => {
+    console.warn(`Code scan error = ${error}`);
+  }, []);
+
+  const validateDecoded = useCallback(
+    (str: string) => {
+      setStep("validating-qr");
+      validateDecodedString(str).then((success) => {
+        if (success) setDecodedQR(str);
+        else setStep("error");
+      });
+    },
+    [validateDecodedString],
+  );
 
   useEffect(() => {
     if (step !== "in-progress") return;
@@ -74,8 +71,14 @@ const QRScan = ({
       if (qrScanner.isScanning) qrScanner.stop();
     };
 
-    // allow cleanup when component is not unmounted but hidden by parent
-    setOnCloseModalRef(onCancelTakePic.current);
+    setOnCloseModalRef?.(onCancelTakePic.current);
+
+    // Cleanup function
+    return () => {
+      if (qrScanner.isScanning) {
+        qrScanner.stop().catch(console.error);
+      }
+    };
   }, [step, onScanFailure, onScanSuccess, setOnCloseModalRef]);
 
   useEffect(() => {
@@ -90,6 +93,10 @@ const QRScan = ({
         setStep("error");
         setFile(null);
       });
+
+    return () => {
+      onCancelTakePic.current();
+    };
   }, [file, validateDecoded]);
 
   useEffect(() => {
@@ -101,151 +108,119 @@ const QRScan = ({
     }
   }, [decodedQR, file, onDecodedQR]);
 
-  let content: ReactNode = null;
-
-  const info = (
-    <Text size="sm">
-      You can scan the <b>QR Code</b> of an AI-Caramba T-Shirt and claim
-      ownership to the Artwork.
-    </Text>
-  );
-
   if (step === "not-yet") {
-    content = (
-      <>
-        {info}
-        {/* qr code scanner requires an html element to preview scan to */}
-        <div id="420file69" style={{ display: "none" }} />
-        <Dropzone
-          onDrop={(files) => setFile(files[0])}
-          onReject={(files) => console.log("rejected files", files)}
-          maxSize={3 * 1024 ** 2}
-          accept={IMAGE_MIME_TYPE}
-          maxFiles={1}
-          className={styles.dropZone}
-        >
-          <Group
-            position="center"
-            spacing="xl"
-            style={{ minHeight: 220, pointerEvents: "none" }}
-          >
-            <Stack>
-              <Dropzone.Accept>
-                <FontAwesomeIcon icon={faFileCircleCheck} />
-              </Dropzone.Accept>
-              <Dropzone.Reject>
-                <FontAwesomeIcon icon={faFileCircleExclamation} />
-              </Dropzone.Reject>
-              <Dropzone.Idle>
-                <FontAwesomeIcon icon={faFile} />
-              </Dropzone.Idle>
-              <Text size="xl" inline>
-                Drag your QR Code image here or click to select a file
-                <Text size="sm" color="dimmed" inline mt={7}>
-                  Attach an image <b>(.png, .jpg or .jpeg)</b> file of your QR
-                  code, should not exceed 5mb
-                </Text>
-              </Text>
-            </Stack>
-          </Group>
-        </Dropzone>
-        <Center>
-          <Text size="sm" weight="bold">
-            - OR -
-          </Text>
-        </Center>
-        <Stack align="center" spacing="xs">
-          <Text color="dimmed" size="sm">
-            Use the webcam on your device to take a picture of the QR Code.
-          </Text>
-          <ActionButton
-            label="Take Picture"
-            modifier="primary"
-            leftFontAwesomeIcon={faCamera}
+    return (
+      <Stack className="gap-4">
+        <div id="420file69" className="hidden" />
+        <Stack className="items-center gap-2">
+          <Button
+            className="w-full sm:w-fit"
             onClick={() => setStep("in-progress")}
-            px="xl"
-          />
+          >
+            <FontAwesomeIcon icon={faCamera} className="mr-2" />
+            Take Picture
+          </Button>
         </Stack>
-      </>
-    );
-  } else if (step === "error") {
-    content = (
-      <Stack spacing="xl">
         <Center>
-          <Issue withoutButton>
-            <Title
-              title="We could not detect a valid QR Code :("
-              subtitle="Oops!"
-              size="xs"
+          <p className="font-bold">- OR -</p>
+        </Center>
+        <Card>
+          <CardContent className="p-6">
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => e.target.files && setFile(e.target.files[0]!)}
+              className="w-full"
             />
-            <p style={{ maxWidth: "50rem" }}>
-              Maybe the file you provided was the wrong one, or perhaps the QR
-              Code is not visible or well centered. You can go back and try
-              again.
-            </p>
-          </Issue>
-        </Center>
-        <Center>
-          <ActionButton
-            label="Go Back & Try Again"
-            modifier="secondary"
-            leftFontAwesomeIcon={faArrowLeft}
-            onClick={() => setStep("not-yet")}
-            px="xl"
-          />
-        </Center>
+          </CardContent>
+        </Card>
       </Stack>
-    );
-  } else if (step === "done") {
-    content = doneChildren;
-  } else if (step === "validating-qr") {
-    content = (
-      <Center style={{ minHeight: 220 }}>
-        <Loading message="Validating QR Code..." />
-      </Center>
-    );
-  } else {
-    content = (
-      <>
-        {info}
-        <Stack spacing="xs">
-          <Box pos="relative" style={{ minHeight: 220 }}>
-            <div id="420cam69" />
-            {step === "in-progress" && (
-              <Center pos="absolute" top={0} bottom={0} left={0} right={0}>
-                <Loading message="Starting camera..." />
-              </Center>
-            )}
-          </Box>
-          {step === "started" && (
-            <>
-              <Text color="dimmed" size="sm" align="center">
-                Make sure that the QR Code is visible, preferably also centered.
-              </Text>
-              <Stack align="center">
-                <Divider label="OR" labelPosition="center" my="xs" w="80%" />
-                <ActionButton
-                  label="Cancel & Go back"
-                  modifier="secondary"
-                  leftFontAwesomeIcon={faPowerOff}
-                  onClick={() => {
-                    setStep("not-yet");
-                    onCancelTakePic.current();
-                  }}
-                  px="xl"
-                />
-              </Stack>
-            </>
-          )}
-        </Stack>
-      </>
     );
   }
 
-  return <Stack className={styles.QRScan}>{content}</Stack>;
+  if (step === "error") {
+    return (
+      <Stack className="gap-6">
+        <Center>
+          <Card className="w-full">
+            <CardContent className="w-full p-6">
+              <h3 className="text-lg font-semibold">QR Code Not Detected</h3>
+              <p className="w-full text-sm text-muted-foreground">
+                The QR code couldn't be read.
+                <br />
+                Please try again.
+              </p>
+            </CardContent>
+          </Card>
+        </Center>
+        <Center>
+          <Button
+            className="w-full sm:w-fit"
+            onClick={() => setStep("not-yet")}
+            variant="default"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+            Try Again
+          </Button>
+        </Center>
+      </Stack>
+    );
+  }
+
+  if (step === "done") {
+    return <>{doneChildren}</>;
+  }
+
+  if (step === "validating-qr") {
+    return (
+      <Center className="min-h-[220px]">
+        <p>Validating QR Code...</p>
+      </Center>
+    );
+  }
+
+  return (
+    <Stack className="gap-4">
+      <p className="text-lg">Scan a QR Code to validate the ticket.</p>
+      <Stack className="gap-2">
+        <div className="relative min-h-[220px]">
+          <div id="420cam69" />
+          {step === "in-progress" && (
+            <Center className="absolute inset-0">
+              <p>Starting camera...</p>
+            </Center>
+          )}
+        </div>
+        {step === "started" && (
+          <>
+            <p className="text-center text-sm text-muted-foreground">
+              Center the QR Code in the camera view.
+            </p>
+            <Stack className="items-center gap-4">
+              <div className="relative flex w-4/5 items-center">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="mx-4 flex-shrink text-gray-400">OR</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+              <Button
+                variant="default"
+                onClick={() => {
+                  setStep("not-yet");
+                  onCancelTakePic.current();
+                }}
+                className="w-full sm:w-fit"
+              >
+                <FontAwesomeIcon icon={faPowerOff} className="mr-2" />
+                Abort Scan
+              </Button>
+            </Stack>
+          </>
+        )}
+      </Stack>
+    </Stack>
+  );
 };
 
 export default QRScan;
 
-const IMAGE_MIME_TYPE = ["image/png", "image/jpg", "image/jpeg"],
-  VIDEO_CONSTRAINTS = { facingMode: "environment" };
+const VIDEO_CONSTRAINTS = { facingMode: "environment" };

@@ -1,6 +1,7 @@
 import { LogoutBtnClient } from "@/app/_components/client/LogoutBtn.client";
 import Group from "@/app/_components/layouts/Group.layout";
 import Stack from "@/app/_components/layouts/Stack.layout";
+import LabelCard from "@/app/_components/molecules/LabelCard.molecule";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import {
   Card,
@@ -20,7 +21,12 @@ export default async function Manage() {
         <CardHeader>
           <CardTitle>
             <Group className="align-between w-full justify-between">
-              <p>Welcome, {user.name}</p>
+              <Stack className="gap-2">
+                <p className="text-xl">Welcome, {user.name}</p>
+                <p className="text-sm">
+                  Role: <b>{user.role}</b>
+                </p>
+              </Stack>
               <Group>
                 <LogoutBtnClient />
               </Group>
@@ -28,8 +34,7 @@ export default async function Manage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Stack className="gap-2">
-            <p>Actions</p>
+          <Stack className="w-full gap-4 sm:max-w-[300px]">
             {user.role === Role.KOKO && (
               <Button asChild>
                 <Link href="/staff/manage/koko">Koko&apos;s dashboard</Link>
@@ -52,7 +57,7 @@ export default async function Manage() {
               </>
             )}
             <Button asChild>
-              <Link href="/staff/manage/admin">Scan Ticket</Link>
+              <Link href="/staff/manage/scan">Scan Ticket</Link>
             </Button>
           </Stack>
         </CardContent>

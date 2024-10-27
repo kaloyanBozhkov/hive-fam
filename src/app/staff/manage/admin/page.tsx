@@ -7,7 +7,7 @@ export default function AdminPage() {
     <Stack className="gap-6">
       <h2 className="text-xl font-semibold">Welcome to the Admin Dashboard</h2>
       <p>Select an action from the buttons above or use the navigation menu.</p>
-      <Stack className="max-w-[300px] gap-4">
+      <Stack className="w-full gap-4 sm:max-w-[300px]">
         <Button asChild>
           <Link href="/staff/manage/admin/staff-list">Staff List</Link>
         </Button>

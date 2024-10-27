@@ -11,7 +11,6 @@ import Header from "./_components/organisms/Header.organism";
 import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
 import { getOrg, getOrgId } from "@/server/actions/org";
-import { db } from "@/server/db";
 
 export async function generateMetadata() {
   const org = await getOrg();

@@ -15,7 +15,6 @@ import { format } from "date-fns";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Group from "@/app/_components/layouts/Group.layout";
 import Link from "next/link";
-import LabelCard from "@/app/_components/molecules/LabelCard.molecule";
 import InfoLineCard from "@/app/_components/molecules/InfoLineCard";
 
 const getTicket = async (ticketId: string) => {

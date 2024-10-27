@@ -6,7 +6,7 @@ export default async function KokoPage() {
   return (
     <Stack className="gap-2">
       <p>Actions</p>
-      <Stack className="max-w-[300px] gap-4">
+      <Stack className="w-full gap-4 sm:max-w-[300px]">
         <Button asChild>
           <Link href="/staff/manage/koko/org-list">Organization List</Link>
         </Button>
