@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { ORG_ID_COOKIE_NAME } from "../auth/constants";
 import { db } from "../db";
+import { env } from "@/env";
 
 export const setCookie = async (org_id: string) => {
   const cookieStore = await cookies();
@@ -13,7 +14,7 @@ export const getOrgId = async () => {
   let orgId = cookieStore.get(ORG_ID_COOKIE_NAME)?.value;
 
   // disable for not
-  orgId = orgId ?? "95b5ea5b-101c-4c41-9d34-e395ba933973";
+  orgId = orgId ?? env.TMP_ORG_ID;
 
   if (!orgId) {
     throw new Error("Org ID not found");

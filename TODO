@@ -1,0 +1,15 @@
+TODO
+
+// needed
+0. nodemailer email env variables for confirmation
+1. pretty confirmatin emails
+
+// not neede
+1. org handling main colors
+2. org handling sliders
+3. org handling links (easy)
+4. org handling QR ticket colors/styles
+5. org handling stripe keys
+6. org id set as cookie properly
+
+7. org add staff / event manager -> send email with link to login & set password

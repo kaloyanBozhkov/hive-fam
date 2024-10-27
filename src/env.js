@@ -10,8 +10,6 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    GITHUB_ACCESS_TOKEN: z.string(),
-    SENSITIVE_CRUD_SECRET: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     STRIPE_SECRET_KEY: z.string(),
     JWT_SECRET: z.string(),
@@ -19,7 +17,8 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: z.string(),
     EMAIL_SERVER_USER: z.string(),
     EMAIL_SERVER_PASSWORD: z.string(),
-    EMAIL_FROM:z.string(),
+    EMAIL_FROM: z.string(),
+    TMP_ORG_ID: z.string(),
   },
 
   /**
@@ -38,8 +37,6 @@ export const env = createEnv({
    */ 
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    GITHUB_ACCESS_TOKEN: process.env.GITHUB_ACCESS_TOKEN,
-    SENSITIVE_CRUD_SECRET: process.env.SENSITIVE_CRUD_SECRET,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
@@ -50,6 +47,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    TMP_ORG_ID: process.env.TMP_ORG_ID,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
