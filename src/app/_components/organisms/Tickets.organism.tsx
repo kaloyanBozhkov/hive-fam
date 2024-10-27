@@ -20,6 +20,7 @@ import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
+import { Currency } from "@prisma/client";
 
 const cart = z.object({
   regularQuantity: z.number(),
@@ -30,11 +31,13 @@ const Tickets = ({
   className,
   eventPrice,
   eventCurrency,
+  eventId,
 }: {
+  eventId: string;
   eventName: string;
   eventPrice: number;
   className?: string;
-  eventCurrency: string;
+  eventCurrency: Currency;
 }) => {
   const [checkoutProcessing, setCheckoutProcessing] = useState(false);
   const form = useForm<z.infer<typeof cart>>({
@@ -54,15 +57,21 @@ const Tickets = ({
       setCheckoutProcessing(true);
       const formVals = form.getValues();
       const total = formVals.regularQuantity * eventPrice;
-      const items: { eventName: string; ticketPrice: number }[] = Array.from(
-        { length: formVals.regularQuantity },
-        () => ({ eventName, ticketPrice: eventPrice }),
-      );
+      const items: {
+        eventName: string;
+        ticketPrice: number;
+        eventId: string;
+      }[] = Array.from({ length: formVals.regularQuantity }, () => ({
+        eventName,
+        ticketPrice: eventPrice,
+        eventId,
+      }));
 
       cartCheckout({
         total,
-        currency: "BGN",
         productsInCart: items,
+        eventId,
+        currency: eventCurrency,
       })
         .catch(() => {
           console.error("failed to checkout");

@@ -33,7 +33,7 @@ const EventCard = ({
   return (
     <Card className="bg-white">
       <CardHeader className="block">
-        <div className="float-left mb-2 mr-3">
+        <div className="float-left mr-3">
           <Stack className="gap-2">
             <DateCard date={new Date(event.date)} />
             <TimeCard date={new Date(event.date)} />
@@ -83,6 +83,7 @@ const EventCard = ({
           </Group>
           {!isPast && (
             <BuyTickets
+              eventId={event.id}
               eventName={event.title}
               eventPrice={event.ticket_price}
               eventCurrency={event.price_currency}

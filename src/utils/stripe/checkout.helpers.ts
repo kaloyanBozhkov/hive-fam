@@ -1,3 +1,4 @@
+import { Currency } from "@prisma/client";
 import { fetchPostJSON } from "../common";
 import getStripe from "./getStripe";
 import { type CartCheckoutPayloadBody } from "@/pages/api/stripe/checkout_sessions";
@@ -13,10 +14,11 @@ export const cartCheckout = async ({
   total: number;
   /* provide relative since BE adds https://domain.com/ */
   onCancelRedirectTo?: string;
-  currency: "BGN";
+  currency: Currency;
   productsInCart: {
     eventName: string;
     ticketPrice: number;
+    eventId: string;
   }[];
 }) => {
   // eslint-disable-next-line
@@ -30,9 +32,10 @@ export const cartCheckout = async ({
       amount: total,
       currency,
       onCancelRedirectTo,
-      items: productsInCart.map(({ eventName, ticketPrice }) => ({
+      items: productsInCart.map(({ eventName, ticketPrice, eventId }) => ({
         eventName,
         ticketPrice,
+        eventId,
       })),
     } as CartCheckoutPayloadBody,
   );

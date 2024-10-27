@@ -1,10 +1,12 @@
 import { type RequestHandler, buffer } from "micro";
 import Cors from "micro-cors";
 import type Stripe from "stripe";
-
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
+import { Currency } from "@prisma/client";
+import { createTickets } from "@/server/queries/tickets/createTickets";
+import { sendOrderReceiptEmail } from "@/server/email/sendOrderReceiptEmail";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -51,15 +53,31 @@ const cors = Cors({
         case "checkout.session.completed": {
           console.log("session completed ran");
           const session = event.data.object;
+          console.log(session);
+          const checkoutSessionId = session.id!;
+          const customerDetails = session.customer_details as CustomerDetails;
+          const currency = session.currency!.toUpperCase() as Currency;
+          // const amountDiscount = session.total_details?.amount_discount;
+          // const total = session.amount_total!;
+
+          if (!session.metadata) throw Error("No metadata found");
+
+          const { eventId, totalTickets, ticketPrice } = session.metadata;
+          if (!eventId || !totalTickets || !ticketPrice)
+            throw Error("Invalid metadata");
+
+          await createTickets({
+            customerDetails,
+            eventId,
+            currency,
+            totalTickets: Number(totalTickets),
+            ticketPrice: Number(ticketPrice),
+            orderSessionId: checkoutSessionId,
+          });
 
           // await sendOrderReceiptEmail({
-          //   customerDetails: {
-          //     phone: session.customer_details!.phone,
-          //     email: session.customer_details!.email,
-          //     name: session.customer_details!.name,
-          //   },
-          //   productDetails,
-          //   shippingDetails: session.shipping_details!,
+          //   customerDetails,
+          //   orderSessionId: checkoutSessionId,
           // });
 
           // console.log("receipt email sent successfully!!!!!");
@@ -97,3 +115,19 @@ const cors = Cors({
 
 // eslint-disable-next-line
 export default cors(webhookHandler as RequestHandler);
+
+export type CustomerDetails = {
+  address: {
+    city: string;
+    country: string;
+    line1: string;
+    line2: string | null;
+    postal_code: string;
+    state: string | null;
+  };
+  email: string;
+  name: string;
+  phone: string;
+  tax_exempt: "none" | "exempt" | "reverse";
+  tax_ids: any[]; // You might want to define a more specific type for tax_ids if needed
+};

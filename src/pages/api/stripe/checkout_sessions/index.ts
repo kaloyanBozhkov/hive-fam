@@ -5,7 +5,8 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { stripeCli } from "@/server/stripe/stripe";
 import { formatAmountForStripe } from "@/server/stripe/stripe.helpers";
 
-import EVENTS from "@/automated/events.json";
+import { db } from "@/server/db";
+import { z } from "zod";
 
 export type CartCheckoutPayloadBody = {
   amount: number;
@@ -15,6 +16,7 @@ export type CartCheckoutPayloadBody = {
     eventName: string;
     ticketPrice: number;
     accessType: "regular";
+    eventId: string;
   }[];
 };
 
@@ -41,18 +43,18 @@ export default async function handler(
       // validate costs with ticket cost on sheets
       if (items.length < 1) throw new Error("No items in cart");
 
-      console.log(
-        items,
-        EVENTS.map((e) => [e.title, e.price]),
-      );
+      const eventId = items[0]!.eventId;
+      const eventPrice = await db.event.findUniqueOrThrow({
+        where: {
+          id: eventId,
+        },
+        select: {
+          ticket_price: true,
+        },
+      });
 
-      const eventPrices: Record<string, number> = EVENTS.reduce(
-        (acc, e) => ({ ...acc, [e.title]: parseFloat(e.price) }),
-        {},
-      );
-
-      if (items.some((p) => eventPrices[p.eventName] !== p.ticketPrice))
-        throw new Error("Not matching prices for all items");
+      if (items.some((p) => p.ticketPrice !== eventPrice.ticket_price))
+        throw new Error("Prices not matching for all items");
 
       const params: Stripe.Checkout.SessionCreateParams = {
           mode: "payment",
@@ -75,7 +77,7 @@ export default async function handler(
           })),
           billing_address_collection: "required",
           cancel_url: `${req.headers.origin!}/${onCancelRedirect}`,
-          success_url: `${req.headers.origin!}/order?session_id={CHECKOUT_SESSION_ID}`,
+          success_url: `${req.headers.origin!}/order/{CHECKOUT_SESSION_ID}`,
           custom_text: {
             submit: {
               message: `Ready to claim these tickets?!`,
@@ -83,6 +85,11 @@ export default async function handler(
           },
           customer_creation: "always",
           allow_promotion_codes: true,
+          metadata: {
+            eventId,
+            totalTickets: items.length,
+            ticketPrice: eventPrice.ticket_price,
+          } as OrderMetadata,
         },
         checkoutSession: Stripe.Checkout.Session =
           await stripeCli.checkout.sessions.create(params);
@@ -100,3 +107,11 @@ export default async function handler(
     res.status(405).end("Method Not Allowed");
   }
 }
+
+export const orderMetadataSchema = z.object({
+  eventId: z.string(),
+  totalTickets: z.number(),
+  ticketPrice: z.number(),
+});
+
+export type OrderMetadata = z.infer<typeof orderMetadataSchema>;

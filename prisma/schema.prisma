@@ -12,9 +12,29 @@ enum PosterType {
   IMAGE
 }
 
-model organization {
-  id   String @id @default(uuid())
+enum LinkType {
+  INSTAGRAM
+  FACEBOOK
+  TWITTER
+  YOUTUBE
+  SOUNDCLOUD
+}
+
+model link {
+  id   String   @id @default(uuid())
+  url  String
   name String
+  type LinkType
+
+  organization   organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+}
+
+model organization {
+  id                  String  @id @default(uuid())
+  name                String
+  brand_logo_data_url String? // used for ticket branding
+  description         String?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -22,6 +42,7 @@ model organization {
   events event[]
   staff  staff[]
   venue  venue[]
+  links  link[]
 }
 
 enum Currency {
@@ -69,11 +90,16 @@ model venue {
   events event[]
 }
 
+// a ticket for an event
 model ticket {
-  id          String    @id @default(uuid())
-  price       Float
-  consumed    Boolean   @default(false)
-  consumed_at DateTime?
+  id         String    @id @default(uuid())
+  price      Float
+  currency   Currency  @default(BGN)
+  scanned    Boolean   @default(false)
+  scanned_at DateTime?
+
+  // idx of ticket for radability in sharing purposes
+  count Int @default(1)
 
   owner    participant @relation(fields: [owner_id], references: [id])
   owner_id String
@@ -84,16 +110,24 @@ model ticket {
   order_session_id String
 }
 
+// someone who ordered one or more tickets for self and maybe others
 model participant {
-  id         String   @id @default(uuid())
-  email      String
-  name       String
-  surname    String
-  phone      String?
-  tickets    ticket[]
-  role       Role     @default(GUEST)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String
+  surname     String
+  phone       String?
+  country     String?
+  city        String?
+  address     String?
+  postal_code String?
+  state       String?
+  line1       String?
+  line2       String?
+  tickets     ticket[]
+  role        Role     @default(GUEST)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
 
 model staff {

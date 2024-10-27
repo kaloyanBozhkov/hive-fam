@@ -19,11 +19,13 @@ import { Currency } from "@prisma/client";
 
 const BuyTickets = ({
   className = "",
+  eventId,
   eventName,
   eventPrice,
   eventCurrency,
 }: {
   className?: string;
+  eventId: string;
   eventName: string;
   eventPrice: number;
   eventCurrency: Currency;
@@ -44,6 +46,7 @@ const BuyTickets = ({
             <DialogTitle className="text-left">Choose tickets</DialogTitle>
             <DialogDescription></DialogDescription>
             <Tickets
+              eventId={eventId}
               eventPrice={eventPrice}
               eventName={eventName}
               eventCurrency={eventCurrency}

@@ -11,14 +11,14 @@ import {
 import { Button } from "../shadcn/Button.shadcn";
 import Link from "next/link";
 import Group from "../layouts/Group.layout";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import DateCard from "../molecules/DateCard.molecule";
-import BuyTickets from "./BuyTickets.organism";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
 import { type event, type venue } from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
 import Tickets from "./Tickets.organism";
+import BuyTickets from "./BuyTickets.organism";
 
 type Event = event & {
   venue: venue;
@@ -29,13 +29,17 @@ const MAX_DESC_LENGTH = 100;
 const FullScreenEvent = ({
   event,
   isPast = false,
+  isView = false,
 }: {
   event: Event;
   isPast?: boolean;
+  isView?: boolean;
 }) => {
-  const [showMore, setShowMore] = useState(false);
-  const [desc, setDesc] = useState(event.description.slice(0, MAX_DESC_LENGTH));
-  const toggleShowMore = (
+  const [showMore, setShowMore] = useState(isView);
+  const [desc, setDesc] = useState(
+    isView ? event.description : event.description.slice(0, MAX_DESC_LENGTH),
+  );
+  const toggleShowMore = isView ? null : (
     <Button
       className="inline px-0"
       variant="link"
@@ -55,8 +59,9 @@ const FullScreenEvent = ({
       {!showMore && toggleShowMore}
     </CardDescription>
   );
+  const visualContentRef = useRef<HTMLDivElement>(null);
   const visualContent = (
-    <CardContent className="clear-both">
+    <CardContent className="clear-both" ref={visualContentRef}>
       <Link href={event.external_event_url ?? "#"} target="_blank">
         <div className="shadow-md">
           <div className="overflow-hidden rounded-md [&:hover_img]:scale-[1.05]">
@@ -73,17 +78,18 @@ const FullScreenEvent = ({
   );
 
   useEffect(() => {
+    if (isView) return;
     setDesc(
       showMore
         ? event.description
         : `${event.description.slice(0, MAX_DESC_LENGTH)}...`,
     );
-  }, [showMore]);
+  }, [showMore, isView]);
 
   return (
     <Card className="bg-white">
       <CardHeader className="block">
-        <div className="float-left mb-2 mr-3">
+        <div className="float-left mr-3">
           <Stack className="gap-2">
             <DateCard date={new Date(event.date)} />
             <TimeCard date={new Date(event.date)} />
@@ -112,16 +118,25 @@ const FullScreenEvent = ({
               </Link>
             )}
           </Group>
-          {!isPast && (
+          {!isPast && !isView && (
             <Stack className="mb-2 gap-6">
               <div className="-mx-1 my-1 h-px w-full bg-black/10" />
               <Tickets
+                eventId={event.id}
                 eventPrice={event.ticket_price}
                 eventName={event.title}
                 eventCurrency={event.price_currency}
               />
               <div className="-mx-1 my-1 h-px w-full bg-black/10" />
             </Stack>
+          )}
+          {!isPast && isView && (
+            <BuyTickets
+              eventId={event.id}
+              eventName={event.title}
+              eventPrice={event.ticket_price}
+              eventCurrency={event.price_currency}
+            />
           )}
           {!isPast && (
             <Button className="w-full shadow-md" variant="secondary" asChild>
