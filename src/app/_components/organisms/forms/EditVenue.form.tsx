@@ -24,6 +24,9 @@ const venue = z.object({
   description: z.string(),
   maps_url: z.string().url("Invalid URL"),
   max_guests: z.number().int().positive("Must be a positive number"),
+  city: z.string().min(1, "City is required"),
+  street_addr: z.string().min(1, "Street address is required"),
+  country: z.string().min(1, "Country is required"),
 });
 
 const EditVenueForm = ({
@@ -90,6 +93,25 @@ const EditVenueForm = ({
           />
           <FormField
             control={form.control}
+            name="max_guests"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max Guests</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value, 10))
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="maps_url"
             render={({ field }) => (
               <FormItem>
@@ -103,18 +125,38 @@ const EditVenueForm = ({
           />
           <FormField
             control={form.control}
-            name="max_guests"
+            name="street_addr"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Max Guests</FormLabel>
+                <FormLabel>Street Address</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value, 10))
-                    }
-                  />
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

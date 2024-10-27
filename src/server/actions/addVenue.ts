@@ -18,6 +18,9 @@ export async function addVenue(venueData: {
   description: string;
   maps_url: string;
   max_guests: number;
+  city: string;
+  street_addr: string;
+  country: string;
 }) {
   try {
     const user = await getJWTUser();

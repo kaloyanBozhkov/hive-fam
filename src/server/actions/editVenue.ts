@@ -19,6 +19,9 @@ export async function editVenue(venueData: {
   description: string;
   maps_url: string;
   max_guests: number;
+  city: string;
+  street_addr: string;
+  country: string;
 }) {
   try {
     const user = await getJWTUser();
@@ -36,6 +39,9 @@ export async function editVenue(venueData: {
         description: venueData.description,
         maps_url: venueData.maps_url,
         max_guests: venueData.max_guests,
+        city: venueData.city,
+        street_addr: venueData.street_addr,
+        country: venueData.country,
       },
     });
 

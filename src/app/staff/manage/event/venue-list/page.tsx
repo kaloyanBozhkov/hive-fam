@@ -29,7 +29,7 @@ export default async function VenueListPage() {
       <Group className="align-between w-full justify-between">
         <h2 className="text-xl font-semibold">Venue List</h2>
         <Button asChild>
-          <Link href="/staff/manage/event/add-event">Add Venue</Link>
+          <Link href="/staff/manage/event/add-venue">Add Venue</Link>
         </Button>
       </Group>
       <VenueList data={data} />
