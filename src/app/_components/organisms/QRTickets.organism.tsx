@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../shadcn/Card.shadcn";
-import { Button } from "../shadcn/Button.shadcn";
 import { formatTicketSignedUrls, getTicketShareUrl } from "@/utils/tickets";
 import { ButtonCopy } from "../molecules/CopyButton.moleule";
+import { DownloadButton } from "../molecules/DownloadButton.molecule";
 
 const QRTickets = async ({
   tickets,
@@ -22,26 +22,38 @@ const QRTickets = async ({
 
   return (
     <Stack className="gap-4">
-      {qrCodes.map(({ dataURL }, idx) => (
-        <Card key={idx}>
-          <CardHeader>
-            <CardTitle>Ticket #{tickets[idx]!.count}</CardTitle>
-          </CardHeader>
-          <CardContent className="w-full">
-            <Stack className="w-fit gap-2">
-              <img
-                className="w-full max-w-[350px]"
-                src={dataURL}
-                alt={`Ticket #${idx + 1}`}
-              />
-              {withShare && (
-                <ButtonCopy value={getTicketShareUrl(tickets[idx]!.id)} />
-              )}
-              <Button>Download</Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      ))}
+      {qrCodes.map(({ dataURL }, idx) => {
+        const id = `ticket-${tickets[idx]!.count}`;
+        return (
+          <Card key={idx} id={id}>
+            <CardHeader>
+              <CardTitle>Ticket #{tickets[idx]!.count}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex w-full flex-col gap-8 sm:flex-row">
+              <Stack className="w-fit gap-2">
+                <img
+                  className="w-full max-w-[350px]"
+                  src={dataURL}
+                  alt={`Ticket #${idx + 1}`}
+                />
+                {withShare && (
+                  <ButtonCopy
+                    data-print="hide-copy"
+                    value={getTicketShareUrl(tickets[idx]!.id)}
+                  />
+                )}
+                <DownloadButton
+                  selector={`#${id}`}
+                  fileName={`ticket-${tickets[idx]!.count}`}
+                  variant={withShare ? "secondary" : "default"}
+                  className={withShare ? "shadow-md" : ""}
+                  alsoHideSelector={withShare ? "[data-print='hide-copy']" : ""}
+                />
+              </Stack>
+            </CardContent>
+          </Card>
+        );
+      })}
     </Stack>
   );
 };

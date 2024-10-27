@@ -33,9 +33,10 @@ model link {
 model organization {
   id                  String  @id @default(uuid())
   name                String
-  brand_logo_data_url String? // used for ticket branding
   description         String?
-  display_name        String?
+  display_name        String? // used for tab title, page title etc..
+  brand_logo_data_url String? // used for ticket branding
+  qr_brand_text       String? // used for ticket branding
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -81,6 +82,9 @@ model venue {
   description String
   maps_url    String
   max_guests  Int    @default(400)
+  city        String
+  street_addr String
+  country     String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

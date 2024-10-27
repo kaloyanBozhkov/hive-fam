@@ -13,6 +13,7 @@ import QRTickets from "../../_components/organisms/QRTickets.organism";
 import { Suspense } from "react";
 import { db } from "@/server/db";
 import Group from "@/app/_components/layouts/Group.layout";
+import { DownloadButton } from "@/app/_components/molecules/DownloadButton.molecule";
 
 const getTickets = async (sessionId: string) => {
   const tickets = await db.ticket.findMany({
@@ -25,11 +26,17 @@ const getTickets = async (sessionId: string) => {
           email: true,
         },
       },
+      event: {
+        select: {
+          title: true,
+        },
+      },
     },
   });
   return {
     tickets: tickets.map(({ id, count }) => ({ id, count })),
     ownerEmail: tickets[0]?.owner?.email,
+    eventTitle: tickets[0]?.event?.title,
   };
 };
 
@@ -41,7 +48,7 @@ export default async function OrderPage({
   const sessionId = (await params).sessionId;
   if (!sessionId) return redirect("/error");
 
-  const { tickets, ownerEmail } = await getTickets(sessionId);
+  const { tickets, ownerEmail, eventTitle } = await getTickets(sessionId);
   if (!tickets.length) return redirect("/error");
 
   const isSingleTicket = tickets.length === 1;
@@ -61,7 +68,12 @@ export default async function OrderPage({
               We&apos;ve emailed the {ticketWord} to <b> {ownerEmail} </b>
             </p>
             <Group className="max-w-[350px] flex-col gap-4 sm:flex-row">
-              <Button className="w-full">Download {ticketWord}</Button>
+              <DownloadButton
+                selector="#tickets"
+                label={`Download ${ticketWord}`}
+                fileName={`${eventTitle ?? "event"}-${ticketWord}`}
+                alsoHideSelector="button"
+              />
               <Button className="w-full shadow-md" variant="secondary">
                 See Event
               </Button>
@@ -70,7 +82,9 @@ export default async function OrderPage({
         </CardContent>
       </Card>
       <Suspense fallback={<p>Rendering your tickets..</p>}>
-        <QRTickets tickets={tickets} />
+        <div id="tickets">
+          <QRTickets tickets={tickets} />
+        </div>
       </Suspense>
     </Stack>
   );

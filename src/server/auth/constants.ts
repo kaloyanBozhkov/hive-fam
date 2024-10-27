@@ -10,3 +10,5 @@ export const STAFF_ROLES: Role[] = [
   Role.EVENT_MANAGER,
   Role.TICKET_SCANNER,
 ];
+
+export const ORG_ID_COOKIE_NAME = "tk-org-id";

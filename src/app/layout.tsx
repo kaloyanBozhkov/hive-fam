@@ -10,17 +10,24 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Header from "./_components/organisms/Header.organism";
 import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
-export const metadata = {
-  title: "HiveFam",
-  description: "Bringing back the 00s sound. SOFIA | BULGARIA",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-};
+import { getOrg, getOrgId } from "@/server/actions/org";
+import { db } from "@/server/db";
 
-export default function RootLayout({
+export async function generateMetadata() {
+  const org = await getOrg();
+  return {
+    title: org?.display_name,
+    description: org?.description,
+    icons: [{ rel: "icon", url: "/favicon.ico" }],
+  };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const org = await getOrg();
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <head>
@@ -32,7 +39,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <AOS>
             <div className="grid-page min-h-screen w-full pb-4">
-              <Header />
+              <Header brandName={org?.display_name ?? ""} />
               {children}
               <Toaster />
               <URLToasts />

@@ -23,5 +23,3 @@ export const BRIGHT_COLOR = "#949292";
 /** Take pixel value relative to canvas size and return  */
 export const scaleSize = (canvasSize: number, constant: number) =>
   Math.floor((constant * canvasSize) / QR_CANVAS_CONFIG.qrSize);
-
-export const LOGO_TEXT = 'HivFam'

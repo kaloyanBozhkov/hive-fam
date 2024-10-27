@@ -15,6 +15,8 @@ import { format } from "date-fns";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Group from "@/app/_components/layouts/Group.layout";
 import Link from "next/link";
+import LabelCard from "@/app/_components/molecules/LabelCard.molecule";
+import InfoLineCard from "@/app/_components/molecules/InfoLineCard";
 
 const getTicket = async (ticketId: string) => {
   const ticket = await db.ticket.findUnique({
@@ -34,6 +36,15 @@ const getTicket = async (ticketId: string) => {
           id: true,
           title: true,
           date: true,
+          venue: {
+            select: {
+              name: true,
+              street_addr: true,
+              city: true,
+              country: true,
+              maps_url: true,
+            },
+          },
         },
       },
     },
@@ -70,15 +81,41 @@ export default async function TicketOrderPage({
               one.
             </p>
             <Group className="flex-col justify-between gap-4 rounded-lg border p-4 sm:flex-row">
-              <p>
-                This ticket is for <b>&quot;{ticket.event.title}&quot;</b>.
-                <br />
-                Opening: <b>{format(ticket.event.date, "HH:mm")}</b> on{" "}
-                {format(ticket.event.date, "dd MMMM yyyy")}
-              </p>
-              <Button className="w-fit" asChild>
-                <Link href={`/event/${ticket.event.id}as=view`}>See Event</Link>
-              </Button>
+              <Stack className="gap-1">
+                <InfoLineCard title="Event" label={ticket.event.title} />
+                <Group className="flex-col gap-4 lg:flex-row">
+                  <Stack className="gap-2">
+                    <InfoLineCard
+                      title="Time"
+                      label={format(ticket.event.date, "HH:mm")}
+                    />
+                    <InfoLineCard
+                      title="Date"
+                      label={format(ticket.event.date, "dd MMMM yyyy")}
+                    />
+                    <InfoLineCard
+                      title="Venue"
+                      label={ticket.event.venue.name}
+                    />
+                  </Stack>
+                </Group>
+              </Stack>
+              <Stack className="gap-2">
+                <Button className="w-full sm:w-[150px]" asChild>
+                  <Link href={`/event/${ticket.event.venue.maps_url}as=view`}>
+                    View Location
+                  </Link>
+                </Button>
+                <Button
+                  className="w-full shadow-md sm:w-[150px]"
+                  variant="secondary"
+                  asChild
+                >
+                  <Link href={`/event/${ticket.event.id}as=view`}>
+                    See Event
+                  </Link>
+                </Button>
+              </Stack>
             </Group>
           </Stack>
         </CardContent>
