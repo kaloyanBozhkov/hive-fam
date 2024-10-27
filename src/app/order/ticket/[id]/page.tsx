@@ -55,11 +55,10 @@ const getTicket = async (ticketId: string) => {
 };
 
 export default async function TicketOrderPage({
-  params,
+  params: { id: ticketId },
 }: {
   params: { id?: string };
 }) {
-  const { id: ticketId } = await (params as unknown as Promise<{ id: string }>);
   if (!ticketId) return redirect("/error");
 
   const { ticket, owner } = await getTicket(ticketId);

@@ -31,11 +31,10 @@ const getInitialData = async (id: string) => {
 };
 
 export default async function EditStaffPage({
-  params,
+  params: { id },
 }: {
   params: { id: string };
 }) {
-  const { id } = await (params as unknown as Promise<{ id: string }>);
   return (
     <Stack className="gap-y-8">
       <h1 className="text-[22px] font-semibold leading-[120%]">Edit Staff</h1>
