@@ -3,8 +3,8 @@ import { getJWTUser } from "@/server/auth/getJWTUser";
 import { db } from "@/server/db";
 import { Role } from "@prisma/client";
 import EditEventForm from "@/app/_components/organisms/forms/EditEvent.form";
-import { getVenuesData } from "../../venue-list/page";
 import { editEvent } from "@/server/actions/editEvent";
+import { getVenuesData } from "@/server/actions/getVenues";
 
 const getInitialData = async (id: string) => {
   const user = await getJWTUser();
