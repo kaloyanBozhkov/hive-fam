@@ -52,10 +52,11 @@ const validateTicket = async (ticketId: string) => {
 };
 
 export default async function ValidateTicket({
-  params: { id },
+  params,
 }: {
   params: { id: string };
 }) {
+  const { id } = await (params as unknown as Promise<{ id: string }>);
   const ticket = await validateTicket(id);
   return (
     <Stack className="min-h-[400px] gap-4">

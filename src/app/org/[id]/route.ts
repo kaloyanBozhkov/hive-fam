@@ -4,8 +4,9 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params: { id } }: { params: { id: string } },
+  { params }: { params: { id: string } },
 ) {
+  const { id } = await (params as unknown as Promise<{ id: string }>);
   await setCookie(id);
   return redirect("/");
 }
