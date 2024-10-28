@@ -21,11 +21,11 @@ export default async function EventPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { as: "view" };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ as: "view" }>;
 }) {
-  const { id } = await (params as unknown as Promise<{ id: string }>);
-  const { as } = await (searchParams as unknown as Promise<{ as: "view" }>);
+  const { id } = await params;
+  const { as } = await searchParams;
   const event = await getEvent(id);
   if (!event) redirect("/");
   return (
