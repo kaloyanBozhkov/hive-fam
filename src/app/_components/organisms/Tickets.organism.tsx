@@ -70,7 +70,6 @@ const Tickets = ({
       cartCheckout({
         total,
         productsInCart: items,
-        eventId,
         currency: eventCurrency,
       })
         .catch(() => {
