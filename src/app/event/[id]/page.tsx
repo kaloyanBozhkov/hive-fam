@@ -22,7 +22,7 @@ export default async function EventPage({
   searchParams: { as },
 }: {
   params: { id: string };
-  searchParams: { as?: "view" };
+  searchParams: { as: "view" };
 }) {
   const event = await getEvent(id);
   if (!event) redirect("/");
