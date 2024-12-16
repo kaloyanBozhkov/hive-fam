@@ -24,8 +24,10 @@ const getSlies = async () => {
       album_slide: {
         select: {
           cover_data_url: true,
-          disc_print_data_url: true,
           link: true,
+          is_single: true,
+          album_name: true,
+          album_subtitle: true,
         },
       },
     },
@@ -40,6 +42,9 @@ const getSlies = async () => {
       ...slide,
       ...info_slide,
       ...album_slide,
+      bgVideoSrc: info_slide?.background_data_url,
+      bgSrc: info_slide?.background_data_url,
+      coverSrc: album_slide?.cover_data_url,
     })) as BannerSlide[];
 };
 
@@ -48,9 +53,9 @@ const LandingBanner = async ({ className }: { className?: string }) => {
   const bg = (() => {
     switch (slides[0]?.type) {
       case "ALBUM":
-        return slides[0].disc_print_data_url;
+        return slides[0].coverSrc;
       case "INFO":
-        return slides[0].background_data_url;
+        return slides[0].bgVideoSrc;
       default:
         return null;
     }

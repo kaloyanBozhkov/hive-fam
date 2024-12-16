@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import SlideDots from "../../atoms/SlideDots.atom";
 import InfoBanner from "./Info.banner";
+import { AlbumBanner } from "./Album.banner";
 
 export type BannerSlide =
   | {
@@ -17,16 +18,18 @@ export type BannerSlide =
       subtitle: string;
       title: string;
       content: string;
-      background_data_url: string;
-      background_video_url?: string;
+      bgSrc: string;
+      bgVideoSrc?: string;
       order: number;
     }
   | {
       type: "ALBUM";
       link: string;
-      cover_data_url: string;
-      disc_print_data_url: string;
+      coverSrc: string;
       order: number;
+      albumName: string;
+      albumSubtitle: string;
+      isSingle: boolean;
     };
 
 const Banners = ({
@@ -37,7 +40,7 @@ const Banners = ({
   slides: BannerSlide[];
 }) => {
   const [active, setActive] = useState(0);
-  const [, setStartAnim] = useState(false);
+  const [startAnim, setStartAnim] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -64,15 +67,24 @@ const Banners = ({
                   {(() => {
                     switch (slide.type) {
                       case "ALBUM":
-                        return null;
+                        return (
+                          <AlbumBanner
+                            {...slide}
+                            name={slide.albumName}
+                            subtitle={slide.albumSubtitle}
+                            idx={idx}
+                            startAnim={startAnim}
+                            active={active}
+                          />
+                        );
                       case "INFO":
                         return (
                           <InfoBanner
                             title={slide.title}
                             subtitle={slide.subtitle}
                             content={slide.content}
-                            backgroundSrc={slide.background_data_url}
-                            bgVideoSrc={slide.background_video_url}
+                            backgroundSrc={slide.bgSrc}
+                            bgVideoSrc={slide.bgVideoSrc}
                           />
                         );
                       default:

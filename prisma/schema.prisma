@@ -26,13 +26,13 @@ enum BannerSlideType {
 }
 
 model album_slide {
-  id                  String         @id @default(uuid())
-  link                String
-  cover_data_url      String?
-  disc_print_data_url String
-  album_name          String
-  album_subtitle      String // Album, Single ...
-  banner_slide        banner_slide[]
+  id             String         @id @default(uuid())
+  link           String
+  cover_data_url String
+  is_single      Boolean        @default(false)
+  album_name     String
+  album_subtitle String // Album, Single ...
+  banner_slide   banner_slide[]
 }
 
 model info_slide {
