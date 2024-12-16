@@ -26,7 +26,7 @@ export async function editLink(linkData: {
     const link = await db.link.update({
       where: {
         id: linkData.id,
-        organizationId: user.organization_id,
+        organization_id: user.organization_id,
       },
       data: {
         name: linkData.name,

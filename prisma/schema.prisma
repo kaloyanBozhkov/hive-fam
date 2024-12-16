@@ -20,14 +20,48 @@ enum LinkType {
   SOUNDCLOUD
 }
 
+enum BannerSlideType {
+  INFO
+  ALBUM
+}
+
+model album_slide {
+  id                  String         @id @default(uuid())
+  link                String
+  cover_data_url      String?
+  disc_print_data_url String
+  banner_slide        banner_slide[]
+}
+
+model info_slide {
+  id           String         @id @default(uuid())
+  subtitle     String
+  title        String
+  content      String
+  banner_slide banner_slide[]
+}
+
+model banner_slide {
+  id    String          @id @default(uuid())
+  type  BannerSlideType
+  order Int
+
+  info_slide      info_slide?  @relation(fields: [info_slide_id], references: [id])
+  album_slide     album_slide? @relation(fields: [album_slide_id], references: [id])
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+  info_slide_id   String?
+  album_slide_id  String?
+}
+
 model link {
   id   String   @id @default(uuid())
   url  String
   name String
   type LinkType
 
-  organization   organization @relation(fields: [organizationId], references: [id])
-  organizationId String
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
 }
 
 model organization {
@@ -41,10 +75,11 @@ model organization {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  events event[]
-  staff  staff[]
-  venue  venue[]
-  links  link[]
+  events       event[]
+  staff        staff[]
+  venue        venue[]
+  links        link[]
+  banner_slide banner_slide[]
 }
 
 enum Currency {

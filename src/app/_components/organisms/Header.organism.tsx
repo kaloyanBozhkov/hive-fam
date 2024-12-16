@@ -13,7 +13,7 @@ const getSocialLinks = async () => {
       type: true,
     },
     where: {
-      organizationId,
+      organization_id: organizationId,
     },
   });
 };

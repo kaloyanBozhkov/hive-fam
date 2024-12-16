@@ -13,7 +13,7 @@ export async function deleteLink(data: { id: string }) {
 
     await db.link.delete({
       where: {
-        organizationId: user.organization_id,
+        organization_id: user.organization_id,
         id: data.id,
       },
     });

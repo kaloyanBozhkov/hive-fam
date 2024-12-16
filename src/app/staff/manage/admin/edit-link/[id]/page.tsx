@@ -12,7 +12,7 @@ const getInitialData = async (id: string) => {
 
   const link = await db.link.findUniqueOrThrow({
     where: {
-      organizationId: user.organization_id,
+      organization_id: user.organization_id,
       id,
     },
   });

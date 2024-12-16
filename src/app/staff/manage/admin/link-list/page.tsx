@@ -14,7 +14,7 @@ const getLinks = async () => {
 
   const links = await db.link.findMany({
     where: {
-      organizationId: user.organization_id,
+      organization_id: user.organization_id,
     },
   });
   return links;
