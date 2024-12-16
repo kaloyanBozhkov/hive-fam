@@ -1,20 +1,74 @@
 import { twMerge } from "tailwind-merge";
 
 import Image from "next/image";
-import Banners from "./Banners/Banners.carousel";
+import Banners, { BannerSlide } from "./Banners/Banners.carousel";
+import { db } from "@/server/db";
+import { getOrgId } from "@/server/actions/org";
+import Connecting from "./Banners/Connecting.banner";
 
-const LandingBanner = ({ className }: { className?: string }) => {
+const getSlies = async () => {
+  const orgId = await getOrgId();
+  const slides = await db.banner_slide.findMany({
+    select: {
+      order: true,
+      type: true,
+      info_slide: {
+        select: {
+          title: true,
+          content: true,
+          subtitle: true,
+          background_data_url: true,
+          background_video_url: true,
+        },
+      },
+      album_slide: {
+        select: {
+          cover_data_url: true,
+          disc_print_data_url: true,
+          link: true,
+        },
+      },
+    },
+    where: {
+      organization_id: orgId,
+    },
+  });
+
+  return slides
+    .filter((s) => s.info_slide || s.album_slide)
+    .map(({ info_slide, album_slide, ...slide }) => ({
+      ...slide,
+      ...info_slide,
+      ...album_slide,
+    })) as BannerSlide[];
+};
+
+const LandingBanner = async ({ className }: { className?: string }) => {
+  const slides = await getSlies();
+  const bg = (() => {
+    switch (slides[0]?.type) {
+      case "ALBUM":
+        return slides[0].disc_print_data_url;
+      case "INFO":
+        return slides[0].background_data_url;
+      default:
+        return null;
+    }
+  })();
+
   return (
     <div className={twMerge("relative h-full w-full", className)}>
-      <Banners />
-      <Image
-        src="/assets/party1.png"
-        alt="party"
-        width={1920}
-        height={1280}
-        className="absolute h-full object-cover object-center"
-        priority
-      />
+      {slides.length > 0 ? <Banners slides={slides} /> : <Connecting />}
+      {bg && (
+        <Image
+          src={bg}
+          alt="party"
+          width={1920}
+          height={1280}
+          className="absolute h-full object-cover object-center"
+          priority
+        />
+      )}
     </div>
   );
 };
