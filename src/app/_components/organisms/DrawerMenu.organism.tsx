@@ -16,10 +16,23 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
-import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import {
+  faInstagram,
+  faFacebook,
+  faTwitter,
+  faYoutube,
+  faSoundcloud,
+} from "@fortawesome/free-brands-svg-icons";
 import Group from "../layouts/Group.layout";
+import { LinkType } from "@prisma/client";
 
-const DrawerMenu = ({ extraChild }: { extraChild?: ReactNode }) => {
+const DrawerMenu = ({
+  extraChild,
+  socialLinks,
+}: {
+  extraChild?: ReactNode;
+  socialLinks: { type: LinkType; url: string; name: string }[];
+}) => {
   const [s, toggleS] = useState(false);
 
   return (
@@ -37,19 +50,21 @@ const DrawerMenu = ({ extraChild }: { extraChild?: ReactNode }) => {
             </DrawerTitle>
             <DrawerDescription asChild>
               <Stack className="w-full items-start justify-between gap-1">
-                <Button variant="link" asChild>
-                  <Link href="https://www.instagram.com/hive.home.bg/">
-                    <Group className="jusitfy-center items-center gap-3">
-                      <FontAwesomeIcon
-                        icon={faInstagram}
-                        className="text-[22px]"
-                      />
-                      <h2 className="font-rex-bold text-[24px] leading-[24px] text-green-800">
-                        Instagram
-                      </h2>
-                    </Group>
-                  </Link>
-                </Button>
+                {socialLinks.map(({ url, type, name }, idx) => (
+                  <Button variant="link" asChild key={idx}>
+                    <Link href={url}>
+                      <Group className="jusitfy-center items-center gap-3">
+                        <FontAwesomeIcon
+                          icon={LINK_TYPE_ICON[type]}
+                          className="text-[22px]"
+                        />
+                        <h2 className="font-rex-bold text-[24px] leading-[24px] text-green-800">
+                          {name}
+                        </h2>
+                      </Group>
+                    </Link>
+                  </Button>
+                ))}
                 {extraChild}
               </Stack>
             </DrawerDescription>
@@ -66,3 +81,11 @@ const DrawerMenu = ({ extraChild }: { extraChild?: ReactNode }) => {
 };
 
 export default DrawerMenu;
+
+const LINK_TYPE_ICON = {
+  [LinkType.INSTAGRAM]: faInstagram,
+  [LinkType.FACEBOOK]: faFacebook,
+  [LinkType.TWITTER]: faTwitter,
+  [LinkType.YOUTUBE]: faYoutube,
+  [LinkType.SOUNDCLOUD]: faSoundcloud,
+} as const;
