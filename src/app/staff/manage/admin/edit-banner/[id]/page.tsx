@@ -6,6 +6,7 @@ import { db } from "@/server/db";
 import { Role } from "@prisma/client";
 import { editBanner } from "@/server/actions/editBanner";
 import { notFound } from "next/navigation";
+import { getOrgId } from "@/server/actions/org";
 
 const getInitialData = async (id: string) => {
   const user = await getJWTUser();
@@ -67,11 +68,17 @@ export default async function EditBannerPage({
     notFound();
   }
 
+  const orgId = await getOrgId();
+
   return (
     <Stack className="gap-y-8">
       <h1 className="text-[22px] font-semibold leading-[120%]">Edit Banner</h1>
       {initialData.type === "INFO" ? (
-        <EditInfoBannerForm onEdit={editBanner} initialData={initialData} />
+        <EditInfoBannerForm
+          onEdit={editBanner}
+          initialData={initialData}
+          organizationId={orgId}
+        />
       ) : (
         <EditAlbumBannerForm onEdit={editBanner} initialData={initialData} />
       )}

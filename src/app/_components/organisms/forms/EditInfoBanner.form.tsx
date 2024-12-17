@@ -18,6 +18,7 @@ import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FileUploadField } from "./fields/FileUploadField";
 
 const infoBanner = z.object({
   id: z.string(),
@@ -34,9 +35,11 @@ const EditInfoBannerForm = ({
   className,
   initialData,
   onEdit,
+  organizationId,
 }: {
   className?: string;
   initialData: z.infer<typeof infoBanner>;
+  organizationId: string;
   onEdit: (
     bannerData: z.infer<typeof infoBanner>,
   ) => Promise<{ success: boolean; error?: string }>;
@@ -168,18 +171,12 @@ const EditInfoBannerForm = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
+          <FileUploadField
+            form={form}
             name="background_video_url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Background Video URL (Optional)</FormLabel>
-                <FormControl>
-                  <Input type="url" {...field} value={field.value ?? ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Background Video (Optional)"
+            organizationId={organizationId}
+            accept="video/mp4"
           />
           <input type="hidden" {...form.register("id")} />
           <input type="hidden" {...form.register("type")} />

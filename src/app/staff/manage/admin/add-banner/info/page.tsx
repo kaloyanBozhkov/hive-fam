@@ -3,6 +3,7 @@ import { addInfoBanner } from "@/server/actions/addInfoBanner";
 import { db } from "@/server/db";
 import { getJWTUser } from "@/server/auth/getJWTUser";
 import { Role } from "@prisma/client";
+import { getOrgId } from "@/server/actions/org";
 
 const getCurrentMaxOrder = async () => {
   const user = await getJWTUser();
@@ -26,6 +27,7 @@ const getCurrentMaxOrder = async () => {
 
 export default async function AddInfoBannerPage() {
   const currentMaxOrder = await getCurrentMaxOrder();
+  const orgId = await getOrgId();
 
   return (
     <div>
@@ -33,6 +35,7 @@ export default async function AddInfoBannerPage() {
       <AddInfoBannerForm
         onAdd={addInfoBanner}
         currentMaxOrder={currentMaxOrder}
+        organizationId={orgId}
       />
     </div>
   );

@@ -45,7 +45,7 @@ const getSlies = async () => {
       ...slide,
       ...info_slide,
       ...album_slide,
-      bgVideoSrc: info_slide?.background_data_url,
+      bgVideoSrc: info_slide?.background_video_url,
       bgSrc: info_slide?.background_data_url,
       coverSrc: album_slide?.cover_data_url,
     })) as BannerSlide[];

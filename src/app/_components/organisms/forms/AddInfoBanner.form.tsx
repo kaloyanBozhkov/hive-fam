@@ -18,13 +18,14 @@ import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FileUploadField } from "./fields/FileUploadField";
 
 const infoBanner = z.object({
   subtitle: z.string().min(1, "Subtitle is required"),
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
   background_data_url: z.string().min(1, "Background image is required"),
-  background_video_url: z.string().url().optional().nullable(),
+  background_video_url: z.string().optional().nullable(),
   order: z.number().int().min(0),
 });
 
@@ -32,9 +33,11 @@ const AddInfoBannerForm = ({
   className,
   onAdd,
   currentMaxOrder,
+  organizationId,
 }: {
   className?: string;
   currentMaxOrder: number;
+  organizationId: string;
   onAdd: (
     bannerData: z.infer<typeof infoBanner>,
   ) => Promise<{ success: boolean; error?: string }>;
@@ -57,9 +60,11 @@ const AddInfoBannerForm = ({
     },
   });
 
-  const handleSubmit = (data: z.infer<typeof infoBanner>) => {
+  const handleSubmit = async (data: z.infer<typeof infoBanner>) => {
+    const latestData = { ...data };
+
     startTransition(async () => {
-      const result = await onAdd(data);
+      const result = await onAdd(latestData);
       if (result.success) {
         form.reset();
         router.push("/staff/manage/admin/banner-list");
@@ -174,18 +179,12 @@ const AddInfoBannerForm = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
+          <FileUploadField
+            form={form}
             name="background_video_url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Background Video URL (Optional)</FormLabel>
-                <FormControl>
-                  <Input type="url" {...field} value={field.value ?? ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Background Video (Optional)"
+            organizationId={organizationId}
+            accept="video/mp4"
           />
           <Button
             type="submit"
