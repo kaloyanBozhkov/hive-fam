@@ -22,7 +22,7 @@ const cartItemSchema = z.object({
 const cartCheckoutSchema = z.object({
   total: z.number().min(MIN_AMOUNT).max(MAX_AMOUNT),
   currency: z.nativeEnum(Currency),
-  onCancelRedirectTo: z.string().optional(),
+  onCancelRedirectTo: z.string().default("/"),
   items: z.array(cartItemSchema).min(1),
 });
 
@@ -37,9 +37,6 @@ export default async function handler(
       // Validate the request body using Zod
       const validatedBody = cartCheckoutSchema.parse(req.body);
       const { total, currency, items, onCancelRedirectTo } = validatedBody;
-
-      let onCancelRedirect = onCancelRedirectTo ?? "/";
-
       const eventId = items[0]!.eventId;
       const eventPrice = await db.event.findUniqueOrThrow({
         where: { id: eventId },
@@ -75,7 +72,7 @@ export default async function handler(
             quantity: 1,
           })),
           billing_address_collection: "required",
-          cancel_url: `${req.headers.origin!}/${onCancelRedirect}`,
+          cancel_url: `${req.headers.origin!}/${onCancelRedirectTo}`,
           success_url: `${req.headers.origin!}/order/{CHECKOUT_SESSION_ID}`,
           custom_text: {
             submit: {
