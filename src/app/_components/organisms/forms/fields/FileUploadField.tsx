@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../shadcn/Form.shadcn";
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { FieldValues, Path, PathValue, UseFormReturn } from "react-hook-form";
 import { useRef, useState } from "react";
 import Stack from "@/app/_components/layouts/Stack.layout";
 import Group from "@/app/_components/layouts/Group.layout";
@@ -49,7 +49,7 @@ export const FileUploadField = <T extends FieldValues>({
     try {
       const fileUrl = await uploadFile(e, createUUID());
       setDirty(true);
-      form.setValue(name, fileUrl);
+      form.setValue(name, fileUrl as PathValue<T, Path<T>>);
     } catch (error) {
       console.error("Failed to upload file:", error);
     }
@@ -84,7 +84,7 @@ export const FileUploadField = <T extends FieldValues>({
                     size="sm"
                     onClick={() => {
                       if (fileRef.current) fileRef.current.value = "";
-                      form.setValue(name, null);
+                      form.setValue(name, null as PathValue<T, Path<T>>);
                     }}
                   >
                     Clear File
