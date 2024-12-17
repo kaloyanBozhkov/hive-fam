@@ -15,6 +15,9 @@ export default function AdminPage() {
           <Link href="/staff/manage/admin/link-list">Link List</Link>
         </Button>
         <Button asChild>
+          <Link href="/staff/manage/admin/banner-list">Banner List</Link>
+        </Button>
+        <Button asChild>
           <Link href="/staff/manage/admin/org-edit">Organization Details</Link>
         </Button>
       </Stack>

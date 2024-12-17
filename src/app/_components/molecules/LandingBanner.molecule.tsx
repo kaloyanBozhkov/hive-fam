@@ -34,6 +34,9 @@ const getSlies = async () => {
     where: {
       organization_id: orgId,
     },
+    orderBy: {
+      order: "asc",
+    },
   });
 
   return slides

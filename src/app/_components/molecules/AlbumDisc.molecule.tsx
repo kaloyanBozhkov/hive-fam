@@ -71,7 +71,7 @@ const AlbumDisc = ({
           )}
         >
           <Disc
-            coverImgSrc={`/assets/${albumImg}`}
+            coverImgSrc={albumImg}
             className={twMerge(
               opened ? "group-hover:pause" : "",
               "w-[95%]",

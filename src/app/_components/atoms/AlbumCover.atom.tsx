@@ -9,7 +9,7 @@ const AlbumCover = ({ img, className }: { img: string; className: string }) => {
       )}
     >
       <div
-        style={{ backgroundImage: `url(/assets/${img})` }}
+        style={{ backgroundImage: `url(${img})` }}
         className="h-full w-full rounded-[4px] bg-cover"
       />
     </div>

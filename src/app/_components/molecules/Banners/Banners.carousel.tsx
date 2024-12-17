@@ -20,13 +20,11 @@ export type BannerSlide =
       content: string;
       bgSrc: string;
       bgVideoSrc?: string;
-      order: number;
     }
   | {
       type: "ALBUM";
       link: string;
       coverSrc: string;
-      order: number;
       albumName: string;
       albumSubtitle: string;
       isSingle: boolean;
@@ -60,39 +58,37 @@ const Banners = ({
           opts={{ duration: 50, loop: true }}
         >
           <CarouselContent className="h-full w-full">
-            {slides
-              .sort((a, b) => a.order - b.order)
-              .map((slide, idx) => (
-                <CarouselItem key={idx} className="h-full">
-                  {(() => {
-                    switch (slide.type) {
-                      case "ALBUM":
-                        return (
-                          <AlbumBanner
-                            {...slide}
-                            name={slide.albumName}
-                            subtitle={slide.albumSubtitle}
-                            idx={idx}
-                            startAnim={startAnim}
-                            active={active}
-                          />
-                        );
-                      case "INFO":
-                        return (
-                          <InfoBanner
-                            title={slide.title}
-                            subtitle={slide.subtitle}
-                            content={slide.content}
-                            backgroundSrc={slide.bgSrc}
-                            bgVideoSrc={slide.bgVideoSrc}
-                          />
-                        );
-                      default:
-                        return `-`;
-                    }
-                  })()}
-                </CarouselItem>
-              ))}
+            {slides.map((slide, idx) => (
+              <CarouselItem key={idx} className="h-full">
+                {(() => {
+                  switch (slide.type) {
+                    case "ALBUM":
+                      return (
+                        <AlbumBanner
+                          {...slide}
+                          name={slide.albumName}
+                          subtitle={slide.albumSubtitle}
+                          idx={idx}
+                          startAnim={startAnim}
+                          active={active}
+                        />
+                      );
+                    case "INFO":
+                      return (
+                        <InfoBanner
+                          title={slide.title}
+                          subtitle={slide.subtitle}
+                          content={slide.content}
+                          backgroundSrc={slide.bgSrc}
+                          bgVideoSrc={slide.bgVideoSrc}
+                        />
+                      );
+                    default:
+                      return `-`;
+                  }
+                })()}
+              </CarouselItem>
+            ))}
           </CarouselContent>
           <CarouselPrevious className="absolute left-[20px] z-10" />
           <CarouselNext className="absolute right-[20px] z-10" />
