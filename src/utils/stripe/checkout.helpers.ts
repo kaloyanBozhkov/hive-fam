@@ -29,7 +29,7 @@ export const cartCheckout = async ({
   const sessionId = await fetchPostJSON<string>(
     "/api/stripe/checkout_sessions",
     {
-      amount: total,
+      total,
       currency,
       onCancelRedirectTo,
       items: productsInCart.map(({ eventName, ticketPrice, eventId }) => ({

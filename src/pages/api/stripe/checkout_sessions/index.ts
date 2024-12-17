@@ -7,54 +7,53 @@ import { formatAmountForStripe } from "@/server/stripe/stripe.helpers";
 
 import { db } from "@/server/db";
 import { z } from "zod";
-
-export type CartCheckoutPayloadBody = {
-  amount: number;
-  currency: "BGN";
-  onCancelRedirectTo: string;
-  items: {
-    eventName: string;
-    ticketPrice: number;
-    accessType: "regular";
-    eventId: string;
-  }[];
-};
+import { Currency } from "@prisma/client";
 
 const MIN_AMOUNT = 0.5,
   MAX_AMOUNT = 100000;
+
+const cartItemSchema = z.object({
+  eventName: z.string(),
+  ticketPrice: z.number(),
+  accessType: z.literal("regular"),
+  eventId: z.string(),
+});
+
+const cartCheckoutSchema = z.object({
+  total: z.number().min(MIN_AMOUNT).max(MAX_AMOUNT),
+  currency: z.nativeEnum(Currency),
+  onCancelRedirectTo: z.string().optional(),
+  items: z.array(cartItemSchema).min(1),
+});
+
+export type CartCheckoutPayloadBody = z.infer<typeof cartCheckoutSchema>;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // @TODO get cart from DB for user ID instead of passing all cart items here
   if (req.method === "POST") {
-    const { amount, currency, items, onCancelRedirectTo } =
-      req.body as CartCheckoutPayloadBody;
     try {
-      // Validate the amount that was passed from the client.
-      if (!(amount >= MIN_AMOUNT && amount <= MAX_AMOUNT))
-        throw new Error("Invalid amount.");
+      // Validate the request body using Zod
+      const validatedBody = cartCheckoutSchema.parse(req.body);
+      const { total, currency, items, onCancelRedirectTo } = validatedBody;
 
-      let onCancelRedirect = onCancelRedirectTo;
-
-      if (!onCancelRedirectTo) onCancelRedirect = `/`;
-
-      // validate costs with ticket cost on sheets
-      if (items.length < 1) throw new Error("No items in cart");
+      let onCancelRedirect = onCancelRedirectTo ?? "/";
 
       const eventId = items[0]!.eventId;
       const eventPrice = await db.event.findUniqueOrThrow({
-        where: {
-          id: eventId,
-        },
+        where: { id: eventId },
         select: {
+          organization_id: true,
           ticket_price: true,
         },
       });
 
       if (items.some((p) => p.ticketPrice !== eventPrice.ticket_price))
         throw new Error("Prices not matching for all items");
+
+      if (items.reduce((acc, p) => acc + p.ticketPrice, 0) !== total)
+        throw new Error("Total doesnt match");
 
       const params: Stripe.Checkout.SessionCreateParams = {
           mode: "payment",
@@ -89,6 +88,7 @@ export default async function handler(
             eventId,
             totalTickets: items.length,
             ticketPrice: eventPrice.ticket_price,
+            organizationId: eventPrice.organization_id,
           } as OrderMetadata,
         },
         checkoutSession: Stripe.Checkout.Session =
@@ -112,6 +112,7 @@ export const orderMetadataSchema = z.object({
   eventId: z.string(),
   totalTickets: z.number(),
   ticketPrice: z.number(),
+  organizationId: z.string().uuid(),
 });
 
 export type OrderMetadata = z.infer<typeof orderMetadataSchema>;
