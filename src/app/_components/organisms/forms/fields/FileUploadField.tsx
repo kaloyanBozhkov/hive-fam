@@ -8,35 +8,29 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../shadcn/Form.shadcn";
-import { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { useRef, useState } from "react";
 import Stack from "@/app/_components/layouts/Stack.layout";
 import Group from "@/app/_components/layouts/Group.layout";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import { createUUID } from "@/utils/common";
 
-interface FileUploadFieldProps<
-  TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues>,
-> {
-  form: TFieldValues;
-  name: TName;
+interface FileUploadFieldProps<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  name: Path<T>;
   label: string;
   organizationId: string;
   accept?: string;
   required?: boolean;
 }
 
-export const FileUploadField = <
-  TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues>,
->({
+export const FileUploadField = <T extends FieldValues>({
   form,
   name,
   label,
   organizationId,
   accept = "*/*",
-}: FileUploadFieldProps<TFieldValues, TName>) => {
+}: FileUploadFieldProps<T>) => {
   const [progress, setProgress] = useState(0);
   const [dirty, setDirty] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
