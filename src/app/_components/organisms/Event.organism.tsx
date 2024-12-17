@@ -54,7 +54,7 @@ const EventCard = ({
           ))}
         </CardDescription>
       </CardHeader>
-      <CardContent className="clear-both">
+      <CardContent className="clear-both pt-2">
         <Link href={event.external_event_url ?? "#"} target="_blank">
           <div className="shadow-md">
             <div className="overflow-hidden rounded-md [&:hover_img]:scale-[1.05]">
