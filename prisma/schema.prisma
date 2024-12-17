@@ -67,16 +67,23 @@ model link {
   organization_id String
 }
 
+enum ThemeColors {
+  DARK_GREEN
+  DARK_BLUE
+}
+
 model organization {
-  id                  String  @id @default(uuid())
+  id                  String      @id @default(uuid())
   name                String
   description         String?
   display_name        String? // used for tab title, page title etc..
   brand_logo_data_url String? // used for ticket branding
+  favicon_url         String?
   qr_brand_text       String? // used for ticket branding
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  default_currency    Currency    @default(EUR)
+  theme_colors        ThemeColors @default(DARK_GREEN)
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
 
   events       event[]
   staff        staff[]
