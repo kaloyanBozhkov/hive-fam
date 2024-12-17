@@ -1,5 +1,4 @@
 import { twMerge } from "tailwind-merge";
-import { ReactNode } from "react";
 import Group from "../layouts/Group.layout";
 import LabelCard from "./LabelCard.molecule";
 

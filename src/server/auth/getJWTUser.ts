@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { jwtVerify } from "jose";
-import { JWTUser } from "./verifyAuth";
+import type { JWTUser } from "./verifyAuth";
 import { cookies } from "next/headers";
 import { JWT_COOKIE_NAME } from "./constants";
 import { redirect } from "next/navigation";

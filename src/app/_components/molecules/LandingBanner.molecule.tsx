@@ -1,7 +1,7 @@
 import { twMerge } from "tailwind-merge";
 
 import Image from "next/image";
-import Banners, { BannerSlide } from "./Banners/Banners.carousel";
+import Banners, { type BannerSlide } from "./Banners/Banners.carousel";
 import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";
 import Connecting from "./Banners/Connecting.banner";
@@ -40,7 +40,7 @@ const getSlies = async () => {
   });
 
   return slides
-    .filter((s) => s.info_slide || s.album_slide)
+    .filter((s) => s.info_slide ?? s.album_slide)
     .map(({ info_slide, album_slide, ...slide }) => ({
       ...slide,
       ...info_slide,

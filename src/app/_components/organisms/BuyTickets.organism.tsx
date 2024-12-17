@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
-import { Currency } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 
 const BuyTickets = ({
   className = "",

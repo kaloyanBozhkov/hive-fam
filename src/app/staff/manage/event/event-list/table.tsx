@@ -13,7 +13,7 @@ import {
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
 import { deleteEvent } from "@/server/actions/deleteEvent";
-import { Currency, type PosterType } from "@prisma/client";
+import type { Currency, PosterType } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";

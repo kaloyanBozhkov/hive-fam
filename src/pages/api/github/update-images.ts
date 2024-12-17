@@ -46,5 +46,5 @@
 // }
 
 // export default handler;
-
-export default {};
+const D = {};
+export default D;

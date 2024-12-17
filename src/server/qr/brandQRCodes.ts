@@ -1,11 +1,6 @@
 import { BRIGHT_COLOR } from "@/server/qr/constants";
 import { scaleSize, QR_CANVAS_CONFIG } from "@/server/qr/constants";
-import {
-  createCanvas,
-  GlobalFonts,
-  loadImage,
-  type SKRSContext2D,
-} from "@napi-rs/canvas";
+import { createCanvas, loadImage, type SKRSContext2D } from "@napi-rs/canvas";
 import { db } from "../db";
 
 /**

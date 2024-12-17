@@ -1,6 +1,6 @@
 import type { CustomerDetails } from "@/pages/api/stripe/webhook";
 import { db } from "@/server/db";
-import { Currency } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 
 export const createTickets = async ({
   eventId,

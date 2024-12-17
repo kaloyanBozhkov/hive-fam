@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { isValidSessionId } from "@/pages/api/stripe/checkout_sessions/helpers/isValidSessionId";
-import { retrieveSession } from "@/pages/api/stripe/checkout_sessions/helpers/retrieveSession";
+// import { isValidSessionId } from "@/pages/api/stripe/checkout_sessions/helpers/isValidSessionId";
+// import { retrieveSession } from "@/pages/api/stripe/checkout_sessions/helpers/retrieveSession";
 import Stack from "@/app/_components/layouts/Stack.layout";
 import {
   Card,
@@ -136,17 +136,17 @@ export default async function TicketOrderPage({
 
 //http://localhost:3000/order/cs_test_b1Qm7aVvvf4tHmGMuhNn8dP7WCAIDb0DCaRsEOfLH6nnLCmSnHLzEag8Qs
 
-// unused as we rel on db now
-const retrieveSessionOrRedirect = async (sessionId?: string | null) => {
-  try {
-    if (!isValidSessionId(sessionId))
-      throw Error("Incorrect CheckoutSession ID.");
-    const s = await retrieveSession(sessionId);
-    return s;
-  } catch (err) {
-    return redirect("/error");
-  }
-};
+// // unused as we rel on db now
+// const retrieveSessionOrRedirect = async (sessionId?: string | null) => {
+//   try {
+//     if (!isValidSessionId(sessionId))
+//       throw Error("Incorrect CheckoutSession ID.");
+//     const s = await retrieveSession(sessionId);
+//     return s;
+//   } catch (err) {
+//     return redirect("/error");
+//   }
+// };
 
 // const formatSignedUrls = (
 //   stripeOrderSession: Awaited<ReturnType<typeof retrieveSession>>,

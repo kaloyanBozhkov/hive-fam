@@ -1,6 +1,6 @@
 "use server";
 
-import { BannerSlideType, Prisma, Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";

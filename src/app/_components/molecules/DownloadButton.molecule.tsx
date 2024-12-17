@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ButtonProps } from "../shadcn/Button.shadcn";
+import { Button, type ButtonProps } from "../shadcn/Button.shadcn";
 import html2canvas from "html2canvas";
 import { forceDownload } from "@/utils/common";
 

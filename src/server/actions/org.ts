@@ -16,7 +16,7 @@ export const getOrgId = async () => {
 
   // Get domain from request headers
   const headersList = await headers();
-  const host = headersList.get("host") || "";
+  const host = headersList.get("host") ?? "";
   const domainName = host.split(":")[0]! as keyof typeof DOMAIN_CONFIG;
   const domainID =
     domainName in DOMAIN_CONFIG ? DOMAIN_CONFIG[domainName] : null;

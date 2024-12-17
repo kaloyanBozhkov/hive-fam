@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import { jwtVerify } from "jose";
 
 export type JWTUser = {

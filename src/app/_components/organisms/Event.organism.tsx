@@ -12,7 +12,6 @@ import Link from "next/link";
 import Group from "../layouts/Group.layout";
 import { Fragment } from "react";
 import DateCard from "../molecules/DateCard.molecule";
-import { twMerge } from "tailwind-merge";
 import BuyTickets from "./BuyTickets.organism";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";

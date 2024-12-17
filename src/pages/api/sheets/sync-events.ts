@@ -170,4 +170,5 @@
 //   }
 // }
 
-export default {};
+const D = {};
+export default D;

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { setCookie } from "@/server/actions/org";
-import { NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 
 export async function GET(
-  request: NextRequest,
+  _: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;

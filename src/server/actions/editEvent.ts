@@ -1,6 +1,6 @@
 "use server";
 
-import { Currency, Prisma, Role, type PosterType } from "@prisma/client";
+import { type Currency, Prisma, Role, type PosterType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";

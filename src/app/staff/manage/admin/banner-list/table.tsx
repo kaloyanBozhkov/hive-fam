@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { deleteBannerSlide } from "@/server/actions/deleteBannerSlide";
-import { BannerSlideType } from "@prisma/client";
+import { type BannerSlideType } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";

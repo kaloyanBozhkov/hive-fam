@@ -7,7 +7,7 @@ import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
 import { env } from "@/env";
 import { getUserByEmailAndPassword } from "../queries/user/getUser";
-import { JWTUser } from "@/server/auth/verifyAuth";
+import type { JWTUser } from "@/server/auth/verifyAuth";
 
 export const signIn = async ({
   email,

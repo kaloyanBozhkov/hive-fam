@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ButtonProps } from "../shadcn/Button.shadcn";
+import { Button, type ButtonProps } from "../shadcn/Button.shadcn";
 import { useEffect, useRef, useState } from "react";
 
 export const ButtonCopy = ({

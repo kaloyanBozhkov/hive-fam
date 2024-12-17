@@ -84,7 +84,7 @@ const FullScreenEvent = ({
         ? event.description
         : `${event.description.slice(0, MAX_DESC_LENGTH)}...`,
     );
-  }, [showMore, isView]);
+  }, [showMore, isView, event.description]);
 
   return (
     <Card className="bg-white">

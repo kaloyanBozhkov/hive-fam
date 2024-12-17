@@ -5,7 +5,6 @@ import { getJWTUser } from "@/server/auth/getJWTUser";
 import { Role } from "@prisma/client";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
-import Group from "@/app/_components/layouts/Group.layout";
 
 const getBanners = async () => {
   const user = await getJWTUser();

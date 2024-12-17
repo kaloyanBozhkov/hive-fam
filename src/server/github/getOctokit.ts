@@ -9,5 +9,5 @@
 
 // export { repoOwner, repoName };
 // export default octokit;
-
-export default {};
+const D = {};
+export default D;

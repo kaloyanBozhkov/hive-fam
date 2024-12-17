@@ -4,9 +4,8 @@ import type Stripe from "stripe";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
-import { Currency } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 import { createTickets } from "@/server/queries/tickets/createTickets";
-import { sendOrderReceiptEmail } from "@/server/email/sendOrderReceiptEmail";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 

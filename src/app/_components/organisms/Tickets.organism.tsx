@@ -20,7 +20,7 @@ import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
-import { Currency } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 
 const cart = z.object({
   regularQuantity: z.number(),
@@ -77,7 +77,7 @@ const Tickets = ({
         })
         .finally(() => setCheckoutProcessing(false));
     },
-    [eventName, form, eventPrice],
+    [eventName, form, eventPrice, eventCurrency, eventId],
   );
 
   return (

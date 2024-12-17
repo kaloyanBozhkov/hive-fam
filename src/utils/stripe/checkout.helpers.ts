@@ -1,4 +1,4 @@
-import { Currency } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 import { fetchPostJSON } from "../common";
 import getStripe from "./getStripe";
 import { type CartCheckoutPayloadBody } from "@/pages/api/stripe/checkout_sessions";
