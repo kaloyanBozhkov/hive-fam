@@ -15,7 +15,7 @@ const MIN_AMOUNT = 0.5,
 const cartItemSchema = z.object({
   eventName: z.string(),
   ticketPrice: z.number(),
-  accessType: z.literal("regular"),
+  accessType: z.literal("regular").optional().default("regular"),
   eventId: z.string(),
 });
 
@@ -34,9 +34,10 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      // Validate the request body using Zod
+      console.log("ONE", req.body);
       const validatedBody = cartCheckoutSchema.parse(req.body);
       const { total, currency, items, onCancelRedirectTo } = validatedBody;
+      console.log("TWO");
       const eventId = items[0]!.eventId;
       const eventPrice = await db.event.findUniqueOrThrow({
         where: { id: eventId },
