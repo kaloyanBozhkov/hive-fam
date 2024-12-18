@@ -34,20 +34,24 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      console.log("ONE", req.body);
       const validatedBody = cartCheckoutSchema.parse(req.body);
       const { total, currency, items, onCancelRedirectTo } = validatedBody;
-      console.log("TWO");
       const eventId = items[0]!.eventId;
-      const eventPrice = await db.event.findUniqueOrThrow({
+      const event = await db.event.findUniqueOrThrow({
         where: { id: eventId },
         select: {
           organization_id: true,
           ticket_price: true,
+          poster_data_url: true,
+          organization: {
+            select: {
+              brand_logo_data_url: true,
+            },
+          },
         },
       });
 
-      if (items.some((p) => p.ticketPrice !== eventPrice.ticket_price))
+      if (items.some((p) => p.ticketPrice !== event.ticket_price))
         throw new Error("Prices not matching for all items");
 
       if (items.reduce((acc, p) => acc + p.ticketPrice, 0) !== total)
@@ -65,6 +69,7 @@ export default async function handler(
               unit_amount: formatAmountForStripe(p.ticketPrice, currency),
               currency,
               product_data: {
+                // TODO images are data urls in db rn, need to be links to s3
                 images: [],
                 name: `Tiket - ${p.eventName}`,
                 description: "Regular access",
@@ -85,8 +90,8 @@ export default async function handler(
           metadata: {
             eventId,
             totalTickets: items.length,
-            ticketPrice: eventPrice.ticket_price,
-            organizationId: eventPrice.organization_id,
+            ticketPrice: event.ticket_price,
+            organizationId: event.organization_id,
           } as OrderMetadata,
         },
         checkoutSession: Stripe.Checkout.Session =
