@@ -42,13 +42,13 @@ const QRTickets = async ({
                     value={getTicketShareUrl(tickets[idx]!.id)}
                   />
                 )}
-                {/* <DownloadButton
+                <DownloadButton
                   selector={`#${id}`}
                   fileName={`ticket-${tickets[idx]!.count}`}
                   variant={withShare ? "secondary" : "default"}
                   className={withShare ? "shadow-md" : ""}
                   alsoHideSelector={withShare ? "[data-print='hide-copy']" : ""}
-                /> */}
+                />
               </Stack>
             </CardContent>
           </Card>
