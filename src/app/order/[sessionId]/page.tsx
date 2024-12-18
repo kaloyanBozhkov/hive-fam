@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "../../_components/shadcn/Card.shadcn";
 import { Button } from "../../_components/shadcn/Button.shadcn";
-// import QRTickets from "../../_components/organisms/QRTickets.organism";
+import QRTickets from "../../_components/organisms/QRTickets.organism";
 import { Suspense } from "react";
 import { db } from "@/server/db";
 import Group from "@/app/_components/layouts/Group.layout";
@@ -84,7 +84,9 @@ export default async function OrderPage({
         </CardContent>
       </Card>
       <Suspense fallback={<p>Rendering your tickets..</p>}>
-        <div id="tickets">{/* <QRTickets tickets={tickets} /> */}</div>
+        <div id="tickets">
+          <QRTickets tickets={tickets} />
+        </div>
       </Suspense>
     </Stack>
   );
