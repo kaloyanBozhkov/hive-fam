@@ -5,8 +5,10 @@ export const getBaseUrl = (useRelativeOnFE = true) => {
     // browser should use relative path
     return "";
 
-  if (typeof window !== "undefined" && env.NODE_ENV !== "development")
+  if (typeof window !== "undefined" && env.NODE_ENV !== "development") {
+    console.log("WINDOW", window);
     return window.location.origin;
+  }
 
   // assume localhost
   return `http://localhost:3000`;
