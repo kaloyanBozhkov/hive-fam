@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Path, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import Stack from "../../layouts/Stack.layout";
@@ -14,7 +14,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 
@@ -24,6 +24,7 @@ const organization = z.object({
   display_name: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   brand_logo_data_url: z.string().optional().nullable(),
+  favicon_data_url: z.string().optional().nullable(),
 });
 
 const EditOrganizationForm = ({
@@ -39,9 +40,6 @@ const EditOrganizationForm = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [logoPreview, setLogoPreview] = useState<string | null>(
-    initialData.brand_logo_data_url ?? null,
-  );
 
   const form = useForm<z.infer<typeof organization>>({
     resolver: zodResolver(organization),
@@ -59,14 +57,16 @@ const EditOrganizationForm = ({
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    name: Path<z.infer<typeof organization>>,
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        form.setValue("brand_logo_data_url", result);
-        setLogoPreview(result);
+        form.setValue(name, result);
       };
       reader.readAsDataURL(file);
     }
@@ -115,15 +115,12 @@ const EditOrganizationForm = ({
                   <Input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleFileChange(e);
-                    }}
+                    onChange={(e) => handleFileChange(e, "brand_logo_data_url")}
                   />
                 </FormControl>
-                {logoPreview && (
+                {field.value && (
                   <img
-                    src={logoPreview}
+                    src={field.value}
                     alt="Logo preview"
                     className="mt-2 max-h-40 object-contain"
                   />
@@ -131,6 +128,35 @@ const EditOrganizationForm = ({
                 <FormMessage />
               </FormItem>
             )}
+          />
+          <FormField
+            control={form.control}
+            name="favicon_data_url"
+            render={({ field }) => {
+              // fallback to brand_logo_data_url if set
+              const favicon = field.value;
+
+              return (
+                <FormItem>
+                  <FormLabel>Favicon (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, "favicon_data_url")}
+                    />
+                  </FormControl>
+                  {favicon && (
+                    <img
+                      src={favicon}
+                      alt="Favicon preview"
+                      className="mt-2 max-h-40 object-contain"
+                    />
+                  )}
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
           <input type="hidden" {...form.register("id")} />
           <Button

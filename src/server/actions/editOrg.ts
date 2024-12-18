@@ -18,6 +18,7 @@ export async function editOrg(orgData: {
   description?: string | null;
   brand_logo_data_url?: string | null;
   display_name?: string | null;
+  favicon_data_url?: string | null;
 }) {
   try {
     const user = await getJWTUser();
@@ -26,12 +27,7 @@ export async function editOrg(orgData: {
 
     await db.organization.update({
       where: { id: orgData.id },
-      data: {
-        name: orgData.name,
-        description: orgData.description,
-        brand_logo_data_url: orgData.brand_logo_data_url,
-        display_name: orgData.display_name,
-      },
+      data: orgData,
     });
 
     revalidatePath("/staff/manage/admin");

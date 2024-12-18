@@ -78,9 +78,12 @@ model organization {
   description         String?
   display_name        String? // used for tab title, page title etc..
   brand_logo_data_url String? // used for ticket branding
-  favicon_url         String?
+  // TODO add favicon
+  favicon_data_url    String?
+  // TODO add qr brand text
   qr_brand_text       String? // used for ticket branding
   default_currency    Currency    @default(EUR)
+  // TODO add theme
   theme_colors        ThemeColors @default(DARK_GREEN)
   created_at          DateTime    @default(now())
   updated_at          DateTime    @updatedAt

@@ -17,7 +17,13 @@ export async function generateMetadata() {
   return {
     title: org?.display_name,
     description: org?.description,
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: [
+      {
+        rel: "icon",
+        url:
+          org?.favicon_data_url ?? org?.brand_logo_data_url ?? "/favicon.ico",
+      },
+    ],
   };
 }
 
