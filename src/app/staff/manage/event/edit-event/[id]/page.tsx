@@ -19,6 +19,7 @@ const getInitialData = async (id: string) => {
       organization_id: user.organization_id,
     },
   });
+
   return {
     ...event,
     external_event_url: event.external_event_url ?? undefined,
@@ -31,13 +32,14 @@ export default async function EditEventPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const event = await getInitialData(id);
   return (
     <Stack className="gap-y-8">
       <h1 className="text-[22px] font-semibold leading-[120%]">Edit Admin</h1>
       <EditEventForm
         onEdit={editEvent}
         venues={await getVenuesData()}
-        initialData={await getInitialData(id)}
+        initialData={event}
       />
     </Stack>
   );

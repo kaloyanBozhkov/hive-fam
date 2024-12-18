@@ -48,12 +48,14 @@ const AddEventForm = ({
   className,
   onAdd,
   venues,
+  defaultCurrency,
 }: {
   className?: string;
   onAdd: (
     eventData: z.infer<typeof event>,
   ) => Promise<{ success: boolean; error?: string }>;
   venues: { id: string; name: string }[];
+  defaultCurrency: Currency;
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -71,7 +73,7 @@ const AddEventForm = ({
       venue_id: "",
       is_published: false,
       ticket_price: 10,
-      price_currency: Currency.BGN,
+      price_currency: defaultCurrency,
     },
   });
 

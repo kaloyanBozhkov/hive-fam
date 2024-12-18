@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import FullScreenEvent from "@/app/_components/organisms/FullScreenEvent.organism";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
+import { isPastEvent } from "@/utils/specific";
 
 const getEvent = async (id: string) => {
   const event = await db.event.findFirst({
@@ -27,7 +28,7 @@ export default async function EventPage({
   const { id } = await params;
   const { as } = await searchParams;
   const event = await getEvent(id);
-  if (!event) redirect("/");
+  if (!event || isPastEvent(event)) redirect("/");
   return (
     <>
       <Stack className="m-auto min-h-[400px] max-w-[500px] gap-4">

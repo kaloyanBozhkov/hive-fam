@@ -18,11 +18,9 @@ export const getOrgId = async () => {
   const headersList = await headers();
   const host = headersList.get("host") ?? "";
   const domainName = host.split(":")[0]! as keyof typeof DOMAIN_CONFIG;
-  console.log("domainName", domainName);
   const domainID =
     domainName in DOMAIN_CONFIG ? DOMAIN_CONFIG[domainName] : null;
 
-  console.log("domainID", domainID, domainName);
   orgId = orgId ?? domainID ?? env.TMP_ORG_ID;
 
   if (!orgId) {

@@ -26,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../shadcn/Select.shadcn";
-import { useState } from "react";
 import { Switch } from "../../shadcn/Switch.shadcn";
 
 const event = z.object({
@@ -41,6 +40,7 @@ const event = z.object({
   is_published: z.boolean(),
   ticket_price: z.number().min(0, "Ticket price must be greater than 1"),
   price_currency: z.nativeEnum(Currency),
+  event_photos_url: z.string().url().optional().nullable(),
 });
 
 const EditEventForm = ({
@@ -58,9 +58,6 @@ const EditEventForm = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [posterPreview, setPosterPreview] = useState<string | null>(
-    initialData.poster_data_url,
-  );
 
   const form = useForm<z.infer<typeof event>>({
     resolver: zodResolver(event),
@@ -85,7 +82,6 @@ const EditEventForm = ({
       reader.onloadend = () => {
         const result = reader.result as string;
         form.setValue("poster_data_url", result);
-        setPosterPreview(result);
       };
       reader.readAsDataURL(file);
     }
@@ -206,9 +202,9 @@ const EditEventForm = ({
                     }}
                   />
                 </FormControl>
-                {posterPreview && (
+                {field.value && (
                   <img
-                    src={posterPreview}
+                    src={field.value}
                     alt="Poster preview"
                     className="mt-2 max-h-40 object-contain"
                   />
@@ -270,6 +266,19 @@ const EditEventForm = ({
                       ))}
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="event_photos_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Photos Url (Optional)</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -6,7 +6,11 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const Select = SelectPrimitive.Root;
+type SelectProps = Parameters<typeof SelectPrimitive.Root>[0];
+
+const Select = (
+  props: SelectProps & { onChange?: SelectProps["onValueChange"] },
+) => SelectPrimitive.Root({ ...props, onValueChange: props.onChange });
 
 const SelectGroup = SelectPrimitive.Group;
 

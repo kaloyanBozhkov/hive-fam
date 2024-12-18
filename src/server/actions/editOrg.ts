@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma, Role } from "@prisma/client";
+import { organization as Organization, Prisma, Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -12,14 +12,7 @@ const errorMessages: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
-export async function editOrg(orgData: {
-  id: string;
-  name: string;
-  description?: string | null;
-  brand_logo_data_url?: string | null;
-  display_name?: string | null;
-  favicon_data_url?: string | null;
-}) {
+export async function editOrg(orgData: Partial<Organization>) {
   try {
     const user = await getJWTUser();
     if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))

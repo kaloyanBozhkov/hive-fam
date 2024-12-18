@@ -1,6 +1,6 @@
 "use server";
 
-import { Role, Prisma } from "@prisma/client";
+import { Role, Prisma, Currency } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -13,7 +13,10 @@ const errorMessages: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
-export async function addOrg(orgData: { name: string }) {
+export async function addOrg(orgData: {
+  name: string;
+  default_currency: Currency;
+}) {
   try {
     const user = await getJWTUser();
     if (user.role !== Role.KOKO) throw new Error("Unauthorized");

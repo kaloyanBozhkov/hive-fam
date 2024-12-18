@@ -17,6 +17,14 @@ import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../shadcn/Select.shadcn";
+import { Currency } from "@prisma/client";
 
 const organization = z.object({
   id: z.string().uuid(),

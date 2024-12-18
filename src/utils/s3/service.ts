@@ -1,4 +1,3 @@
-import { env } from "@/env";
 import axios from "axios";
 
 export class S3Service {

@@ -16,9 +16,15 @@ import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Currency } from "@prisma/client";
+import { Select } from "../../shadcn/Select.shadcn";
+import { SelectItem } from "../../shadcn/Select.shadcn";
+import { SelectTrigger, SelectValue } from "../../shadcn/Select.shadcn";
+import { SelectContent } from "../../shadcn/Select.shadcn";
 
 const org = z.object({
   name: z.string(),
+  default_currency: z.nativeEnum(Currency).default(Currency.EUR),
 });
 
 const AddOrgForm = ({
@@ -70,6 +76,36 @@ const AddOrgForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage className="col-span-2 w-full" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="default_currency"
+            render={({ field }) => (
+              <FormItem className="mt-0 flex-1">
+                <FormLabel className="mr-auto">
+                  <Stack>
+                    <p className="text-[18px] leading-[120%]">
+                      Default Currency
+                    </p>
+                  </Stack>
+                </FormLabel>
+                <FormControl>
+                  <Select {...field}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(Currency).map((currency) => (
+                        <SelectItem key={currency} value={currency}>
+                          {currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage className="col-span-2 w-full" />
               </FormItem>
