@@ -1,13 +1,15 @@
+import { env } from "@/env";
+
 export const getBaseUrl = (useRelativeOnFE = true) => {
   if (typeof window !== "undefined" && useRelativeOnFE)
     // browser should use relative path
     return "";
 
-  if (typeof window !== "undefined" && process.env.NODE_ENV !== "development")
+  if (typeof window !== "undefined" && env.NODE_ENV !== "development")
     return window.location.origin;
 
   // assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:3000`;
 };
 
 export async function fetchPostJSON<T>(
