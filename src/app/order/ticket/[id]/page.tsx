@@ -1,6 +1,4 @@
 import { redirect } from "next/navigation";
-// import { isValidSessionId } from "@/pages/api/stripe/checkout_sessions/helpers/isValidSessionId";
-// import { retrieveSession } from "@/pages/api/stripe/checkout_sessions/helpers/retrieveSession";
 import Stack from "@/app/_components/layouts/Stack.layout";
 import {
   Card,
@@ -8,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/_components/shadcn/Card.shadcn";
-import QRTickets from "@/app/_components/organisms/QRTickets.organism";
 import { Suspense } from "react";
 import { db } from "@/server/db";
 import { format } from "date-fns";
@@ -16,6 +13,7 @@ import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Group from "@/app/_components/layouts/Group.layout";
 import Link from "next/link";
 import InfoLineCard from "@/app/_components/molecules/InfoLineCard";
+import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";
 
 const getTicket = async (ticketId: string) => {
   const ticket = await db.ticket.findUnique({
@@ -120,7 +118,7 @@ export default async function TicketOrderPage({
         </CardContent>
       </Card>
       <Suspense fallback={<p>Rendering your ticket..</p>}>
-        <QRTickets
+        <QRTicketsServer
           tickets={[
             {
               id: ticket.id,

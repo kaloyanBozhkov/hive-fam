@@ -1,27 +1,27 @@
 "use client";
 
 import Stack from "../layouts/Stack.layout";
-import { getQRCodes } from "@/server/qr/getQRCodes";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../shadcn/Card.shadcn";
-import { formatTicketSignedUrls, getTicketShareUrl } from "@/utils/tickets";
+import { getTicketShareUrl } from "@/utils/tickets";
 import { ButtonCopy } from "../molecules/CopyButton.moleule";
 import { DownloadButton } from "../molecules/DownloadButton.molecule";
 
-const QRTickets = async ({
-  tickets,
+const QRTickets = ({
+  qrCodes,
   withShare = true,
+  tickets,
 }: {
+  qrCodes: {
+    dataURL: string;
+  }[];
   tickets: { id: string; count: number }[];
   withShare?: boolean;
 }) => {
-  const contents = formatTicketSignedUrls(tickets.map(({ id }) => id));
-  const qrCodes = (await getQRCodes(contents)) as { dataURL: string }[];
-
   return (
     <Stack className="gap-4">
       {qrCodes.map(({ dataURL }, idx) => {

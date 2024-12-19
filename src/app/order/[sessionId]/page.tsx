@@ -1,6 +1,4 @@
 import { redirect } from "next/navigation";
-// import { isValidSessionId } from "@/pages/api/stripe/checkout_sessions/helpers/isValidSessionId";
-// import { retrieveSession } from "@/pages/api/stripe/checkout_sessions/helpers/retrieveSession";
 import Stack from "../../_components/layouts/Stack.layout";
 import {
   Card,
@@ -9,11 +7,11 @@ import {
   CardTitle,
 } from "../../_components/shadcn/Card.shadcn";
 import { Button } from "../../_components/shadcn/Button.shadcn";
-import QRTickets from "../../_components/organisms/QRTickets.organism";
-import { Suspense } from "react";
 import { db } from "@/server/db";
 import Group from "@/app/_components/layouts/Group.layout";
 import { DownloadButton } from "@/app/_components/molecules/DownloadButton.molecule";
+import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";
+import { Suspense } from "react";
 
 const getTickets = async (sessionId: string) => {
   const tickets = await db.ticket.findMany({
@@ -85,7 +83,7 @@ export default async function OrderPage({
       </Card>
       <Suspense fallback={<p>Rendering your tickets..</p>}>
         <div id="tickets">
-          <QRTickets tickets={tickets} />
+          <QRTicketsServer tickets={tickets} />
         </div>
       </Suspense>
     </Stack>
