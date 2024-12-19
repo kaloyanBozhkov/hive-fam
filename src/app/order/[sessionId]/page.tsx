@@ -12,6 +12,8 @@ import Group from "@/app/_components/layouts/Group.layout";
 import { DownloadButton } from "@/app/_components/molecules/DownloadButton.molecule";
 import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";
 import { Suspense } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 const getTickets = async (sessionId: string) => {
   const tickets = await db.ticket.findMany({
@@ -75,7 +77,10 @@ export default async function OrderPage({
                 alsoHideSelector="button"
               />
               <Button className="w-full shadow-md" variant="secondary">
-                See Event
+                <Group>
+                  <FontAwesomeIcon icon={faCalendarAlt} />{" "}
+                  <span>See Event</span>
+                </Group>
               </Button>
             </Group>
           </Stack>

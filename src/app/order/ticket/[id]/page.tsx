@@ -14,6 +14,8 @@ import Group from "@/app/_components/layouts/Group.layout";
 import Link from "next/link";
 import InfoLineCard from "@/app/_components/molecules/InfoLineCard";
 import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 const getTicket = async (ticketId: string) => {
   const ticket = await db.ticket.findUnique({
@@ -109,7 +111,10 @@ export default async function TicketOrderPage({
                   asChild
                 >
                   <Link href={`/event/${ticket.event.id}as=view`}>
-                    See Event
+                    <Group className="items-center gap-2">
+                      <FontAwesomeIcon icon={faCalendarAlt} />{" "}
+                      <span>See Event</span>
+                    </Group>
                   </Link>
                 </Button>
               </Stack>

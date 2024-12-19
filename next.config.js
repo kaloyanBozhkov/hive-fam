@@ -7,7 +7,15 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["kems-bucket.s3.eu-central-1.amazonaws.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "kems-bucket.s3.eu-central-1.amazonaws.com",
+        port: "",
+        pathname: "/**",
+        search: "",
+      },
+    ],
   },
 };
 

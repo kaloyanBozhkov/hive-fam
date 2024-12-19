@@ -1,4 +1,6 @@
 const screens = {
+  xs: "400px",
+
   sm: "640px",
   // => @media (min-width: 640px) { ... }
 
@@ -27,7 +29,10 @@ const screens = {
   // => @media (max-width: 767px) { ... }
 
   "-sm": { max: "639px" },
+
   // => @media (max-width: 639px) { ... }
+
+  "-xs": { max: "399px" },
 };
 
 export default screens;

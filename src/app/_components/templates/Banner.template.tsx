@@ -17,7 +17,7 @@ const Banner = ({
   return (
     <div
       className={twMerge(
-        "grid-page -sm:items-center -sm:!grid-rows-[unset] z-10 h-full w-full bg-[rgb(0,0,0,0.5)] px-[46px] py-[20px] lg:px-0",
+        "grid-page -xs:p-0 z-10 h-full w-full bg-[rgb(0,0,0,0.5)] px-[46px] py-[20px] lg:px-0 -sm:!grid-rows-[unset] -sm:items-center",
         className,
       )}
     >
