@@ -1,4 +1,4 @@
-import { fetchPostJSON, getBaseUrl } from "@/utils/common";
+import { fetchPostJSON } from "@/utils/common";
 import { getOrgId } from "../actions/org";
 import { DOMAIN_CONFIG } from "../config";
 
@@ -8,5 +8,8 @@ export const getQRCodes = async (contents: string[]) => {
   const orgDomain = Object.entries(DOMAIN_CONFIG).find(
     ([, id]) => id === orgId,
   )?.[0];
-  return fetchPostJSON(`${orgDomain}/api/qr/getQRCodes`, { qrs, orgId });
+  return fetchPostJSON(`https://${orgDomain}/api/qr/getQRCodes`, {
+    qrs,
+    orgId,
+  });
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import Stack from "../layouts/Stack.layout";
 import { getQRCodes } from "@/server/qr/getQRCodes";
 import {
