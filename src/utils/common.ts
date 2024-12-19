@@ -1,11 +1,9 @@
-import { env } from "@/env";
-
 export const getBaseUrl = (useRelativeOnFE = true) => {
   if (typeof window !== "undefined" && useRelativeOnFE)
     // browser should use relative path
     return "";
 
-  if (env.NEXT_PUBLIC_NODE_ENV !== "development") {
+  if (process.env.NODE_ENV !== "development") {
     if (typeof window !== "undefined") return window.location.origin;
   }
 
