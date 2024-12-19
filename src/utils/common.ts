@@ -5,7 +5,7 @@ export const getBaseUrl = (useRelativeOnFE = true) => {
     // browser should use relative path
     return "";
 
-  if (env.NODE_ENV !== "development") {
+  if (env.NEXT_PUBLIC_NODE_ENV !== "development") {
     if (typeof window !== "undefined") return window.location.origin;
   }
 
