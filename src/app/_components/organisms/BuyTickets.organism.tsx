@@ -41,10 +41,11 @@ const BuyTickets = ({
             </Group>
           </Button>
         </DialogTrigger>
-        <DialogContent className="-sm:max-w-[90vw]">
+        <DialogContent className="rounded-lg -sm:max-w-[90vw]">
           <DialogHeader>
-            <DialogTitle className="text-left">Choose tickets</DialogTitle>
-            <DialogDescription></DialogDescription>
+            <DialogTitle className="text-left">Get Your Tickets</DialogTitle>
+            {/* <DialogDescription>
+            </DialogDescription> */}
             <Tickets
               eventId={eventId}
               eventPrice={eventPrice}

@@ -91,14 +91,14 @@ const Tickets = ({
             control={form.control}
             name="regularQuantity"
             render={({ field }) => (
-              <FormItem className="mt-0 grid grid-cols-2 items-center gap-[20px]">
-                <FormLabel className="mr-auto">
+              <FormItem className="mt-0 grid grid-cols-2 items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
+                <FormLabel className="mr-auto -sm:-mb-2">
                   <Stack>
                     <p className="text-[18px] leading-[120%]">Regular Access</p>
                   </Stack>
                 </FormLabel>
                 <FormControl>
-                  <Group className="!mt-0 ml-auto gap-[12px]">
+                  <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
                     <Button
                       onClick={() => {
                         const newVal = form.getValues("regularQuantity") - 1;
@@ -114,7 +114,7 @@ const Tickets = ({
                     <Input
                       type="number"
                       {...field}
-                      className="w-[62px]"
+                      className="w-[62px] -sm:w-full"
                       min={0}
                       max={99}
                       onChange={({ currentTarget: { value } }) => {
