@@ -98,12 +98,14 @@ const Banners = ({
           )}
         </Carousel>
       </div>
-      <SlideDots
-        count={slides.length}
-        active={active}
-        onClick={setActive}
-        className="absolute bottom-[20px] left-0 right-0 "
-      />
+      {slides.length > 1 && (
+        <SlideDots
+          count={slides.length}
+          active={active}
+          onClick={setActive}
+          className="absolute bottom-[20px] left-0 right-0 "
+        />
+      )}
     </div>
   );
 };
