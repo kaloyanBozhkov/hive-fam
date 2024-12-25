@@ -32,6 +32,7 @@ import { useState } from "react";
 import { Switch } from "../../shadcn/Switch.shadcn";
 import MediaSelect from "../MediaSelect.organism";
 import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
+import { addDays } from "date-fns";
 
 const event = z.object({
   title: z.string().min(1, "Title is required"),
@@ -76,7 +77,7 @@ const AddEventForm = ({
     defaultValues: {
       title: "",
       description: "",
-      date: new Date(),
+      date: addDays(new Date(), 1),
       poster_media: [],
       external_event_url: undefined,
       venue_id: "",
@@ -191,14 +192,16 @@ const AddEventForm = ({
                 <FormControl>
                   <Input
                     type="datetime-local"
-                    min={new Date().toISOString().slice(0, 16)}
                     {...field}
-                    value={
-                      field.value instanceof Date
-                        ? field.value.toISOString().slice(0, 16)
-                        : ""
-                    }
-                    onChange={(e) => field.onChange(new Date(e.target.value))}
+                    value={field.value.toISOString().slice(0, 16)}
+                    onChange={(e) => {
+                      const localDate = new Date(e.target.value);
+                      const utcDate = new Date(
+                        localDate.getTime() -
+                          localDate.getTimezoneOffset() * 60000,
+                      );
+                      field.onChange(utcDate);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

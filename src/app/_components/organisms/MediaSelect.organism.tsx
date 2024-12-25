@@ -140,6 +140,7 @@ export default function MediaSelect({
               {media.length > 1 && (
                 <Stack className="gap-2">
                   <Button
+                    type="button"
                     className="size-[20px]"
                     size="sm"
                     onClick={() => handleMoveUp(index)}
@@ -148,6 +149,7 @@ export default function MediaSelect({
                     <FontAwesomeIcon icon={faChevronUp} size="1x" />
                   </Button>
                   <Button
+                    type="button"
                     className="size-[20px]"
                     size="sm"
                     onClick={() => handleMoveDown(index)}
