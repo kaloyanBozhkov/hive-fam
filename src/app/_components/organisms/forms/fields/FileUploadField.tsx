@@ -19,6 +19,7 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import Group from "@/app/_components/layouts/Group.layout";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import { createUUID } from "@/utils/common";
+import { S3Service } from "@/utils/s3/service";
 
 interface FileUploadFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -54,7 +55,10 @@ export const FileUploadField = <T extends FieldValues>({
     try {
       const bucketPath = await uploadFile(e, createUUID());
       setDirty(true);
-      form.setValue(name, bucketPath as PathValue<T, Path<T>>);
+      form.setValue(
+        name,
+        S3Service.getFileUrlFromFullPath(bucketPath) as PathValue<T, Path<T>>,
+      );
     } catch (error) {
       console.error("Failed to upload file:", error);
     }

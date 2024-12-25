@@ -90,8 +90,12 @@ const Banners = ({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="-xs:hidden absolute left-[20px] z-10" />
-          <CarouselNext className="-xs:hidden absolute right-[20px] z-10" />
+          {slides.length > 1 && (
+            <>
+              <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
+              <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+            </>
+          )}
         </Carousel>
       </div>
       <SlideDots
