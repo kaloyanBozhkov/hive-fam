@@ -109,16 +109,22 @@ const EventCard = ({
                     );
                   })}
                 </CarouselContent>
-                <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
-                <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+                {event.poster_media.length > 1 && (
+                  <>
+                    <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
+                    <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+                  </>
+                )}
               </Carousel>
             </Link>
-            <SlideDots
-              count={event.poster_media.length}
-              active={active}
-              onClick={setActive}
-              modifier="black"
-            />
+            {event.poster_media.length > 1 && (
+              <SlideDots
+                count={event.poster_media.length}
+                active={active}
+                onClick={setActive}
+                modifier="black"
+              />
+            )}
           </Stack>
         </CardContent>
       )}

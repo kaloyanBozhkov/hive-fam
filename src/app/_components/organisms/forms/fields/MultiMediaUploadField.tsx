@@ -89,7 +89,6 @@ export const MultiMediaUploadField = <T extends FieldValues>({
     );
 
     const currentMedia = [...currentMedias.current, ...mediasWithBucketPath];
-
     const formattedMedia = medias.map((media, order) => {
       const curr = currentMedia.find((cMedia) => cMedia.id === media.id)!;
       return {
@@ -99,22 +98,23 @@ export const MultiMediaUploadField = <T extends FieldValues>({
     }) as SelectedMedia[];
 
     currentMedias.current = formattedMedia;
-    form.setValue(name, currentMedias.current as PathValue<T, Path<T>>);
-    console.log("set", currentMedias.current);
     setIsUploadingMultipleFIles(false);
+    return currentMedias.current;
   };
 
   return (
     <FormField
       control={form.control}
       name={name}
-      render={() => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Stack>
               <MediaSelect
-                onChange={handleMediaChange}
+                onChange={async (data) => {
+                  field.onChange(await handleMediaChange(data));
+                }}
                 maxFiles={maxFiles}
                 mediaType="BOTH"
                 withUploadIndicator
