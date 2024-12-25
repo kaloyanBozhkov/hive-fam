@@ -15,13 +15,26 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import DateCard from "../molecules/DateCard.molecule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
-import { type event, type venue } from "@prisma/client";
+import { MediaType, type event, type venue } from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
 import Tickets from "./Tickets.organism";
 import BuyTickets from "./BuyTickets.organism";
+import SlideDots from "../atoms/SlideDots.atom";
+import {
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "../shadcn/Carousel.shadcn";
+import { CarouselContent } from "../shadcn/Carousel.shadcn";
+import { Carousel } from "../shadcn/Carousel.shadcn";
+import { S3Service } from "@/utils/s3/service";
 
 type Event = event & {
   venue: venue;
+  poster_media: {
+    bucket_path: string;
+    type: MediaType;
+  }[];
 };
 
 const MAX_DESC_LENGTH = 100;
@@ -35,6 +48,7 @@ const FullScreenEvent = ({
   isPast?: boolean;
   isView?: boolean;
 }) => {
+  const [active, setActive] = useState(0);
   const [showMore, setShowMore] = useState(isView);
   const [desc, setDesc] = useState(
     isView ? event.description : event.description.slice(0, MAX_DESC_LENGTH),
@@ -61,18 +75,52 @@ const FullScreenEvent = ({
   );
   const visualContentRef = useRef<HTMLDivElement>(null);
   const visualContent = (
-    <CardContent className="clear-both" ref={visualContentRef}>
-      <Link href={event.external_event_url ?? "#"} target="_blank">
-        <div className="shadow-md">
-          <div className="overflow-hidden rounded-md [&:hover_img]:scale-[1.05]">
-            <img
-              src={event.poster_data_url}
-              className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
-              alt="Cover"
-            />
-          </div>
-        </div>
-      </Link>
+    <CardContent className="clear-both pt-2" ref={visualContentRef}>
+      <Stack className="gap-3">
+        <Link href={event.external_event_url ?? "#"} target="_blank">
+          <Carousel
+            onSlideChanged={setActive}
+            currentSlide={active}
+            opts={{ duration: 50, loop: true }}
+            className="w-full overflow-hidden rounded-md"
+          >
+            <CarouselContent className="h-full w-full">
+              {event.poster_media.map((media, index) => {
+                const url = S3Service.getFileUrlFromFullPath(media.bucket_path);
+                return (
+                  <CarouselItem key={index} className="h-full">
+                    {media.type === MediaType.IMAGE ? (
+                      <img
+                        src={url}
+                        className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                      />
+                    ) : media.type === MediaType.VIDEO ? (
+                      <video
+                        className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                        autoPlay
+                        loop
+                        muted
+                        controls
+                      >
+                        <source src={url} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : null}
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
+            <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+          </Carousel>
+        </Link>
+        <SlideDots
+          count={event.poster_media.length}
+          active={active}
+          onClick={setActive}
+          modifier="black"
+        />
+      </Stack>
       {showMore && <div className="mt-2">{toggleShowMore}</div>}
     </CardContent>
   );

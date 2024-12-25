@@ -132,3 +132,21 @@ export const createUUID = (): string => {
   });
   return uuid;
 };
+
+export function moveItemInArray<T>(
+  array: T[],
+  index: number,
+  direction: "up" | "down",
+): T[] {
+  const newArray = [...array]; // Create a shallow copy of the array
+  const targetIndex =
+    (index + (direction === "up" ? -1 : 1) + newArray.length) % newArray.length; // Calculate the target index with wrap-around
+
+  // Swap the items
+  [newArray[index], newArray[targetIndex]] = [
+    newArray[targetIndex]!,
+    newArray[index]!,
+  ];
+
+  return newArray; // Return the new array
+}

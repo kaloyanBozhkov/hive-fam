@@ -102,7 +102,11 @@ const EditVenueForm = ({
                     type="number"
                     {...field}
                     onChange={(e) =>
-                      field.onChange(parseInt(e.target.value, 10))
+                      field.onChange(
+                        e.target.value === ""
+                          ? ""
+                          : parseInt(e.target.value, 10),
+                      )
                     }
                   />
                 </FormControl>

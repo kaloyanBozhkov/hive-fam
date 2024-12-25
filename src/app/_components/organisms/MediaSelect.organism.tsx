@@ -8,20 +8,29 @@ import Stack from "../layouts/Stack.layout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import DotsLoader from "../atoms/DotsLoader.atom";
-import { createUUID } from "@/utils/common";
+import { createUUID, moveItemInArray } from "@/utils/common";
+import { twMerge } from "tailwind-merge";
+import { S3Service } from "@/utils/s3/service";
 
 interface MediaFile extends File {
   preview: string;
   id: string;
 }
 
+type UploadedMediaFile = {
+  id: string;
+  bucket_path: string;
+  type: MediaType;
+};
+
 interface MediaSelectProps {
-  onChange?: (media: MediaFile[]) => void;
+  onChange?: (media: (MediaFile | UploadedMediaFile)[]) => void;
   maxFiles: number;
   mediaType?: MediaType | "BOTH";
   withUploadIndicator?: boolean;
   // optional: specify which files were uploaded successfully
   uploadReadyFiles?: File[];
+  alreadySelectedMedia?: UploadedMediaFile[];
 }
 
 export default function MediaSelect({
@@ -30,10 +39,12 @@ export default function MediaSelect({
   mediaType = MediaType.IMAGE,
   withUploadIndicator,
   uploadReadyFiles,
+  alreadySelectedMedia = [],
 }: MediaSelectProps) {
-  const [media, setMedia] = useState<MediaFile[]>([]);
+  const [media, setMedia] =
+    useState<(MediaFile | UploadedMediaFile)[]>(alreadySelectedMedia);
   const setMediaAndNotify = useCallback(
-    (newMedias: MediaFile[]) => {
+    (newMedias: (MediaFile | UploadedMediaFile)[]) => {
       setMedia(newMedias);
       onChange?.(newMedias);
     },
@@ -42,7 +53,7 @@ export default function MediaSelect({
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
+      const files = Array.from(e.target.files ?? []);
       const newMedia = files.slice(0, maxFiles - media.length).map((file) =>
         Object.assign(file, {
           preview: file.type.startsWith("video/")
@@ -59,7 +70,8 @@ export default function MediaSelect({
   const removeMedia = useCallback(
     (index: number) => {
       const newMedia = [...media];
-      URL.revokeObjectURL(newMedia[index]!.preview);
+      if ("preview" in newMedia[index]!)
+        URL.revokeObjectURL(newMedia[index].preview);
       newMedia.splice(index, 1);
       setMediaAndNotify(newMedia);
     },
@@ -67,31 +79,22 @@ export default function MediaSelect({
   );
 
   const handleMoveUp = (index: number) => {
-    const newMedia = [...media];
-    const draggedItem = newMedia[index]!;
-    newMedia.splice(index, 1);
-    newMedia.splice(index - 1, 0, draggedItem);
-    setMediaAndNotify(newMedia);
+    const updatedMedia = moveItemInArray(media, index, "up");
+    setMediaAndNotify(updatedMedia);
   };
 
   const handleMoveDown = (index: number) => {
-    const newMedia = [...media];
-    const draggedItem = newMedia[index]!;
-    newMedia.splice(index, 1);
-    newMedia.splice(index + 1, 0, draggedItem);
-    setMediaAndNotify(newMedia);
+    const updatedMedia = moveItemInArray(media, index, "down");
+    setMediaAndNotify(updatedMedia);
   };
 
-  const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLLIElement>,
-    index: number,
-  ) => {
-    if (event.key === "ArrowUp") {
-      handleMoveUp(index);
-    } else if (event.key === "ArrowDown") {
-      handleMoveDown(index);
-    }
-  };
+  const isUploadingMedia =
+    withUploadIndicator &&
+    media.some((file) => {
+      if ("bucket_path" in file) return;
+      const isUploaded = uploadReadyFiles?.includes(file);
+      return !isUploaded;
+    });
 
   return (
     <div className="w-full max-w-3xl">
@@ -129,46 +132,64 @@ export default function MediaSelect({
       </div>
       <ul className="space-y-2">
         {media.map((file, index) => {
-          const isUploaded = uploadReadyFiles?.includes(file);
+          const isNewFile = !("bucket_path" in file);
+          const isUploaded = isNewFile && uploadReadyFiles?.includes(file);
+          const isVideo = isNewFile
+            ? file.type.startsWith("video/")
+            : file.type === MediaType.VIDEO;
+
           return (
             <li
               key={file.id}
               className="flex items-center space-x-2 rounded-lg bg-white p-2 shadow"
-              onKeyDown={(event) => handleKeyDown(event, index)}
               tabIndex={0}
             >
               {media.length > 1 && (
                 <Stack className="gap-2">
                   <Button
                     type="button"
-                    className="size-[20px]"
+                    className={twMerge(
+                      "size-[20px]",
+                      isUploadingMedia ? "opacity-80" : "",
+                    )}
                     size="sm"
                     onClick={() => handleMoveUp(index)}
-                    disabled={index === 0}
+                    disabled={isUploadingMedia}
                   >
                     <FontAwesomeIcon icon={faChevronUp} size="1x" />
                   </Button>
                   <Button
                     type="button"
-                    className="size-[20px]"
+                    className={twMerge(
+                      "size-[20px]",
+                      isUploadingMedia ? "opacity-80" : "",
+                    )}
                     size="sm"
                     onClick={() => handleMoveDown(index)}
-                    disabled={index === media.length - 1}
+                    disabled={isUploadingMedia}
                   >
                     <FontAwesomeIcon icon={faChevronDown} size="1x" />
                   </Button>
                 </Stack>
               )}
               <div className="relative h-20 w-20 flex-shrink-0">
-                {file.type.startsWith("video/") ? (
+                {isVideo ? (
                   <video
-                    src={file.preview}
+                    src={
+                      isNewFile
+                        ? file.preview
+                        : S3Service.getFileUrlFromFullPath(file.bucket_path)
+                    }
                     className="h-full w-full rounded object-cover"
                     controls
                   />
                 ) : (
                   <img
-                    src={file.preview}
+                    src={
+                      isNewFile
+                        ? file.preview
+                        : S3Service.getFileUrlFromFullPath(file.bucket_path)
+                    }
                     alt={`Preview ${index + 1}`}
                     className="h-full w-full rounded object-cover"
                   />
@@ -176,14 +197,23 @@ export default function MediaSelect({
               </div>
               <Stack className="flex-grow gap-2">
                 <Stack>
-                  <p className="truncate text-wrap break-words break-all text-sm font-medium leading-[16px]">
-                    {file.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
+                  {isNewFile ? (
+                    <>
+                      <p className="truncate text-wrap break-words break-all text-sm font-medium leading-[16px]">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </>
+                  ) : (
+                    <p className="truncate text-wrap break-words break-all text-sm font-medium leading-[16px]">
+                      {S3Service.getFileUrlFromFullPath(file.bucket_path)}
+                    </p>
+                  )}
                 </Stack>
                 {withUploadIndicator &&
+                  isNewFile &&
                   (isUploaded ? (
                     <p className="text-[14px] text-green-600">Upload ready</p>
                   ) : (

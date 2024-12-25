@@ -93,6 +93,7 @@ model organization {
 enum Currency {
   BGN
   EUR
+  LEI
 }
 
 enum MediaType {
@@ -110,9 +111,9 @@ model media {
 model event_media {
   id       String  @id @default(uuid())
   order    Int
-  event    event?  @relation(fields: [event_id], references: [id])
+  event    event?  @relation(fields: [event_id], references: [id], onDelete: Cascade)
   event_id String?
-  media    media   @relation(fields: [media_id], references: [id])
+  media    media   @relation(fields: [media_id], references: [id], onDelete: Cascade)
   media_id String
 }
 

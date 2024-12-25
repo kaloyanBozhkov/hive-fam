@@ -65,8 +65,15 @@ export class S3Service {
     return `${organizationId}/${fileName}`;
   }
 
-  static getFileUrl(orgId: string, fileName: string) {
+  static getBaseUrl() {
     // @TODO replace with NEXT_PUBLIC env var
-    return `https://kems-bucket.s3.eu-central-1.amazonaws.com/${orgId}/${fileName}`;
+    return "https://kems-bucket.s3.eu-central-1.amazonaws.com";
+  }
+  static getFileUrlFromFullPath(path: string) {
+    return `${S3Service.getBaseUrl()}/${path}`;
+  }
+
+  static getFileUrl(orgId: string, fileName: string) {
+    return `${S3Service.getBaseUrl()}/${orgId}/${fileName}`;
   }
 }

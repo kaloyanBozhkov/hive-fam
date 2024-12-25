@@ -29,7 +29,7 @@ export const getOrgId = async () => {
 
 export const getOrg = async () => {
   const orgId = await getOrgId();
-  const org = await db.organization.findUnique({
+  const org = await db.organization.findUniqueOrThrow({
     where: {
       id: orgId,
     },

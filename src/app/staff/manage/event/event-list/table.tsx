@@ -13,7 +13,7 @@ import {
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
 import { deleteEvent } from "@/server/actions/deleteEvent";
-import type { Currency, PosterType } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
@@ -25,8 +25,6 @@ export type Event = {
   title: string;
   description: string;
   date: Date;
-  poster_data_url: string;
-  poster_type: PosterType;
   external_event_url: string | null;
   event_photos_url: string | null;
   venue: {
@@ -52,28 +50,6 @@ export const EventList = ({ data }: { data: Event[] }) => {
 
   const columns: ColumnDef<Event>[] = [
     {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ row }) => (
-        <Link href={`/event/${row.original.id}?as=view`}>
-          <p className="max-w-[100px] overflow-auto whitespace-nowrap">
-            {row.original.id}
-          </p>
-        </Link>
-      ),
-    },
-    {
-      accessorKey: "poster_data_url",
-      header: "Poster",
-      cell: ({ row }) => (
-        <img
-          src={row.original.poster_data_url}
-          alt="poster"
-          className="h-10 w-10 rounded-sm"
-        />
-      ),
-    },
-    {
       accessorKey: "title",
       header: "Title",
     },
@@ -89,10 +65,6 @@ export const EventList = ({ data }: { data: Event[] }) => {
       accessorKey: "venue.name",
       header: "Venue",
     },
-    // {
-    //   accessorKey: "poster_type",
-    //   header: "Poster Type",
-    // },
     {
       accessorKey: "ticket_price",
       header: "Price",

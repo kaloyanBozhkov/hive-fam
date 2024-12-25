@@ -7,15 +7,35 @@ import Link from "next/link";
 import { isPastEvent } from "@/utils/specific";
 
 const getEvent = async (id: string) => {
-  const event = await db.event.findFirst({
+  const { poster_media, ...event } = await db.event.findFirstOrThrow({
     where: {
       id,
     },
     include: {
       venue: true,
+      poster_media: {
+        select: {
+          order: true,
+          media: {
+            select: {
+              bucket_path: true,
+              media_type: true,
+            },
+          },
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
   });
-  return event;
+  return {
+    poster_media: poster_media.map((pm) => ({
+      bucket_path: pm.media.bucket_path,
+      type: pm.media.media_type,
+    })),
+    ...event,
+  };
 };
 
 export default async function EventPage({
@@ -27,8 +47,19 @@ export default async function EventPage({
 }) {
   const { id } = await params;
   const { as } = await searchParams;
-  const event = await getEvent(id);
+
+  let event: Awaited<ReturnType<typeof getEvent>>;
+
+  try {
+    event = await getEvent(id);
+  } catch (err) {
+    console.warn(err);
+    redirect("/");
+    return;
+  }
+
   if (!event || isPastEvent(event)) redirect("/");
+
   return (
     <>
       <Stack className="m-auto min-h-[400px] max-w-[500px] gap-4">

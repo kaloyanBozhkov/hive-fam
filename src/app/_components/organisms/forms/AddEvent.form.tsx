@@ -28,9 +28,7 @@ import {
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import Group from "../../layouts/Group.layout";
 import Link from "next/link";
-import { useState } from "react";
 import { Switch } from "../../shadcn/Switch.shadcn";
-import MediaSelect from "../MediaSelect.organism";
 import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
 import { addDays } from "date-fns";
 
@@ -38,14 +36,9 @@ const event = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   date: z.date(),
+  // array of bucketPaths for media, in order of appearance
   poster_media: z
-    .array(
-      z.object({
-        bucket_path: z.string(),
-        type: z.nativeEnum(MediaType),
-        order: z.number(),
-      }),
-    )
+    .array(z.object({ bucket_path: z.string(), type: z.nativeEnum(MediaType) }))
     .min(1),
   external_event_url: z.string().url("Invalid URL").optional(),
   venue_id: z.string().uuid("Invalid venue ID"),
@@ -70,7 +63,6 @@ const AddEventForm = ({
   organizationId: string;
 }) => {
   const router = useRouter();
-  const [selectedEventMedia, setSelectedEventMedia] = useState<File[]>([]);
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof event>>({
     resolver: zodResolver(event),
@@ -90,7 +82,7 @@ const AddEventForm = ({
   const handleSubmit = async (data: z.infer<typeof event>) => {
     startTransition(async () => {
       console.log(data);
-      return;
+      debugger;
       const result = await onAdd(data);
       if (result.success) {
         form.reset();
@@ -215,23 +207,6 @@ const AddEventForm = ({
             organizationId={organizationId}
             maxFiles={10}
           />
-          {/* <FormField
-            control={form.control}
-            name="poster_media"
-            render={() => (
-              <FormItem>
-                <FormLabel>Poster Media</FormLabel>
-                <FormControl>
-                  <MediaSelect
-                    mediaType="BOTH"
-                    maxFiles={10}
-                    onChange={setSelectedEventMedia}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
           <FormField
             control={form.control}
             name="external_event_url"

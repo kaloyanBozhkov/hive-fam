@@ -18,7 +18,7 @@ import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
-import { Currency, PosterType } from "@prisma/client";
+import { Currency, MediaType } from "@prisma/client";
 import {
   Select,
   SelectContent,
@@ -27,14 +27,24 @@ import {
   SelectValue,
 } from "../../shadcn/Select.shadcn";
 import { Switch } from "../../shadcn/Switch.shadcn";
+import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
 
 const event = z.object({
   id: z.string().uuid(),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   date: z.date(),
-  poster_data_url: z.string(),
-  poster_type: z.nativeEnum(PosterType),
+  // array of bucketPaths for media, in order of appearance
+  poster_media: z
+    .array(
+      z.object({
+        bucket_path: z.string(),
+        type: z.nativeEnum(MediaType),
+        id: z.string(),
+        order: z.number(),
+      }),
+    )
+    .min(1),
   external_event_url: z.string().url("Invalid URL").optional(),
   venue_id: z.string().uuid("Invalid venue ID"),
   is_published: z.boolean(),
@@ -48,6 +58,7 @@ const EditEventForm = ({
   initialData,
   onEdit,
   venues,
+  organizationId,
 }: {
   className?: string;
   initialData: z.infer<typeof event>;
@@ -55,9 +66,11 @@ const EditEventForm = ({
     eventData: z.infer<typeof event>,
   ) => Promise<{ success: boolean; error?: string }>;
   venues: { id: string; name: string }[];
+  organizationId: string;
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  console.log(initialData);
 
   const form = useForm<z.infer<typeof event>>({
     resolver: zodResolver(event),
@@ -73,18 +86,6 @@ const EditEventForm = ({
         form.setError("title", { message: result.error });
       }
     });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        form.setValue("poster_data_url", result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   return (
@@ -186,32 +187,13 @@ const EditEventForm = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="poster_data_url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Poster</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleFileChange(e);
-                    }}
-                  />
-                </FormControl>
-                {field.value && (
-                  <img
-                    src={field.value}
-                    alt="Poster preview"
-                    className="mt-2 max-h-40 object-contain"
-                  />
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
+          <MultiMediaUploadField
+            form={form}
+            name="poster_media"
+            label="Poster Media"
+            organizationId={organizationId}
+            maxFiles={10}
+            alreadySelectedMedia={initialData.poster_media}
           />
           <FormField
             control={form.control}

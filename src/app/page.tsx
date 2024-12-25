@@ -9,13 +9,33 @@ const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
     include: {
       venue: true,
+      poster_media: {
+        select: {
+          order: true,
+          media: {
+            select: {
+              bucket_path: true,
+              media_type: true,
+            },
+          },
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     where: {
       is_published: true,
       organization_id: orgId,
     },
   });
-  return events;
+  return events.map(({ poster_media, ...event }) => ({
+    ...event,
+    poster_media: poster_media.map((pm) => ({
+      bucket_path: pm.media.bucket_path,
+      type: pm.media.media_type,
+    })),
+  }));
 };
 
 export default async function Home() {

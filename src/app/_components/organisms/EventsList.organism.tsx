@@ -6,11 +6,15 @@ import {
 } from "@/app/_components/shadcn/Tabs.shadcn";
 import Center from "../layouts/Center.layout";
 import Stack from "../layouts/Stack.layout";
-import { type event, type venue } from "@prisma/client";
+import { type MediaType, type event, type venue } from "@prisma/client";
 import EventCard from "./Event.organism";
 
 type Event = event & {
   venue: venue;
+  poster_media: {
+    bucket_path: string;
+    type: MediaType;
+  }[];
 };
 
 const Events = ({ events }: { events: Event[] }) => {

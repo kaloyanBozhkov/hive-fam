@@ -1,6 +1,11 @@
 "use server";
 
-import { Prisma, Role, event as Event } from "@prisma/client";
+import {
+  Prisma,
+  Role,
+  type event as Event,
+  type MediaType,
+} from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
@@ -13,7 +18,18 @@ const errorMessages: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
-export async function editEvent(eventData: Partial<Event>) {
+export async function editEvent({
+  poster_media: latestEventMedia,
+  ...eventData
+}: Partial<Event> & {
+  poster_media: {
+    bucket_path: string;
+    type: MediaType;
+    // event_media id
+    id: string;
+    order: number;
+  }[];
+}) {
   try {
     const user = await getJWTUser();
     if (
@@ -23,9 +39,39 @@ export async function editEvent(eventData: Partial<Event>) {
     )
       throw new Error("Unauthorized");
 
+    // delete edent media
+    await db.event_media.deleteMany({
+      where: {
+        event_id: eventData.id,
+      },
+    });
+    const createdMedia = await db.media.createManyAndReturn({
+      data: latestEventMedia.map((lm) => ({
+        bucket_path: lm.bucket_path,
+        media_type: lm.type,
+      })),
+      select: {
+        id: true,
+        bucket_path: true,
+      },
+    });
+
+    const mediaWithOrder = latestEventMedia.map((lm) => ({
+      order: lm.order,
+      media_id: createdMedia.find((cm) => cm.bucket_path === lm.bucket_path)!
+        .id,
+    }));
+
     const event = await db.event.update({
       where: { id: eventData.id, organization_id: user.organization_id },
-      data: eventData,
+      data: {
+        ...eventData,
+        poster_media: {
+          createMany: {
+            data: mediaWithOrder,
+          },
+        },
+      },
     });
 
     // Revalidate the event list page

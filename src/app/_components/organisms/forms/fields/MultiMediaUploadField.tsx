@@ -15,7 +15,6 @@ import type {
 } from "react-hook-form";
 import { useRef, useState } from "react";
 import MediaSelect from "@/app/_components/organisms/MediaSelect.organism";
-import { createUUID } from "@/utils/common";
 import { MediaType } from "@prisma/client";
 import Stack from "@/app/_components/layouts/Stack.layout";
 
@@ -25,7 +24,24 @@ interface MediaUploadFieldProps<T extends FieldValues> {
   label: string;
   organizationId: string;
   maxFiles: number;
+  alreadySelectedMedia?: AlreadyUploadedMedia[];
 }
+
+type UploadedMedia = {
+  id: string;
+  order: number;
+  bucket_path: string;
+  type: MediaType;
+};
+
+type MediaFile = File & { id: string };
+
+type AlreadyUploadedMedia = {
+  id: string;
+  bucket_path: string;
+  type: MediaType;
+};
+type SelectedMedia = AlreadyUploadedMedia | MediaFile;
 
 export const MultiMediaUploadField = <T extends FieldValues>({
   form,
@@ -34,37 +50,56 @@ export const MultiMediaUploadField = <T extends FieldValues>({
   label,
   organizationId,
   maxFiles,
+  alreadySelectedMedia = [],
 }: MediaUploadFieldProps<T>) => {
-  const prevFiles = useRef<(File & { id: string })[]>([]);
+  const currentMedias = useRef<SelectedMedia[]>(alreadySelectedMedia);
   const [isUploadingMultipleFiles, setIsUploadingMultipleFIles] =
     useState(false);
   const [uploadReadyFiles, setUploadReadyFiles] = useState<File[]>([]);
   const { uploadFile } = useFileUploader({ organizationId });
-  const handleMediaChange = async (medias: (File & { id: string })[]) => {
+  const handleMediaChange = async (allMedias: SelectedMedia[]) => {
     form.setValue(name, [] as PathValue<T, Path<T>>);
     setIsUploadingMultipleFIles(true);
+    const medias = allMedias.filter(
+      (media) => !("url" in media),
+    ) as MediaFile[];
     let newMedia = [...medias];
-    if (prevFiles.current.length)
-      newMedia = medias.filter((media) => !prevFiles.current.includes(media));
+    if (currentMedias.current.length)
+      newMedia = medias.filter(
+        (media) => !currentMedias.current.find((m) => m.id === media.id),
+      );
 
-    const mediasWithBucketPath = [];
-    prevFiles.current = medias;
-    const uploadedFiles = await Promise.all(
-      newMedia.map(async (file, idx) => {
+    // new media that will be uploded
+    const mediasWithBucketPath: Omit<UploadedMedia, "order">[] = [];
+
+    await Promise.all(
+      newMedia.map(async (file) => {
+        // @TODO add signals and abort controller on remove of media
         const bucketPath = await uploadFile(file, file.id);
         mediasWithBucketPath.push({
-          bucketPath,
+          id: file.id,
+          bucket_path: bucketPath,
           type: file.type.startsWith("image/")
             ? MediaType.IMAGE
             : MediaType.VIDEO,
-          order: idx,
         });
         setUploadReadyFiles((prev) => [...prev, file]);
         return bucketPath;
       }),
     );
 
-    form.setValue(name, uploadedFiles as PathValue<T, Path<T>>);
+    const currentMedia = [...currentMedias.current, ...mediasWithBucketPath];
+
+    const formattedMedia = medias.map((media, order) => {
+      const curr = currentMedia.find((cMedia) => cMedia.id === media.id)!;
+      return {
+        ...curr,
+        order,
+      };
+    }) as SelectedMedia[];
+
+    currentMedias.current = formattedMedia;
+    form.setValue(name, currentMedias.current as PathValue<T, Path<T>>);
     setIsUploadingMultipleFIles(false);
   };
 
@@ -83,8 +118,9 @@ export const MultiMediaUploadField = <T extends FieldValues>({
                 mediaType="BOTH"
                 withUploadIndicator
                 uploadReadyFiles={uploadReadyFiles}
+                alreadySelectedMedia={alreadySelectedMedia}
               />
-              {isUploadingMultipleFiles && <p>Uploading...</p>}
+              {isUploadingMultipleFiles && <p className="mt-2">Uploading...</p>}
             </Stack>
           </FormControl>
           <FormMessage />

@@ -1,3 +1,5 @@
+"use client";
+
 import Stack from "../layouts/Stack.layout";
 import {
   Card,
@@ -10,16 +12,29 @@ import {
 import { Button } from "../shadcn/Button.shadcn";
 import Link from "next/link";
 import Group from "../layouts/Group.layout";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import DateCard from "../molecules/DateCard.molecule";
 import BuyTickets from "./BuyTickets.organism";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
-import { type event, type venue } from "@prisma/client";
+import { MediaType, type event, type venue } from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/app/_components/shadcn/Carousel.shadcn";
+import { S3Service } from "@/utils/s3/service";
+import SlideDots from "../atoms/SlideDots.atom";
 
 type Event = event & {
   venue: venue;
+  poster_media: {
+    bucket_path: string;
+    type: MediaType;
+  }[];
 };
 
 const EventCard = ({
@@ -29,6 +44,8 @@ const EventCard = ({
   event: Event;
   isPast?: boolean;
 }) => {
+  const [active, setActive] = useState(0);
+
   return (
     <Card className="bg-white">
       <CardHeader className="block">
@@ -54,19 +71,57 @@ const EventCard = ({
           ))}
         </CardDescription>
       </CardHeader>
-      <CardContent className="clear-both pt-2">
-        <Link href={event.external_event_url ?? "#"} target="_blank">
-          <div className="shadow-md">
-            <div className="overflow-hidden rounded-md [&:hover_img]:scale-[1.05]">
-              <img
-                src={event.poster_data_url}
-                className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
-                alt="Cover"
-              />
-            </div>
-          </div>
-        </Link>
-      </CardContent>
+      {event.poster_media.length > 0 && (
+        <CardContent className="clear-both pt-2">
+          <Stack className="gap-3">
+            <Link href={event.external_event_url ?? "#"} target="_blank">
+              <Carousel
+                onSlideChanged={setActive}
+                currentSlide={active}
+                opts={{ duration: 50, loop: true }}
+                className="w-full overflow-hidden rounded-md"
+              >
+                <CarouselContent className="h-full w-full">
+                  {event.poster_media.map((media, index) => {
+                    const url = S3Service.getFileUrlFromFullPath(
+                      media.bucket_path,
+                    );
+                    return (
+                      <CarouselItem key={index} className="h-full">
+                        {media.type === MediaType.IMAGE ? (
+                          <img
+                            src={url}
+                            className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                          />
+                        ) : media.type === MediaType.VIDEO ? (
+                          <video
+                            className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                            autoPlay
+                            loop
+                            muted
+                            controls
+                          >
+                            <source src={url} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : null}
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
+                <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+              </Carousel>
+            </Link>
+            <SlideDots
+              count={event.poster_media.length}
+              active={active}
+              onClick={setActive}
+              modifier="black"
+            />
+          </Stack>
+        </CardContent>
+      )}
       <CardFooter>
         <Stack className="w-full gap-4">
           <Group className="w-full items-center justify-between">
