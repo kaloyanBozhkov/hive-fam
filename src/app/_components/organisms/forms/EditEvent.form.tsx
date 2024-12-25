@@ -74,9 +74,6 @@ const EditEventForm = ({
     resolver: zodResolver(event),
     defaultValues: initialData,
   });
-
-  console.log(form.getValues());
-
   const handleSubmit = (data: z.infer<typeof event>) => {
     startTransition(async () => {
       const result = await onEdit(data);
