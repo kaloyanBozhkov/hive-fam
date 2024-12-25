@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum PosterType {
-  VIDEO
-  IMAGE
-}
-
 enum LinkType {
   INSTAGRAM
   FACEBOOK
@@ -100,18 +95,37 @@ enum Currency {
   EUR
 }
 
+enum MediaType {
+  VIDEO
+  IMAGE
+}
+
+model media {
+  id          String        @id @default(uuid())
+  media_type  MediaType
+  bucket_path String
+  event_media event_media[]
+}
+
+model event_media {
+  id       String  @id @default(uuid())
+  order    Int
+  event    event?  @relation(fields: [event_id], references: [id])
+  event_id String?
+  media    media   @relation(fields: [media_id], references: [id])
+  media_id String
+}
+
 model event {
-  id                 String     @id @default(uuid())
+  id                 String   @id @default(uuid())
   title              String
   description        String
   date               DateTime
-  poster_data_url    String
-  poster_type        PosterType @default(IMAGE)
   external_event_url String?
   event_photos_url   String? // when event is completed
-  is_published       Boolean    @default(false)
-  ticket_price       Float      @default(10)
-  price_currency     Currency   @default(BGN)
+  is_published       Boolean  @default(false)
+  ticket_price       Float    @default(10)
+  price_currency     Currency @default(BGN)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String
@@ -121,6 +135,7 @@ model event {
   organization    organization? @relation(fields: [organization_id], references: [id])
   organization_id String?
 
+  poster_media event_media[]
   sold_tickets ticket[]
 }
 

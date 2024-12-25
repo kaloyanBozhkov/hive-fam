@@ -13,7 +13,7 @@ import {
 import { Button } from "../shadcn/Button.shadcn";
 import Stack from "../layouts/Stack.layout";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import {

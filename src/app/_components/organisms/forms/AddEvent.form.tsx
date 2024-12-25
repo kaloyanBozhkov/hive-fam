@@ -17,7 +17,7 @@ import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Currency, PosterType } from "@prisma/client";
+import { Currency, MediaType } from "@prisma/client";
 import {
   Select,
   SelectContent,
@@ -30,13 +30,22 @@ import Group from "../../layouts/Group.layout";
 import Link from "next/link";
 import { useState } from "react";
 import { Switch } from "../../shadcn/Switch.shadcn";
+import MediaSelect from "../MediaSelect.organism";
+import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
 
 const event = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   date: z.date(),
-  poster_data_url: z.string(),
-  poster_type: z.nativeEnum(PosterType),
+  poster_media: z
+    .array(
+      z.object({
+        bucket_path: z.string(),
+        type: z.nativeEnum(MediaType),
+        order: z.number(),
+      }),
+    )
+    .min(1),
   external_event_url: z.string().url("Invalid URL").optional(),
   venue_id: z.string().uuid("Invalid venue ID"),
   is_published: z.boolean().default(false),
@@ -49,6 +58,7 @@ const AddEventForm = ({
   onAdd,
   venues,
   defaultCurrency,
+  organizationId,
 }: {
   className?: string;
   onAdd: (
@@ -56,19 +66,18 @@ const AddEventForm = ({
   ) => Promise<{ success: boolean; error?: string }>;
   venues: { id: string; name: string }[];
   defaultCurrency: Currency;
+  organizationId: string;
 }) => {
   const router = useRouter();
+  const [selectedEventMedia, setSelectedEventMedia] = useState<File[]>([]);
   const [isPending, startTransition] = useTransition();
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
-
   const form = useForm<z.infer<typeof event>>({
     resolver: zodResolver(event),
     defaultValues: {
       title: "",
       description: "",
       date: new Date(),
-      poster_data_url: undefined,
-      poster_type: PosterType.IMAGE,
+      poster_media: [],
       external_event_url: undefined,
       venue_id: "",
       is_published: false,
@@ -77,8 +86,10 @@ const AddEventForm = ({
     },
   });
 
-  const handleSubmit = (data: z.infer<typeof event>) => {
+  const handleSubmit = async (data: z.infer<typeof event>) => {
     startTransition(async () => {
+      console.log(data);
+      return;
       const result = await onAdd(data);
       if (result.success) {
         form.reset();
@@ -87,19 +98,6 @@ const AddEventForm = ({
         form.setError("title", { message: result.error });
       }
     });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        form.setValue("poster_data_url", result);
-        setPosterPreview(result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   return (
@@ -140,10 +138,7 @@ const AddEventForm = ({
                     <Link href="/staff/manage/event/add-venue">Add Venue</Link>
                   </Button>
                 </Group>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a venue" />
@@ -210,56 +205,26 @@ const AddEventForm = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="poster_data_url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Poster</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleFileChange(e);
-                    }}
-                  />
-                </FormControl>
-                {posterPreview && (
-                  <img
-                    src={posterPreview}
-                    alt="Poster preview"
-                    className="mt-2 max-h-40 object-contain"
-                  />
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
+          <MultiMediaUploadField
+            form={form}
+            name="poster_media"
+            label="Poster Media"
+            organizationId={organizationId}
+            maxFiles={10}
           />
           {/* <FormField
             control={form.control}
-            name="poster_type"
-            render={({ field }) => (
+            name="poster_media"
+            render={() => (
               <FormItem>
-                <FormLabel>Poster Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select poster type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.values(PosterType).map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>Poster Media</FormLabel>
+                <FormControl>
+                  <MediaSelect
+                    mediaType="BOTH"
+                    maxFiles={10}
+                    onChange={setSelectedEventMedia}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

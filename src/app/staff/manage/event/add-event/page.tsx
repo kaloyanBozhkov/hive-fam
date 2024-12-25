@@ -1,7 +1,7 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import AddEventForm from "@/app/_components/organisms/forms/AddEvent.form";
 import { addEvent } from "@/server/actions/addEvent";
-import { getOrg } from "@/server/actions/org";
+import { getOrg, getOrgId } from "@/server/actions/org";
 import { getJWTUser } from "@/server/auth/getJWTUser";
 import { db } from "@/server/db";
 import { Currency, Role } from "@prisma/client";
@@ -28,7 +28,8 @@ const getVenues = async () => {
 };
 
 export default async function AddEvent() {
-  const { venues, defaultCurrency } = await getVenues();
+  const { venues, defaultCurrency } = (await getVenues()) ?? {};
+  const orgId = await getOrgId();
   return (
     <Stack className="gap-y-8">
       <h1 className="text-[22px] font-semibold leading-[120%]">New Event</h1>
@@ -36,6 +37,7 @@ export default async function AddEvent() {
         onAdd={addEvent}
         venues={venues}
         defaultCurrency={defaultCurrency}
+        organizationId={orgId}
       />
     </Stack>
   );

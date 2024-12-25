@@ -1,7 +1,6 @@
-import { env } from "@/env";
 import { getBucketName, s3 } from "@/server/s3/s3";
 import { S3Service } from "@/utils/s3/service";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 
 // Define the query schema

@@ -10,21 +10,22 @@ export const useFileUploader = ({
 }: {
   organizationId: string;
   onUploadProgress?: (progress: number) => void;
-  onSuccessfulUpload?: (url: string, path?: FileBucketPath) => void;
+  onSuccessfulUpload?: (path: FileBucketPath, url?: string) => void;
 }) => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const uploadFile = async (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement> | File,
     overwriteName?: string,
   ) => {
     setUploadProgress(0);
+    setIsUploading(false);
     setError(null);
-    const file = e.target.files?.[0];
+    const file = e instanceof File ? e : e.target.files?.[0];
     if (!file) {
       alert("Please select a file first.");
-      return;
+      return "";
     }
 
     setIsUploading(true);
@@ -34,24 +35,31 @@ export const useFileUploader = ({
     const fileName = encodeURIComponent(overwriteName ?? file.name);
     const fileType = file.type;
 
-    const uploadUrl = await S3Service.getPresignedUrl(
-      fileName,
-      fileType,
-      organizationId,
-    );
+    try {
+      const uploadUrl = await S3Service.getPresignedUrl(
+        fileName,
+        fileType,
+        organizationId,
+      );
 
-    // Step 2: Upload file to S3
-    await S3Service.uploadFileToS3({
-      uploadUrl,
-      file,
-      fileType,
-      onUploadProgress,
-    });
-    const fileUrl = S3Service.getFileUrl(organizationId, fileName);
-    const pathName = S3Service.getBucketPath(organizationId, fileName);
-    onSuccessfulUpload?.(fileUrl, pathName);
-    setIsUploading(false);
-    return fileUrl;
+      // Step 2: Upload file to S3
+      await S3Service.uploadFileToS3({
+        uploadUrl,
+        file,
+        fileType,
+        onUploadProgress,
+      });
+      const fileUrl = S3Service.getFileUrl(organizationId, fileName);
+      const pathName = S3Service.getBucketPath(organizationId, fileName);
+      onSuccessfulUpload?.(pathName, fileUrl);
+      setIsUploading(false);
+      return pathName;
+    } catch (error) {
+      console.warn(error);
+      setError("Failed to upload file.");
+      setIsUploading(false);
+      return "";
+    }
   };
 
   return {

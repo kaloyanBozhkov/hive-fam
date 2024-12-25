@@ -23,9 +23,7 @@ export const getOrgId = async () => {
 
   orgId = orgId ?? domainID ?? env.TMP_ORG_ID;
 
-  if (!orgId) {
-    throw new Error("Org ID not found");
-  }
+  if (!orgId) console.warn("Org ID not found");
   return orgId;
 };
 

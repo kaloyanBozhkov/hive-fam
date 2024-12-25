@@ -51,7 +51,7 @@ const brandQRCode = async ({
   logoRadius,
   fontColor = "white",
   fontSize = "28px",
-  fontBg = "black",
+  // fontBg = "black",
   textBgRadius = 5,
 
   canvasSize = QR_CANVAS_CONFIG.qrSize,

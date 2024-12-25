@@ -9,7 +9,6 @@ import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,

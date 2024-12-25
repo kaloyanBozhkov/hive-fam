@@ -1,4 +1,4 @@
-import { event as Event } from "@prisma/client";
+import type { event as Event } from "@prisma/client";
 import { addHours } from "date-fns";
 
 // TODO add longer period events?
