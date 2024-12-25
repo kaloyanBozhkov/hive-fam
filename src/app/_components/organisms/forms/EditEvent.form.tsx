@@ -70,12 +70,12 @@ const EditEventForm = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  console.log(initialData);
-
   const form = useForm<z.infer<typeof event>>({
     resolver: zodResolver(event),
     defaultValues: initialData,
   });
+
+  console.log(form.getValues());
 
   const handleSubmit = (data: z.infer<typeof event>) => {
     startTransition(async () => {

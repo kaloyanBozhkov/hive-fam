@@ -100,6 +100,7 @@ export const MultiMediaUploadField = <T extends FieldValues>({
 
     currentMedias.current = formattedMedia;
     form.setValue(name, currentMedias.current as PathValue<T, Path<T>>);
+    console.log("set", currentMedias.current);
     setIsUploadingMultipleFIles(false);
   };
 

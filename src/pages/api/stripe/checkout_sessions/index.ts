@@ -8,6 +8,7 @@ import { formatAmountForStripe } from "@/server/stripe/stripe.helpers";
 import { db } from "@/server/db";
 import { z } from "zod";
 import { Currency } from "@prisma/client";
+import { S3Service } from "@/utils/s3/service";
 
 const MIN_AMOUNT = 0.5,
   MAX_AMOUNT = 100000;
@@ -42,7 +43,16 @@ export default async function handler(
         select: {
           organization_id: true,
           ticket_price: true,
-          poster_data_url: true,
+          poster_media: {
+            select: {
+              media: {
+                select: {
+                  bucket_path: true,
+                  media_type: true,
+                },
+              },
+            },
+          },
           organization: {
             select: {
               brand_logo_data_url: true,
@@ -69,8 +79,11 @@ export default async function handler(
               unit_amount: formatAmountForStripe(p.ticketPrice, currency),
               currency,
               product_data: {
-                // TODO images are data urls in db rn, need to be links to s3
-                images: [],
+                images: event.poster_media
+                  .filter((m) => m.media.media_type === "IMAGE")
+                  .map((m) =>
+                    S3Service.getFileUrlFromFullPath(m.media.bucket_path),
+                  ),
                 name: `Tiket - ${p.eventName}`,
                 description: "Regular access",
               },
