@@ -5,3 +5,7 @@ export const DOMAIN_CONFIG = {
   localhost: "7380adac-fd46-4daa-a8bf-f5bde81bf67f",
   "192.168.1.100": "7380adac-fd46-4daa-a8bf-f5bde81bf67f",
 };
+
+export const getDomainFromOrgId = (orgId: string) => {
+  return Object.entries(DOMAIN_CONFIG).find(([, id]) => id === orgId)?.[0]!;
+};
