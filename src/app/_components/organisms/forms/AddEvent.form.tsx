@@ -225,9 +225,17 @@ const AddEventForm = ({
             name="ticket_price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ticket Price</FormLabel>
+                <FormLabel>
+                  <Stack>
+                    <p>Ticket Price</p>
+                    <p className="font-light text-gray-400">
+                      Note: minimum price is around 0.1 USD
+                    </p>
+                  </Stack>
+                </FormLabel>
                 <FormControl>
                   <Input
+                    min={1.5}
                     type="number"
                     {...field}
                     onChange={(e) =>

@@ -46,7 +46,7 @@ export default async function Home() {
       <div className="full-width mb-4 h-[420px] overflow-hidden border-y-[1px] border-white sm:h-[600px]">
         <LandingBanner />
       </div>
-      <Stack className="mt-2 min-h-[400px] gap-4">
+      <Stack className="mt-2 min-h-[400px] gap-4 px-[10px]">
         <EventsList events={await getEvents(orgId)} />
       </Stack>
     </>

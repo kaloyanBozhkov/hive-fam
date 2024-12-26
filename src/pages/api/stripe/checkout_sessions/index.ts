@@ -43,6 +43,7 @@ export default async function handler(
         select: {
           organization_id: true,
           ticket_price: true,
+          price_currency: true,
           poster_media: {
             select: {
               media: {
@@ -60,6 +61,11 @@ export default async function handler(
           },
         },
       });
+
+      console.log(items, event.ticket_price, event.price_currency);
+
+      if (event.price_currency !== currency)
+        throw new Error("Currency doesn't match");
 
       if (items.some((p) => p.ticketPrice !== event.ticket_price))
         throw new Error("Prices not matching for all items");
@@ -90,7 +96,7 @@ export default async function handler(
             },
             quantity: 1,
           })),
-          billing_address_collection: "required",
+          billing_address_collection: "auto",
           cancel_url: `${req.headers.origin!}/${onCancelRedirectTo}`,
           success_url: `${req.headers.origin!}/order/{CHECKOUT_SESSION_ID}`,
           custom_text: {

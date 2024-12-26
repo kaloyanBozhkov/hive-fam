@@ -21,7 +21,7 @@ const getSocialLinks = async () => {
 const Header = async ({ brandName }: { brandName: string }) => {
   const socialLinks = await getSocialLinks();
   return (
-    <Group className="w-full items-center justify-between py-4">
+    <Group className="w-full items-center justify-between px-[10px] py-4">
       <Link href="/">
         <h1 className="pointer font-rex-bold text-[30px] leading-[110%] text-white">
           {brandName}

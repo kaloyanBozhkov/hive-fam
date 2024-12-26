@@ -213,6 +213,7 @@ const EditEventForm = ({
                 <FormLabel>Ticket Price</FormLabel>
                 <FormControl>
                   <Input
+                    min={1.5}
                     type="number"
                     {...field}
                     onChange={(e) =>
