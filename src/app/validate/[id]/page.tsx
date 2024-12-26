@@ -21,8 +21,9 @@ const validateTicket = async (ticketId: string) => {
   });
   if (!ticket) return redirect("/");
 
-  const user = await getJWTUser();
-  if (!user.isStaff) return redirect(`/event/${ticket.event.id}`);
+  const eventPageUrl = `/event/${ticket.event.id}`;
+  const user = await getJWTUser(eventPageUrl);
+  if (!user.isStaff) return redirect(eventPageUrl);
 
   const alreadyScanned = ticket.scanned;
 
