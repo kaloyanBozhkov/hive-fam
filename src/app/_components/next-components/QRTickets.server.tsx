@@ -14,11 +14,12 @@ const QRTicketsServer = async ({
   const orgId = await getOrgId();
   const orgDomain = Object.entries(DOMAIN_CONFIG).find(
     ([, id]) => id === orgId,
-  )?.[0]!;
+  )?.[0];
   const contents = formatTicketSignedUrls(
-    orgDomain,
+    orgDomain ?? "localhost",
     tickets.map(({ id }) => id),
   );
+
   const qrs = contents.map((urlContent) => ({ urlContent }));
   const qrCodes = (await fetchPostJSON(
     `https://${orgDomain}/api/qr/getQRCodes`,
@@ -27,6 +28,7 @@ const QRTicketsServer = async ({
       orgId,
     },
   )) as { dataURL: string }[];
+
   return (
     <QRTickets qrCodes={qrCodes} tickets={tickets} withShare={withShare} />
   );
