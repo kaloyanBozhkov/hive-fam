@@ -8,7 +8,6 @@ export const getQRCodes = async (contents: string[]) => {
   const orgDomain = Object.entries(DOMAIN_CONFIG).find(
     ([, id]) => id === orgId,
   )?.[0];
-  console.log("orgDomain", orgDomain);
   return fetchPostJSON(`https://${orgDomain}/api/qr/getQRCodes`, {
     qrs,
     orgId,

@@ -19,6 +19,7 @@ export default async function handler(
 ) {
   try {
     const { qrs, orgId } = getQRCodesSchema.parse(req.body);
+    console.log("qrs", qrs);
     const qrCodes = await generateQRDataURLs(qrs);
     const brandedQRCodes = await brandQRCodes(qrCodes, orgId);
     res.status(200).json(brandedQRCodes);
