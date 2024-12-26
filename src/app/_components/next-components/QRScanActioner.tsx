@@ -8,7 +8,8 @@ export const QRScanActioner = () => {
       onDecodedQR={(url) => (window.location.href = url)}
       doneChildren={<p>Scan successful. Redirecting...</p>}
       validateDecodedString={async (str) => {
-        if (!str.includes("http")) return false;
+        debugger;
+        if (!(str.includes("http") || str.includes("www."))) return false;
         if (!str.includes("/validate/")) return false;
         return true;
       }}
