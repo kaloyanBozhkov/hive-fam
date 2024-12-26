@@ -53,30 +53,10 @@ const getSlies = async () => {
 
 const LandingBanner = async ({ className }: { className?: string }) => {
   const slides = await getSlies();
-  const bg = (() => {
-    switch (slides[0]?.type) {
-      case "ALBUM":
-        return slides[0].coverSrc;
-      case "INFO":
-        return slides[0].bgVideoSrc;
-      default:
-        return null;
-    }
-  })();
 
   return (
     <div className={twMerge("relative h-full w-full", className)}>
       {slides.length > 0 ? <Banners slides={slides} /> : <Connecting />}
-      {bg && (
-        <Image
-          src={bg}
-          alt="party"
-          width={1920}
-          height={1280}
-          className="absolute h-full object-cover object-center"
-          priority
-        />
-      )}
     </div>
   );
 };
