@@ -1,5 +1,11 @@
 "use client";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import type {
   QrcodeErrorCallback,

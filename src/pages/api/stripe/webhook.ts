@@ -6,6 +6,7 @@ import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
 import type { Currency } from "@prisma/client";
 import { createTickets } from "@/server/queries/tickets/createTickets";
+import { sendOrderReceiptEmail } from "@/server/email/sendOrderReceiptEmail";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -74,12 +75,17 @@ const cors = Cors({
             orderSessionId: checkoutSessionId,
           });
 
-          // await sendOrderReceiptEmail({
-          //   customerDetails,
-          //   orderSessionId: checkoutSessionId,
-          // });
+          try {
+            await sendOrderReceiptEmail({
+              customerDetails,
+              orderSessionId: checkoutSessionId,
+              eventId,
+            });
+            console.log("receipt email sent successfully!!!!!");
+          } catch (error) {
+            console.warn("Failed to send order completed email");
+          }
 
-          // console.log("receipt email sent successfully!!!!!");
           break;
         }
         case "payment_intent.succeeded": {

@@ -1,6 +1,7 @@
 import Group from "@/app/_components/layouts/Group.layout";
 import DrawerMenu from "@/app/_components/organisms/DrawerMenu.organism";
 import { getOrgId } from "@/server/actions/org";
+import { getUserRole } from "@/server/auth/getJWTUser";
 import { db } from "@/server/db";
 import Link from "next/link";
 
@@ -20,6 +21,8 @@ const getSocialLinks = async () => {
 
 const Header = async ({ brandName }: { brandName: string }) => {
   const socialLinks = await getSocialLinks();
+  const userRole = (await getUserRole()) ?? undefined;
+
   return (
     <Group className="w-full items-center justify-between px-[10px] py-4">
       <Link href="/">
@@ -27,7 +30,7 @@ const Header = async ({ brandName }: { brandName: string }) => {
           {brandName}
         </h1>
       </Link>
-      <DrawerMenu socialLinks={socialLinks} />
+      <DrawerMenu socialLinks={socialLinks} userRole={userRole} />
     </Group>
   );
 };

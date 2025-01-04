@@ -1,6 +1,6 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
-import { Button } from "@/app/_components/shadcn/Button.shadcn";
-import Link from "next/link";
+import { StaffNav } from "@/app/_components/organisms/StaffNav.organism";
+import { Role } from "@prisma/client";
 
 export default function ManagePage() {
   return (
@@ -10,12 +10,7 @@ export default function ManagePage() {
       </h2>
       <p>Select an action from the buttons above or use the navigation menu.</p>
       <Stack className="w-full gap-4 sm:max-w-[300px]">
-        <Button asChild>
-          <Link href="/staff/manage/event/event-list">Events List</Link>
-        </Button>
-        <Button asChild>
-          <Link href="/staff/manage/event/venue-list">Venues List</Link>
-        </Button>
+        <StaffNav userRole={Role.EVENT_MANAGER} variant="default" />
       </Stack>
     </Stack>
   );

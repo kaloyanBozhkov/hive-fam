@@ -9,15 +9,12 @@ import {
 } from "@/app/_components/shadcn/Card.shadcn";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const router = useRouter();
   return (
     <Stack className="min-h-[400px] gap-4">
       <Card className="w-full">
@@ -25,21 +22,9 @@ export default function AdminLayout({
           <CardTitle>
             <Group className="align-between w-full justify-between">
               <p>Admin area</p>
-              {pathname !== "/staff/manage/admin" ? (
-                <Button
-                  onClick={() =>
-                    pathname
-                      ? router.push(pathname.split("/").slice(0, -1).join("/"))
-                      : router.back()
-                  }
-                >
-                  Go back
-                </Button>
-              ) : (
-                <Button asChild>
-                  <Link href="/staff/manage">Back to management</Link>
-                </Button>
-              )}
+              <Link href="/staff/manage">
+                <Button>Go back</Button>
+              </Link>
             </Group>
           </CardTitle>
         </CardHeader>
