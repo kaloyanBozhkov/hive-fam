@@ -58,12 +58,16 @@ export default async function EventPage({
     return;
   }
 
-  if (!event || isPastEvent(event)) redirect("/");
+  if (!event) redirect("/");
 
   return (
     <>
       <Stack className="m-auto min-h-[400px] max-w-[500px] gap-4">
-        <FullScreenEvent event={event} isPast={false} isView={as === "view"} />
+        <FullScreenEvent
+          event={event}
+          isPast={isPastEvent(event)}
+          isView={as === "view"}
+        />
         <Button variant="outline">
           <Link href="/">Back To Home</Link>
         </Button>
