@@ -6,6 +6,9 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    esmExternals: true, // Enable ES Modules external resolution
+  },
   images: {
     remotePatterns: [
       {

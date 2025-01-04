@@ -1,11 +1,11 @@
-import { transporter } from "./nodemailer";
 import { z } from "zod";
+import { resend } from "./resend";
 
 const emailRequestSchema = z.object({
   to: z.string().nonempty(),
   subject: z.string().nonempty(),
   text: z.string().optional(),
-  html: z.string().optional(),
+  html: z.string().nonempty(),
   from: z.string().nonempty(),
 });
 
@@ -26,12 +26,18 @@ export const sendEmail = async ({
 
   if (!validationResult.success) throw Error("Invalid sendEmail request");
 
-  // Send the email
-  await transporter.sendMail({
-    from,
-    to, // Recipient address
-    subject, // Subject line
-    text, // Plain text body
-    html, // HTML body
-  });
+  try {
+    const response = await resend.emails.send({
+      from,
+      to,
+      subject,
+      html,
+    });
+
+    console.log("Email sent successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw error;
+  }
 };

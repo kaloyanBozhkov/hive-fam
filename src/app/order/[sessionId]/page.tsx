@@ -77,7 +77,7 @@ export default async function OrderPage({
                 alsoHideSelector="button"
               />
               <Button className="w-full shadow-md" variant="secondary">
-                <Group>
+                <Group className="items-center gap-2">
                   <FontAwesomeIcon icon={faCalendarAlt} />{" "}
                   <span>See Event</span>
                 </Group>

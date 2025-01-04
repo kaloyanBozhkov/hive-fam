@@ -1,11 +1,10 @@
-import { env } from "@/env";
 import type { CustomerDetails } from "@/pages/api/stripe/webhook";
 import { db } from "../db";
 import { render } from "@react-email/components";
-import OrderCompletedEmail from "@/app/_components/emails/orderComplete.email";
 import { getDomainFromOrgId } from "../config";
 import { format } from "date-fns";
-import { transporter } from "../mail/nodemailer";
+import OrderCompletedEmail from "@/app/_components/emails/OrderComplete.email";
+import { sendEmail } from "./send";
 
 export async function sendOrderReceiptEmail({
   customerDetails,
@@ -50,7 +49,7 @@ export async function sendOrderReceiptEmail({
   if (!sold_tickets.length) throw Error("No ticket found");
 
   const orgName = organization.name;
-  const orgUrl = getDomainFromOrgId(orgId);
+  const orgUrl = getDomainFromOrgId(orgId)!;
   const orderPageUrl = `${orgUrl}/order/${orderSessionId}`;
 
   const emailHtml = await render(
@@ -66,13 +65,15 @@ export async function sendOrderReceiptEmail({
     />,
   );
 
-  // Send email
-  const info = await transporter.sendMail({
-    from: env.EMAIL_FROM,
+  const info = await sendEmail({
+    from: `Event Tickets | ${organization.name} <tickets@eventrave.com>`,
     to: customerDetails.email,
     subject: `Order Receipt from ${orgName}`,
     html: emailHtml,
   });
 
-  console.log("Message sent: %s", info.messageId);
+  console.log(
+    "Message sent: %s",
+    info.data?.id ?? info.error?.message ?? info.error?.name,
+  );
 }

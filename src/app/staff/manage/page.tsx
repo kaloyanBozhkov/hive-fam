@@ -1,7 +1,7 @@
 import { LogoutBtnClient } from "@/app/_components/client/LogoutBtn.client";
 import Group from "@/app/_components/layouts/Group.layout";
 import Stack from "@/app/_components/layouts/Stack.layout";
-import { Button } from "@/app/_components/shadcn/Button.shadcn";
+import { StaffNav } from "@/app/_components/organisms/StaffNav.organism";
 import {
   Card,
   CardContent,
@@ -9,8 +9,6 @@ import {
   CardTitle,
 } from "@/app/_components/shadcn/Card.shadcn";
 import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
-import Link from "next/link";
 
 export default async function Manage() {
   const user = await getJWTUser();
@@ -33,32 +31,7 @@ export default async function Manage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Stack className="w-full gap-4 sm:max-w-[300px]">
-            {user.role === Role.KOKO && (
-              <Button asChild>
-                <Link href="/staff/manage/koko">Koko&apos;s dashboard</Link>
-              </Button>
-            )}
-            {([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role) && (
-              <>
-                <Button asChild>
-                  <Link href="/staff/manage/admin">Admin dashboard</Link>
-                </Button>
-              </>
-            )}
-            {([Role.ADMIN, Role.KOKO, Role.EVENT_MANAGER] as Role[]).includes(
-              user.role,
-            ) && (
-              <>
-                <Button asChild>
-                  <Link href="/staff/manage/event">Manage Events</Link>
-                </Button>
-              </>
-            )}
-            <Button asChild>
-              <Link href="/staff/manage/scan">Scan Ticket</Link>
-            </Button>
-          </Stack>
+          <StaffNav userRole={user.role} variant="default" />
         </CardContent>
       </Card>
     </Stack>
