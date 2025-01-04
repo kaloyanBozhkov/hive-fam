@@ -1,9 +1,8 @@
-import { getQRCodes } from "@/server/qr/getQRCodes";
 import { formatTicketSignedUrls } from "@/utils/tickets";
 import QRTickets from "../organisms/QRTickets.organism";
 import { getOrgId } from "@/server/actions/org";
 import { fetchPostJSON } from "@/utils/common";
-import { DOMAIN_CONFIG, getDomainFromOrgId } from "@/server/config";
+import { getDomainFromOrgId } from "@/server/config";
 
 const QRTicketsServer = async ({
   tickets,

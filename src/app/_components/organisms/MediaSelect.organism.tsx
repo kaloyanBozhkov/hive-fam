@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { Button } from "../shadcn/Button.shadcn";
 import { MediaType } from "@prisma/client";

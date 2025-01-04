@@ -1,6 +1,5 @@
 import { twMerge } from "tailwind-merge";
 
-import Image from "next/image";
 import Banners, { type BannerSlide } from "./Banners/Banners.carousel";
 import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";

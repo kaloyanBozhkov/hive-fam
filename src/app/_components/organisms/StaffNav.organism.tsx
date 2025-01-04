@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../shadcn/Accordion.shadcn";
-import { Button, ButtonProps } from "../shadcn/Button.shadcn";
+import { Button, type ButtonProps } from "../shadcn/Button.shadcn";
 import { Role } from "@prisma/client";
 import Stack from "../layouts/Stack.layout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,6 +19,7 @@ import {
   faFileAlt,
   faCalendarAlt,
   faTicketAlt,
+  type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import Group from "../layouts/Group.layout";
 
@@ -64,7 +65,10 @@ export const StaffNav = ({
 
 const LINKS: Record<
   string,
-  { label: string; links: { label: string; href: string; icon: any }[] }
+  {
+    label: string;
+    links: { label: string; href: string; icon: IconDefinition }[];
+  }
 > = {
   [Role.KOKO]: {
     label: "Koko's area",

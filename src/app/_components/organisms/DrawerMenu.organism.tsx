@@ -13,7 +13,7 @@ import {
 import { Button } from "../shadcn/Button.shadcn";
 import Stack from "../layouts/Stack.layout";
 import Link from "next/link";
-import { type ReactNode, Suspense, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -24,7 +24,7 @@ import {
   faSoundcloud,
 } from "@fortawesome/free-brands-svg-icons";
 import Group from "../layouts/Group.layout";
-import { LinkType, Role } from "@prisma/client";
+import { LinkType, type Role } from "@prisma/client";
 import { StaffNav } from "./StaffNav.organism";
 import { usePathname } from "next/navigation";
 

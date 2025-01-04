@@ -1,8 +1,6 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { StaffNav } from "@/app/_components/organisms/StaffNav.organism";
-import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import { Role } from "@prisma/client";
-import Link from "next/link";
 
 export default function ManagePage() {
   return (
