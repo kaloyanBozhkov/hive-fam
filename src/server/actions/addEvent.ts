@@ -11,7 +11,7 @@ type EventData = {
   poster_media: { bucket_path: string; type: MediaType }[];
   external_event_url?: string | null;
   venue_id: string;
-  ticket_price: number;
+  ticket_price?: number;
   price_currency: Currency;
   is_free: boolean;
 };
