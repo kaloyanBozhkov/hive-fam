@@ -12,7 +12,8 @@ export const createTickets = async ({
 }: {
   eventId: string;
   totalTickets: number;
-  customerDetails: CustomerDetails;
+  customerDetails: Partial<CustomerDetails> &
+    Pick<CustomerDetails, "email" | "name">;
   orderSessionId: string;
   ticketPrice: number;
   currency: Currency;
@@ -24,13 +25,13 @@ export const createTickets = async ({
     name: name ?? "unknown",
     surname: surname ?? "unknown",
     phone: customerDetails.phone,
-    country: customerDetails.address.country,
-    city: customerDetails.address.city,
-    address: customerDetails.address.line1,
-    postal_code: customerDetails.address.postal_code,
-    line1: customerDetails.address.line1,
-    line2: customerDetails.address.line2,
-    state: customerDetails.address.state,
+    country: customerDetails?.address?.country,
+    city: customerDetails?.address?.city,
+    address: customerDetails?.address?.line1,
+    postal_code: customerDetails?.address?.postal_code,
+    line1: customerDetails?.address?.line1,
+    line2: customerDetails?.address?.line2,
+    state: customerDetails?.address?.state,
   };
 
   const participant = await db.participant.upsert({
@@ -47,6 +48,7 @@ export const createTickets = async ({
       order_session_id: orderSessionId,
       price: ticketPrice,
       count: idx + 1,
+      is_free: ticketPrice === 0,
     })),
   });
 };

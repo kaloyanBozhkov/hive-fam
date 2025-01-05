@@ -34,7 +34,11 @@ const getTickets = async (sessionId: string) => {
     },
   });
   return {
-    tickets: tickets.map(({ id, count }) => ({ id, count })),
+    tickets: tickets.map(({ id, count, is_free }) => ({
+      id,
+      count,
+      isFree: is_free,
+    })),
     ownerEmail: tickets[0]?.owner?.email,
     eventTitle: tickets[0]?.event?.title,
   };
@@ -55,17 +59,24 @@ export default async function OrderPage({
 
   const isSingleTicket = tickets.length === 1;
   const ticketWord = isSingleTicket ? "ticket" : "tickets";
+  const isFreeTickets = tickets.some((t) => t.isFree);
 
   return (
     <Stack className="gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Your order is complete</CardTitle>
+          <CardTitle>
+            {isFreeTickets
+              ? "Your tickets are ready"
+              : "Your order is complete"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Stack className="gap-4">
             <p>
-              Your order has been processed successfully 🎉
+              {isFreeTickets
+                ? "You claimed your tickets successfully 🎉"
+                : "Your order has been processed successfully 🎉"}
               <br />
               We&apos;ve emailed the {ticketWord} to <b> {ownerEmail} </b>
             </p>
@@ -77,7 +88,7 @@ export default async function OrderPage({
                 alsoHideSelector="button"
               />
               <Button className="w-full shadow-md" variant="secondary">
-                <Group className="items-center gap-2">
+                <Group className="items-center justify-center gap-2">
                   <FontAwesomeIcon icon={faCalendarAlt} />{" "}
                   <span>See Event</span>
                 </Group>

@@ -1,7 +1,10 @@
 "use client";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Group from "../layouts/Group.layout";
 import { Button, type ButtonProps } from "../shadcn/Button.shadcn";
 import { useEffect, useRef, useState } from "react";
+import { faShare } from "@fortawesome/free-solid-svg-icons";
 
 export const ButtonCopy = ({
   value,
@@ -27,7 +30,10 @@ export const ButtonCopy = ({
 
   return (
     <Button onClick={handleCopy} {...btnProps}>
-      {copied ? "Link Copied" : "Share"}
+      <Group className="items-center justify-center gap-2">
+        <FontAwesomeIcon icon={faShare} />
+        <span>{copied ? "Link Copied" : "Share"}</span>
+      </Group>
     </Button>
   );
 };

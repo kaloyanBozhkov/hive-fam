@@ -11,7 +11,8 @@ export async function sendOrderReceiptEmail({
   orderSessionId,
   eventId,
 }: {
-  customerDetails: CustomerDetails;
+  customerDetails: Partial<CustomerDetails> &
+    Pick<CustomerDetails, "email" | "name">;
   orderSessionId: string;
   eventId: string;
 }) {
@@ -27,6 +28,7 @@ export async function sendOrderReceiptEmail({
     select: {
       title: true,
       date: true,
+      is_free: true,
       organization_id: true,
       organization: {
         select: {
@@ -62,6 +64,7 @@ export async function sendOrderReceiptEmail({
       eventUrl={`${orgUrl}/event/${eventId}`}
       platformUrl={orgUrl}
       brandLogoUrl={organization.brand_logo_data_url}
+      isEventFree={event.is_free}
     />,
   );
 

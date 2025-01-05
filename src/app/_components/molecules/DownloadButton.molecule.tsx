@@ -3,6 +3,9 @@
 import { Button, type ButtonProps } from "../shadcn/Button.shadcn";
 import html2canvas from "html2canvas";
 import { forceDownload } from "@/utils/common";
+import Group from "../layouts/Group.layout";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 export const DownloadButton = ({
   selector,
@@ -47,7 +50,10 @@ export const DownloadButton = ({
 
   return (
     <Button onClick={downloadTicket} id={btnId} {...btnProps}>
-      {label}
+      <Group className="items-center justify-center gap-2">
+        <FontAwesomeIcon icon={faDownload} />
+        <span>{label}</span>
+      </Group>
     </Button>
   );
 };

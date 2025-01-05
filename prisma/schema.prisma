@@ -315,6 +315,9 @@ model ticket {
   scanned    Boolean   @default(false)
   scanned_at DateTime?
 
+  // for free events (or at a point were free)
+  is_free Boolean @default(false)
+
   // idx of ticket for radability in sharing purposes
   count Int @default(1)
 

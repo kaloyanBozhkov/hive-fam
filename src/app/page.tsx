@@ -29,6 +29,7 @@ const getEvents = async (orgId: string) => {
       organization_id: orgId,
     },
   });
+
   return events.map(({ poster_media, ...event }) => ({
     ...event,
     poster_media: poster_media.map((pm) => ({

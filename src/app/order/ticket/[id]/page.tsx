@@ -111,7 +111,7 @@ export default async function TicketOrderPage({
                   asChild
                 >
                   <Link href={`/event/${ticket.event.id}as=view`}>
-                    <Group className="items-center gap-2">
+                    <Group className="items-center justify-center gap-2">
                       <FontAwesomeIcon icon={faCalendarAlt} />{" "}
                       <span>See Event</span>
                     </Group>

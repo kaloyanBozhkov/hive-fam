@@ -186,6 +186,7 @@ const FullScreenEvent = ({
           )}
           {!isPast && isView && (
             <BuyTickets
+              isEventFree={event.is_free}
               eventId={event.id}
               eventName={event.title}
               eventPrice={event.ticket_price}

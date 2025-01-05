@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { Button } from "../shadcn/Button.shadcn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Group from "../layouts/Group.layout";
-import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
+import { faCreditCard, faTicket } from "@fortawesome/free-solid-svg-icons";
 
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
 import type { Currency } from "@prisma/client";
+import FreeTickets from "./FreeTickets.organism";
 
 const BuyTickets = ({
   className = "",
@@ -22,22 +23,31 @@ const BuyTickets = ({
   eventName,
   eventPrice,
   eventCurrency,
+  isEventFree,
 }: {
   className?: string;
   eventId: string;
   eventName: string;
   eventPrice: number;
   eventCurrency: Currency;
+  isEventFree: boolean;
 }) => {
   return (
     <div className={twMerge("w-full", className)}>
       <Dialog>
         <DialogTrigger asChild>
           <Button className="w-full">
-            <Group className="items-center gap-[12px]">
-              <FontAwesomeIcon icon={faCreditCard} />
-              <span>Buy Tickets</span>
-            </Group>
+            {isEventFree ? (
+              <Group className="items-center gap-[12px]">
+                <FontAwesomeIcon icon={faTicket} />
+                <span>Get Tickets</span>
+              </Group>
+            ) : (
+              <Group className="items-center gap-[12px]">
+                <FontAwesomeIcon icon={faCreditCard} />
+                <span>Buy Tickets</span>
+              </Group>
+            )}
           </Button>
         </DialogTrigger>
         <DialogContent className="rounded-lg -sm:max-w-[90vw]">
@@ -45,12 +55,16 @@ const BuyTickets = ({
             <DialogTitle className="text-left">Get Your Tickets</DialogTitle>
             {/* <DialogDescription>
             </DialogDescription> */}
-            <Tickets
-              eventId={eventId}
-              eventPrice={eventPrice}
-              eventName={eventName}
-              eventCurrency={eventCurrency}
-            />
+            {isEventFree ? (
+              <FreeTickets eventId={eventId} eventName={eventName} />
+            ) : (
+              <Tickets
+                eventId={eventId}
+                eventPrice={eventPrice}
+                eventName={eventName}
+                eventCurrency={eventCurrency}
+              />
+            )}
           </DialogHeader>
         </DialogContent>
       </Dialog>

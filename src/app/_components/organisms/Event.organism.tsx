@@ -147,6 +147,7 @@ const EventCard = ({
               eventName={event.title}
               eventPrice={event.ticket_price}
               eventCurrency={event.price_currency}
+              isEventFree={event.is_free}
             />
           )}
           {!isPast && (

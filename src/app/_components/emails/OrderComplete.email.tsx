@@ -11,6 +11,7 @@ interface EmailProps {
   eventDate: string;
   brandLogoUrl: string | null;
   platformUrl: string;
+  isEventFree?: boolean;
 }
 
 export default function OrderCompletedEmail({
@@ -22,6 +23,7 @@ export default function OrderCompletedEmail({
   eventDate = "24-12-2025",
   brandLogoUrl = `${getBaseUrl()}/assets/flow.jpeg`,
   platformUrl = "",
+  isEventFree = false,
 }: EmailProps) {
   return (
     <Html>
@@ -43,10 +45,15 @@ export default function OrderCompletedEmail({
         )}
         <h1 style={{ color: "#333" }}>Order Completed!</h1>
         <p style={{ fontSize: "16px", color: "#555" }}>
-          Thank you for your purchase from <strong>{organisationName}</strong>!
+          {isEventFree
+            ? "Woohoo! Your free tickets"
+            : "Thank you for your purchase"}{" "}
+          from <strong>{organisationName}</strong>
+          {isEventFree ? " just arrived" : ""}!
         </p>
         <p style={{ fontSize: "16px", color: "#555" }}>
-          You have purchased <strong>{ticketCount}</strong> tickets for{" "}
+          You {isEventFree ? "have claimed" : "have purchased"}{" "}
+          <strong>{ticketCount}</strong> tickets for{" "}
           <a
             href={eventUrl}
             style={{

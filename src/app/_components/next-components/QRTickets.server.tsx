@@ -8,7 +8,11 @@ const QRTicketsServer = async ({
   tickets,
   withShare = true,
 }: {
-  tickets: { id: string; count: number }[];
+  tickets: {
+    id: string;
+    // count the order of ticket for sharing purposes
+    count: number;
+  }[];
   withShare?: boolean;
 }) => {
   const orgId = await getOrgId();

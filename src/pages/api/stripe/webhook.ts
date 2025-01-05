@@ -5,8 +5,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
 import type { Currency } from "@prisma/client";
-import { createTickets } from "@/server/queries/tickets/createTickets";
-import { sendOrderReceiptEmail } from "@/server/email/sendOrderReceiptEmail";
+import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -66,25 +65,15 @@ const cors = Cors({
           if (!eventId || !totalTickets || !ticketPrice)
             throw Error("Invalid metadata");
 
-          await createTickets({
-            customerDetails,
+          // also sends email
+          await createOrderTicketsAndSendEmail({
             eventId,
+            customerDetails,
             currency,
+            checkoutSessionId,
             totalTickets: Number(totalTickets),
             ticketPrice: Number(ticketPrice),
-            orderSessionId: checkoutSessionId,
           });
-
-          try {
-            await sendOrderReceiptEmail({
-              customerDetails,
-              orderSessionId: checkoutSessionId,
-              eventId,
-            });
-            console.log("receipt email sent successfully!!!!!");
-          } catch (error) {
-            console.warn("Failed to send order completed email");
-          }
 
           break;
         }
