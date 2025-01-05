@@ -54,8 +54,19 @@ const FreeTickets = ({
     (values: z.infer<typeof cart>) => {
       setCheckoutProcessing(true);
       claimFreeTickets({ eventId, ...values })
-        .then(({ sessionId }) => {
-          router.push(`/order/${sessionId}`);
+        .then(({ success, reason, sessionId }) => {
+          if (success) {
+            router.push(`/order/${sessionId}`);
+            return;
+          }
+
+          if (reason === "ALREADY_CLAIMED_WITH_THAT_EMAIL") {
+            form.setError("email", {
+              message:
+                "This email has already been used to claim one or more tickets.",
+            });
+            setCheckoutProcessing(false);
+          }
         })
         .catch((error) => {
           console.warn(error);

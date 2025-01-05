@@ -29,6 +29,29 @@ export const claimFreeTickets = async ({
     },
   });
 
+  // check if this email already got tickets
+  const userAlreadyClaimedTicketsWithThatEmail = await db.participant.findFirst(
+    {
+      where: {
+        email,
+        tickets: {
+          some: {
+            is_free: true,
+            event_id: eventId,
+          },
+        },
+      },
+      select: { id: true },
+    },
+  );
+
+  if (userAlreadyClaimedTicketsWithThatEmail) {
+    return {
+      success: false,
+      reason: "ALREADY_CLAIMED_WITH_THAT_EMAIL" as const,
+    };
+  }
+
   // also sends email
   await createOrderTicketsAndSendEmail({
     eventId,
@@ -39,5 +62,5 @@ export const claimFreeTickets = async ({
     ticketPrice: 0,
   });
 
-  return { sessionId: checkoutSessionId };
+  return { success: true, sessionId: checkoutSessionId };
 };
