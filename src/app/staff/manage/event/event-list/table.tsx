@@ -32,6 +32,7 @@ export type Event = {
   };
   created_at: Date;
   is_published: boolean;
+  is_free: boolean;
   ticket_price: number;
   price_currency: Currency;
 };
@@ -69,6 +70,7 @@ export const EventList = ({ data }: { data: Event[] }) => {
       accessorKey: "ticket_price",
       header: "Price",
       cell: ({ row }) => {
+        if (row.original.is_free) return <p>Free</p>;
         return (
           <p>
             {row.original.ticket_price} {row.original.price_currency}

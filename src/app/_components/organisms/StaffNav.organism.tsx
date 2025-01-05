@@ -12,7 +12,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
   faUsers,
-  faClipboard,
   faUser,
   faLink,
   faImage,
@@ -36,7 +35,7 @@ export const StaffNav = ({
       <Accordion
         type="single"
         collapsible
-        defaultValue={areas[areas.length - 1]}
+        defaultValue={areas.includes(userRole) ? userRole : areas[0]}
       >
         {areas.map((area) => {
           return (
@@ -88,11 +87,11 @@ const LINKS: Record<
   [[Role.KOKO, Role.ADMIN].join("-")]: {
     label: "Admin area",
     links: [
-      {
-        label: "Admin Dashboard",
-        href: "/staff/manage/admin",
-        icon: faClipboard,
-      },
+      // {
+      //   label: "Admin Dashboard",
+      //   href: "/staff/manage/admin",
+      //   icon: faClipboard,
+      // },
       {
         label: "Staff List",
         href: "/staff/manage/admin/staff-list",

@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Currency, MediaType } from "@prisma/client";
 import {
@@ -31,21 +31,36 @@ import Link from "next/link";
 import { Switch } from "../../shadcn/Switch.shadcn";
 import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
 import { addDays } from "date-fns";
+import { Checkbox } from "../../shadcn/Checkbox.shadcn";
 
-const event = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  date: z.date(),
-  // array of bucketPaths for media, in order of appearance
-  poster_media: z
-    .array(z.object({ bucket_path: z.string(), type: z.nativeEnum(MediaType) }))
-    .min(1),
-  external_event_url: z.string().url("Invalid URL").optional(),
-  venue_id: z.string().uuid("Invalid venue ID"),
-  is_published: z.boolean().default(false),
-  ticket_price: z.number().min(0, "Ticket price must be greater than 1"),
-  price_currency: z.nativeEnum(Currency),
-});
+export const DEFAULT_TICKET_PRICE = 10;
+export const MIN_TICKET_PRICE = 1;
+
+const event = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    date: z.date(),
+    // array of bucketPaths for media, in order of appearance
+    poster_media: z
+      .array(
+        z.object({ bucket_path: z.string(), type: z.nativeEnum(MediaType) }),
+      )
+      .min(1),
+    external_event_url: z.string().url("Invalid URL").optional(),
+    venue_id: z.string().uuid("Invalid venue ID"),
+    is_published: z.boolean().default(false),
+    ticket_price: z
+      .number()
+      .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1")
+      .optional(),
+    is_free: z.boolean(),
+    price_currency: z.nativeEnum(Currency),
+  })
+  .refine((data) => data.is_free || data.ticket_price !== undefined, {
+    message: "Ticket price is required if the event is not free",
+    path: ["ticket_price"], // Target field for the error
+  });
 
 const AddEventForm = ({
   className,
@@ -73,16 +88,20 @@ const AddEventForm = ({
       poster_media: [],
       external_event_url: undefined,
       venue_id: "",
+      is_free: false,
       is_published: false,
-      ticket_price: 10,
+      ticket_price: DEFAULT_TICKET_PRICE,
       price_currency: defaultCurrency,
     },
   });
+  const onToggleFreeEvent = (isFree: boolean) => {
+    form.setValue("ticket_price", DEFAULT_TICKET_PRICE);
+    form.setValue("is_free", isFree);
+  };
 
   const handleSubmit = async (data: z.infer<typeof event>) => {
     startTransition(async () => {
       console.log(data);
-      debugger;
       const result = await onAdd(data);
       if (result.success) {
         form.reset();
@@ -92,6 +111,12 @@ const AddEventForm = ({
       }
     });
   };
+
+  const isFreeField = form.getValues().is_free;
+
+  useEffect(() => {
+    onToggleFreeEvent(isFreeField);
+  }, [isFreeField]);
 
   return (
     <Form {...form}>
@@ -220,59 +245,84 @@ const AddEventForm = ({
               </FormItem>
             )}
           />
+          {!form.getValues().is_free && (
+            <>
+              <FormField
+                control={form.control}
+                name="ticket_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <Stack>
+                        <p>Ticket Price</p>
+                        <p className="font-light text-gray-400">
+                          Note: minimum price is around 0.1 USD
+                        </p>
+                      </Stack>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        max={100000}
+                        min={MIN_TICKET_PRICE}
+                        type="number"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === "" ? "" : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price_currency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currency</FormLabel>
+                    <FormControl>
+                      <Select {...field}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(Currency).map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {currency}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
           <FormField
             control={form.control}
-            name="ticket_price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  <Stack>
-                    <p>Ticket Price</p>
-                    <p className="font-light text-gray-400">
-                      Note: minimum price is around 0.1 USD
-                    </p>
-                  </Stack>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    min={1.5}
-                    type="number"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === "" ? "" : Number(e.target.value),
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            name="is_free"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      label="This event is FREE"
+                      subtitle="By making this event free, tickets will be generated without a need to pay"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
-          <FormField
-            control={form.control}
-            name="price_currency"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Currency</FormLabel>
-                <FormControl>
-                  <Select {...field}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(Currency).map((currency) => (
-                        <SelectItem key={currency} value={currency}>
-                          {currency}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <Button
             type="submit"
             disabled={!form.formState.isValid}

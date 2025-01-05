@@ -274,6 +274,7 @@ model event {
   is_published       Boolean  @default(false)
   ticket_price       Float    @default(10)
   price_currency     Currency @default(BGN)
+  is_free            Boolean  @default(false)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String

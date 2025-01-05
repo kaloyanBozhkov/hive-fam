@@ -13,6 +13,7 @@ type EventData = {
   venue_id: string;
   ticket_price: number;
   price_currency: Currency;
+  is_free: boolean;
 };
 
 export async function addEvent({ poster_media, ...data }: EventData) {
