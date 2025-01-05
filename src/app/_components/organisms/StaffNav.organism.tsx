@@ -19,6 +19,7 @@ import {
   faCalendarAlt,
   faTicketAlt,
   type IconDefinition,
+  faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import Group from "../layouts/Group.layout";
 
@@ -87,11 +88,11 @@ const LINKS: Record<
   [[Role.KOKO, Role.ADMIN].join("-")]: {
     label: "Admin area",
     links: [
-      // {
-      //   label: "Admin Dashboard",
-      //   href: "/staff/manage/admin",
-      //   icon: faClipboard,
-      // },
+      {
+        label: "Earnings",
+        href: "/staff/manage/admin/profits",
+        icon: faMoneyBill,
+      },
       {
         label: "Staff List",
         href: "/staff/manage/admin/staff-list",

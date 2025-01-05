@@ -105,10 +105,18 @@ export const FileUploadField = <T extends FieldValues>({
               <div className="space-y-2">
                 {hasFileUploaded && (
                   <Stack>
-                    <video controls crossOrigin="anonymous">
-                      <source src={field.value} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
+                    {accept.includes("video") ? (
+                      <video controls crossOrigin="anonymous">
+                        <source src={field.value} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <img
+                        className="max-w-[160px]"
+                        src={field.value}
+                        alt="Brand logo"
+                      />
+                    )}
                   </Stack>
                 )}
                 <Input

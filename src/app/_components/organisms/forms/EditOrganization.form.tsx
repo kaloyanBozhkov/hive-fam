@@ -17,6 +17,7 @@ import { Input } from "../../shadcn/Input.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
+import { FileUploadField } from "./fields/FileUploadField";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -31,9 +32,11 @@ const EditOrganizationForm = ({
   className,
   initialData,
   onEdit,
+  orgId,
 }: {
   className?: string;
   initialData: z.infer<typeof organization>;
+  orgId: string;
   onEdit: (
     organizationData: z.infer<typeof organization>,
   ) => Promise<{ success: boolean; error?: string }>;
@@ -105,7 +108,7 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="brand_logo_data_url"
             render={({ field }) => (
@@ -128,6 +131,13 @@ const EditOrganizationForm = ({
                 <FormMessage />
               </FormItem>
             )}
+          /> */}
+          <FileUploadField
+            form={form}
+            organizationId={orgId}
+            name="brand_logo_data_url"
+            label="Brand Logo"
+            accept="image/*"
           />
           <FormField
             control={form.control}

@@ -30,7 +30,11 @@ export default async function OrgEditPage() {
         </h1>
       </Stack>
       <Stack className="gap-4">
-        <EditOrganizationForm initialData={data} onEdit={editOrg} />
+        <EditOrganizationForm
+          initialData={data}
+          onEdit={editOrg}
+          orgId={data.id}
+        />
       </Stack>
     </Stack>
   );

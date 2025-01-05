@@ -37,10 +37,10 @@ const DrawerMenu = ({
   socialLinks: { type: LinkType; url: string; name: string }[];
   userRole?: Role;
 }) => {
-  const isOnStaffPage = !!userRole;
   const [s, toggleS] = useState(false);
   const pathname = usePathname();
-
+  const isOnStaffPage = !!pathname?.startsWith("/staff/manage");
+  const staffMode = userRole && isOnStaffPage;
   useEffect(() => {
     toggleS(false);
   }, [pathname]);
@@ -52,7 +52,7 @@ const DrawerMenu = ({
       </DrawerTrigger>
       <DrawerContent className="m-auto lg:max-w-[900px]">
         <DrawerHeader>
-          {isOnStaffPage ? (
+          {staffMode ? (
             <Stack className="gap-4">
               <DrawerTitle>- Backoffice -</DrawerTitle>
               <StaffNav userRole={userRole} variant="secondary" />

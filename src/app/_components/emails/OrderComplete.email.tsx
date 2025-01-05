@@ -21,7 +21,7 @@ export default function OrderCompletedEmail({
   ticketCount = 2,
   eventName = "Event Name",
   eventDate = "24-12-2025",
-  brandLogoUrl = `${getBaseUrl()}/assets/flow.jpeg`,
+  brandLogoUrl = `${getBaseUrl(false)}/assets/flow.jpeg`,
   platformUrl = "",
   isEventFree = false,
 }: EmailProps) {
