@@ -46,7 +46,6 @@ export default function OrderCompletedEmail({
           margin: "0",
           padding: "20px",
           fontFamily: "Arial, sans-serif",
-          // backgroundColor: "red",
           backgroundColor: "#f9f9f9",
         }}
       >

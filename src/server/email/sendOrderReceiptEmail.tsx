@@ -61,7 +61,7 @@ export async function sendOrderReceiptEmail({
       ticketCount={sold_tickets.length}
       eventName={event.title}
       eventDate={format(event.date, "PPpp")}
-      eventUrl={`${orgUrl}/event/${eventId}`}
+      eventUrl={`${orgUrl}/event/${eventId}?as=view`}
       platformUrl={orgUrl}
       brandLogoUrl={organization.brand_logo_data_url}
       isEventFree={event.is_free}
