@@ -70,7 +70,8 @@ export default async function TicketOrderPage({
       <Card>
         <CardHeader>
           <CardTitle>
-            {owner.name} {owner.surname} shared a ticket with you!
+            {owner.name}
+            {owner.surname ? ` ${owner.surname}` : ""} shared a ticket with you!
           </CardTitle>
         </CardHeader>
         <CardContent>

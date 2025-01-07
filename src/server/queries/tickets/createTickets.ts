@@ -19,11 +19,11 @@ export const createTickets = async ({
   currency: Currency;
 }) => {
   const participantEmail = customerDetails.email;
-  const [name, surname] = customerDetails.name.split(" ");
+  const [name, ...surname] = customerDetails.name.split(" ").filter((w) => w);
   const participantDetails = {
     email: participantEmail,
-    name: name ?? "unknown",
-    surname: surname ?? "unknown",
+    name: name?.trim() ?? "unknown",
+    surname: surname.join(" ").trim() ?? "unknown",
     phone: customerDetails.phone,
     country: customerDetails?.address?.country,
     city: customerDetails?.address?.city,

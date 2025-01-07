@@ -8,7 +8,6 @@ import {
   Link,
   Text,
 } from "@react-email/components";
-import { Heading } from "lucide-react";
 import * as React from "react";
 
 interface EmailProps {
