@@ -13,9 +13,9 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "kems-bucket.s3.eu-central-1.amazonaws.com",
+        hostname: "s3-eu-central-1.amazonaws.com",
         port: "",
-        pathname: "/**",
+        pathname: "/kems-bucket/**",
         search: "",
       },
     ],

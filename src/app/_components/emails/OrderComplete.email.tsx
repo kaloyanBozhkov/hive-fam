@@ -1,5 +1,5 @@
 import { getBaseUrl } from "@/utils/common";
-import { Button, Html } from "@react-email/components";
+import { Body, Button, Html, Link } from "@react-email/components";
 import * as React from "react";
 
 interface EmailProps {
@@ -26,22 +26,29 @@ export default function OrderCompletedEmail({
   isEventFree = false,
 }: EmailProps) {
   return (
-    <Html>
-      <div
+    <Html
+      style={{
+        width: "100%",
+        padding: 0,
+        margin: 0,
+      }}
+    >
+      <Body
         style={{
-          fontFamily: "Arial, sans-serif",
+          margin: "0",
           padding: "20px",
+          fontFamily: "Arial, sans-serif",
           backgroundColor: "#f9f9f9",
         }}
       >
         {brandLogoUrl && (
-          <a href={platformUrl}>
+          <Link href={platformUrl}>
             <img
               src={brandLogoUrl}
               alt="Brand Logo"
               style={{ width: "100px", marginBottom: "10px" }}
             />
-          </a>
+          </Link>
         )}
         <h1 style={{ color: "#333" }}>Order Completed!</h1>
         <p style={{ fontSize: "16px", color: "#555" }}>
@@ -54,7 +61,7 @@ export default function OrderCompletedEmail({
         <p style={{ fontSize: "16px", color: "#555" }}>
           You {isEventFree ? "have claimed" : "have purchased"}{" "}
           <strong>{ticketCount}</strong> tickets for{" "}
-          <a
+          <Link
             href={eventUrl}
             style={{
               color: "#007BFF",
@@ -63,24 +70,26 @@ export default function OrderCompletedEmail({
             }}
           >
             <strong>{eventName}</strong>
-          </a>{" "}
+          </Link>{" "}
           on <strong>{eventDate}</strong>.
         </p>
         <div style={{ marginTop: "20px" }}>
-          <Button
-            href={orderPageUrl}
-            style={{
-              background: "#000",
-              color: "#fff",
-              padding: "12px 20px",
-              borderRadius: "5px",
-              textDecoration: "none",
-            }}
-          >
-            View Tickets
-          </Button>
+          <Link href={orderPageUrl}>
+            <Button
+              type="button"
+              style={{
+                background: "#000",
+                color: "#fff",
+                padding: "12px 20px",
+                borderRadius: "5px",
+                textDecoration: "none",
+              }}
+            >
+              View Tickets
+            </Button>
+          </Link>
         </div>
-      </div>
+      </Body>
     </Html>
   );
 }

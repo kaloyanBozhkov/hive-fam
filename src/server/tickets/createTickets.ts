@@ -1,7 +1,7 @@
-import { Currency } from "@prisma/client";
+import { type Currency } from "@prisma/client";
 import { sendOrderReceiptEmail } from "../email/sendOrderReceiptEmail";
 import { createTickets } from "../queries/tickets/createTickets";
-import { CustomerDetails } from "@/pages/api/stripe/webhook";
+import { type CustomerDetails } from "@/pages/api/stripe/webhook";
 
 export const createOrderTicketsAndSendEmail = async ({
   eventId,

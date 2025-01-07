@@ -67,7 +67,8 @@ export class S3Service {
 
   static getBaseUrl() {
     // @TODO replace with NEXT_PUBLIC env var
-    return "https://kems-bucket.s3.eu-central-1.amazonaws.com";
+    // return "https://kems-bucket.s3.eu-central-1.amazonaws.com";
+    return "https://s3-eu-central-1.amazonaws.com/kems-bucket";
   }
   static getFileUrlFromFullPath(path: string) {
     return `${S3Service.getBaseUrl()}/${path}`;

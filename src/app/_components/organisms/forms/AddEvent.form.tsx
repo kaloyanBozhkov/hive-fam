@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useEffect, useTransition } from "react";
+import { useCallback, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Currency, MediaType } from "@prisma/client";
 import {
@@ -94,10 +94,10 @@ const AddEventForm = ({
       price_currency: defaultCurrency,
     },
   });
-  const onToggleFreeEvent = (isFree: boolean) => {
+  const onToggleFreeEvent = useCallback((isFree: boolean) => {
     form.setValue("ticket_price", DEFAULT_TICKET_PRICE);
     form.setValue("is_free", isFree);
-  };
+  }, []);
 
   const handleSubmit = async (data: z.infer<typeof event>) => {
     startTransition(async () => {
@@ -116,7 +116,7 @@ const AddEventForm = ({
 
   useEffect(() => {
     onToggleFreeEvent(isFreeField);
-  }, [isFreeField]);
+  }, [isFreeField, onToggleFreeEvent]);
 
   return (
     <Form {...form}>

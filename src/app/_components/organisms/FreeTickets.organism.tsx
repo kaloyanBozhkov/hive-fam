@@ -73,7 +73,7 @@ const FreeTickets = ({
           setCheckoutProcessing(false);
         });
     },
-    [eventName, form, eventId],
+    [eventName, form, eventId, router],
   );
 
   return (
