@@ -6,6 +6,7 @@ import {
   Html,
   Img,
   Link,
+  Section,
   Text,
 } from "@react-email/components";
 import * as React from "react";
@@ -96,22 +97,20 @@ export default function OrderCompletedEmail({
             </Link>{" "}
             on <strong>{eventDate}</strong>.
           </Text>
-          <div style={{ marginTop: "20px" }}>
-            <Link href={orderPageUrl}>
-              <Button
-                type="button"
-                style={{
-                  background: "#000",
-                  color: "#fff",
-                  padding: "12px 20px",
-                  borderRadius: "5px",
-                  textDecoration: "none",
-                }}
-              >
-                View Tickets
-              </Button>
+          <Section style={{ marginTop: "40px", marginBottom: "10px" }}>
+            <Link
+              href={orderPageUrl}
+              style={{
+                background: "#000",
+                color: "#fff",
+                padding: "12px 20px",
+                borderRadius: "5px",
+                textDecoration: "none",
+              }}
+            >
+              View Tickets
             </Link>
-          </div>
+          </Section>
         </Container>
       </Body>
     </Html>
