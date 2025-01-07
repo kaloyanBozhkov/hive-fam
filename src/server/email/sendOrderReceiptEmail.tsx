@@ -53,7 +53,10 @@ export async function sendOrderReceiptEmail({
   const orgName = organization.name;
   const orgUrl = getDomainFromOrgId(orgId)!;
   const orderPageUrl = `${orgUrl}/order/${orderSessionId}`;
-
+  console.log(
+    "organization.brand_logo_data_url",
+    organization.brand_logo_data_url,
+  );
   const emailHtml = await render(
     <OrderCompletedEmail
       organisationName={orgName}
