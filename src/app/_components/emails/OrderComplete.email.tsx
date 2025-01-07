@@ -1,5 +1,14 @@
 import { getBaseUrl } from "@/utils/common";
-import { Body, Button, Html, Link } from "@react-email/components";
+import {
+  Body,
+  Button,
+  Container,
+  Html,
+  Img,
+  Link,
+  Text,
+} from "@react-email/components";
+import { Heading } from "lucide-react";
 import * as React from "react";
 
 interface EmailProps {
@@ -38,57 +47,74 @@ export default function OrderCompletedEmail({
           margin: "0",
           padding: "20px",
           fontFamily: "Arial, sans-serif",
+          // backgroundColor: "red",
           backgroundColor: "#f9f9f9",
         }}
       >
-        {brandLogoUrl && (
-          <Link href={platformUrl}>
-            <img
-              src={brandLogoUrl}
-              alt="Brand Logo"
-              style={{ width: "100px", marginBottom: "10px" }}
-            />
-          </Link>
-        )}
-        <h1 style={{ color: "#333" }}>Order Completed!</h1>
-        <p style={{ fontSize: "16px", color: "#555" }}>
-          {isEventFree
-            ? "Woohoo! Your free tickets"
-            : "Thank you for your purchase"}{" "}
-          from <strong>{organisationName}</strong>
-          {isEventFree ? " just arrived" : ""}!
-        </p>
-        <p style={{ fontSize: "16px", color: "#555" }}>
-          You {isEventFree ? "have claimed" : "have purchased"}{" "}
-          <strong>{ticketCount}</strong> tickets for{" "}
-          <Link
-            href={eventUrl}
-            style={{
-              color: "#007BFF",
-              textDecoration: "underline",
-              fontWeight: "bold",
-            }}
-          >
-            <strong>{eventName}</strong>
-          </Link>{" "}
-          on <strong>{eventDate}</strong>.
-        </p>
-        <div style={{ marginTop: "20px" }}>
-          <Link href={orderPageUrl}>
-            <Button
-              type="button"
+        <Container
+          style={{
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "1px 1px 20px 0px rgb(119 119 119 / 15%)",
+          }}
+        >
+          {brandLogoUrl && (
+            <Link href={platformUrl}>
+              <Img
+                src={brandLogoUrl}
+                alt="Brand Logo"
+                height={100}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  marginBottom: "10px",
+                }}
+              />
+            </Link>
+          )}
+          <Text style={{ color: "#555", fontSize: "16px", fontWeight: "bold" }}>
+            Order Completed 🎉
+          </Text>
+          <Text style={{ fontSize: "16px", color: "#555" }}>
+            {isEventFree
+              ? "Woohoo! Your free tickets"
+              : "Thank you for your purchase"}{" "}
+            from <strong>{organisationName}</strong>
+            {isEventFree ? " just arrived" : ""}!
+          </Text>
+          <Text style={{ fontSize: "16px", color: "#555" }}>
+            You {isEventFree ? "have claimed" : "have purchased"}{" "}
+            <strong>{ticketCount}</strong> tickets for{" "}
+            <Link
+              href={eventUrl}
               style={{
-                background: "#000",
-                color: "#fff",
-                padding: "12px 20px",
-                borderRadius: "5px",
-                textDecoration: "none",
+                color: "#007BFF",
+                textDecoration: "underline",
+                fontWeight: "bold",
               }}
             >
-              View Tickets
-            </Button>
-          </Link>
-        </div>
+              <strong>{eventName}</strong>
+            </Link>{" "}
+            on <strong>{eventDate}</strong>.
+          </Text>
+          <div style={{ marginTop: "20px" }}>
+            <Link href={orderPageUrl}>
+              <Button
+                type="button"
+                style={{
+                  background: "#000",
+                  color: "#fff",
+                  padding: "12px 20px",
+                  borderRadius: "5px",
+                  textDecoration: "none",
+                }}
+              >
+                View Tickets
+              </Button>
+            </Link>
+          </div>
+        </Container>
       </Body>
     </Html>
   );
