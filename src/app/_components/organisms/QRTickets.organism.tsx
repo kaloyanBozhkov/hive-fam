@@ -11,6 +11,7 @@ import { getTicketShareUrl } from "@/utils/tickets";
 import { ButtonCopy } from "../molecules/CopyButton.moleule";
 import { DownloadButton } from "../molecules/DownloadButton.molecule";
 import { EventInfoCard } from "../molecules/EventInfoCard.molecule";
+import Group from "../layouts/Group.layout";
 
 const QRTickets = ({
   qrCodes,
@@ -39,9 +40,14 @@ const QRTickets = ({
           <Card key={idx} id={id}>
             <CardHeader>
               <CardTitle>
-                <p className="text-[18px] font-light">
-                  #{tickets[idx]!.count} Ticket
-                </p>
+                <Group className="items-center justify-between gap-2">
+                  <p className="text-[18px] font-light">
+                    #{tickets[idx]!.count} Ticket
+                  </p>
+                  <p className="text-[14px] font-light text-gray-500">
+                    {tickets[idx]!.id}
+                  </p>
+                </Group>
                 <p className="text-[22px] font-semibold">
                   {tickets[idx]!.ticketType}
                 </p>

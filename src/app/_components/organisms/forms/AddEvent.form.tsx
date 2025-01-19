@@ -315,7 +315,7 @@ const AddEventForm = ({
                                       field.onChange(
                                         e.target.value === ""
                                           ? ""
-                                          : Number(e.target.value),
+                                          : String(e.target.value),
                                       )
                                     }
                                   />
