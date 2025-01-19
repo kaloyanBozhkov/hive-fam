@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import { type FC, useRef, useState } from "react";
 import {
   LineChart,
   Line,
@@ -115,10 +115,7 @@ function groupAndCountTimestamps(
   for (let i = 1; i < sortedTimestamps.length; i++) {
     const currentTimestamp = sortedTimestamps[i]!;
 
-    if (
-      currentTimestamp!.getTime() - currentGroup.start.getTime() <=
-      periodMs
-    ) {
+    if (currentTimestamp.getTime() - currentGroup.start.getTime() <= periodMs) {
       currentGroup.count += 1;
       currentGroup.end = currentTimestamp; // Update the end timestamp of the group
     } else {

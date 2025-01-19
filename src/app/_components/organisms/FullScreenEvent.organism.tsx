@@ -15,7 +15,12 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import DateCard from "../molecules/DateCard.molecule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
-import { MediaType, type event, type venue } from "@prisma/client";
+import {
+  event_ticket_type,
+  MediaType,
+  type event,
+  type venue,
+} from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
 import Tickets from "./Tickets.organism";
 import BuyTickets from "./BuyTickets.organism";
@@ -35,6 +40,7 @@ type Event = event & {
     bucket_path: string;
     type: MediaType;
   }[];
+  ticket_types: event_ticket_type[];
 };
 
 const MAX_DESC_LENGTH = 100;
@@ -177,9 +183,8 @@ const FullScreenEvent = ({
               <div className="-mx-1 my-1 h-px w-full bg-black/10" />
               <Tickets
                 eventId={event.id}
-                eventPrice={event.ticket_price}
                 eventName={event.title}
-                eventCurrency={event.price_currency}
+                ticketTypes={event.ticket_types}
               />
               <div className="-mx-1 my-1 h-px w-full bg-black/10" />
             </Stack>
@@ -189,8 +194,7 @@ const FullScreenEvent = ({
               isEventFree={event.is_free}
               eventId={event.id}
               eventName={event.title}
-              eventPrice={event.ticket_price}
-              eventCurrency={event.price_currency}
+              ticketTypes={event.ticket_types}
             />
           )}
           {!isPast && (

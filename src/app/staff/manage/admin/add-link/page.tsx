@@ -1,7 +1,7 @@
 import AddLinkForm from "@/app/_components/organisms/forms/AddLink.form";
 import { isAdminOrAbove } from "@/server/auth/roleGates";
 import { db } from "@/server/db";
-import { LinkType, Prisma } from "@prisma/client";
+import { type LinkType, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const errorMessages: Record<string, string> = {

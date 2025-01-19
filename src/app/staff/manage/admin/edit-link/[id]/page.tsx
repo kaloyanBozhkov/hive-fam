@@ -2,8 +2,7 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import { db } from "@/server/db";
 import EditLinkForm from "@/app/_components/organisms/forms/EditLink.form";
 import { isAdminOrAbove } from "@/server/auth/roleGates";
-import { Prisma } from "@prisma/client";
-import { LinkType } from "@prisma/client";
+import { type LinkType, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const errorMessages: Record<string, string> = {

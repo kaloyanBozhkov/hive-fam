@@ -17,8 +17,9 @@ export const cartCheckout = async ({
   currency: Currency;
   productsInCart: {
     eventName: string;
-    ticketPrice: number;
     eventId: string;
+    ticketPrice: number;
+    ticketTypeId: string;
   }[];
 }) => {
   // eslint-disable-next-line
@@ -32,11 +33,14 @@ export const cartCheckout = async ({
       total,
       currency,
       onCancelRedirectTo,
-      items: productsInCart.map(({ eventName, ticketPrice, eventId }) => ({
-        eventName,
-        ticketPrice,
-        eventId,
-      })),
+      items: productsInCart.map(
+        ({ eventName, ticketPrice, eventId, ticketTypeId }) => ({
+          eventName,
+          ticketPrice,
+          eventId,
+          ticketTypeId,
+        }),
+      ),
     } as CartCheckoutPayloadBody,
   );
 

@@ -14,22 +14,20 @@ import {
   DialogTrigger,
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
-import type { Currency } from "@prisma/client";
+import type { event_ticket_type } from "@prisma/client";
 import FreeTickets from "./FreeTickets.organism";
 
 const BuyTickets = ({
   className = "",
   eventId,
   eventName,
-  eventPrice,
-  eventCurrency,
+  ticketTypes,
   isEventFree,
 }: {
   className?: string;
   eventId: string;
   eventName: string;
-  eventPrice: number;
-  eventCurrency: Currency;
+  ticketTypes: event_ticket_type[];
   isEventFree: boolean;
 }) => {
   return (
@@ -53,16 +51,14 @@ const BuyTickets = ({
         <DialogContent className="rounded-lg -sm:max-w-[90vw]">
           <DialogHeader>
             <DialogTitle className="text-left">Get Your Tickets</DialogTitle>
-            {/* <DialogDescription>
-            </DialogDescription> */}
             {isEventFree ? (
+              // TODO free tickets of different types
               <FreeTickets eventId={eventId} eventName={eventName} />
             ) : (
               <Tickets
                 eventId={eventId}
-                eventPrice={eventPrice}
                 eventName={eventName}
-                eventCurrency={eventCurrency}
+                ticketTypes={ticketTypes}
               />
             )}
           </DialogHeader>

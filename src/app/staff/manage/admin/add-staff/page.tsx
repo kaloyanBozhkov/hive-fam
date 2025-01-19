@@ -1,7 +1,7 @@
 import AddStaffForm from "@/app/_components/organisms/forms/AddStaff.form";
 import { isAdminOrAbove } from "@/server/auth/roleGates";
 import { createUser } from "@/server/queries/user/createUser";
-import { Prisma, Role } from "@prisma/client";
+import { Prisma, type Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const errorMessages: Record<string, string> = {

@@ -1,7 +1,6 @@
 import { getBaseUrl } from "@/utils/common";
 import {
   Body,
-  Button,
   Container,
   Html,
   Img,

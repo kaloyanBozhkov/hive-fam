@@ -258,13 +258,28 @@ model media {
 model event_media {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   order    Int
   event    event?  @relation(fields: [event_id], references: [id], onDelete: Cascade)
   event_id String?
   media    media   @relation(fields: [media_id], references: [id], onDelete: Cascade)
   media_id String
+}
+
+model event_ticket_type {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  label                     String
+  price                     Float
+  is_visible                Boolean
+  available_tickets_of_type Int
+
+  event          event    @relation(fields: [event_id], references: [id])
+  event_id       String
+  price_currency Currency @default(EUR)
 }
 
 model event {
@@ -278,8 +293,6 @@ model event {
   external_event_url String?
   event_photos_url   String? // when event is completed
   is_published       Boolean  @default(false)
-  ticket_price       Float    @default(10)
-  price_currency     Currency @default(BGN)
   is_free            Boolean  @default(false)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
@@ -290,6 +303,7 @@ model event {
 
   poster_media event_media[]
   sold_tickets ticket[]
+  ticket_types event_ticket_type[]
 }
 
 model venue {
@@ -320,7 +334,7 @@ model ticket {
   scanned_at DateTime?
 
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   // for free events (or at a point were free)
   is_free Boolean @default(false)

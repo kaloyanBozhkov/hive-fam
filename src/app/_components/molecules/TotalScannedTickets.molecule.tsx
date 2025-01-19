@@ -1,5 +1,5 @@
 import { ticket } from "@prisma/client";
-import { FC } from "react";
+import { type FC } from "react";
 
 export const TotalScannedTickets: FC<{
   tickets: ticket[];

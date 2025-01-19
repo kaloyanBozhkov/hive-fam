@@ -13,6 +13,7 @@ const getEvent = async (id: string) => {
     },
     include: {
       venue: true,
+      ticket_types: true,
       poster_media: {
         select: {
           order: true,

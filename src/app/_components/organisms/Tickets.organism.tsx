@@ -17,36 +17,44 @@ import {
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
-import type { Currency } from "@prisma/client";
+import type { event_ticket_type } from "@prisma/client";
 
-const cart = z.object({
-  regularQuantity: z.number(),
-});
+const cart = z.record(z.number());
+type TicketAddedToCard = {
+  eventName: string;
+  eventId: string;
+  ticketPrice: number;
+  ticketTypeId: string;
+};
 
 const Tickets = ({
   eventName,
   className,
-  eventPrice,
-  eventCurrency,
   eventId,
+  ticketTypes,
 }: {
   eventId: string;
   eventName: string;
-  eventPrice: number;
+  ticketTypes: event_ticket_type[];
   className?: string;
-  eventCurrency: Currency;
 }) => {
   const [checkoutProcessing, setCheckoutProcessing] = useState(false);
   const form = useForm<z.infer<typeof cart>>({
     resolver: zodResolver(cart),
-    defaultValues: {
-      regularQuantity: 0,
-    },
+    defaultValues: ticketTypes.reduce(
+      (acc, ticketType) => ({
+        ...acc,
+        [ticketType.id]: 0,
+      }),
+      {},
+    ),
   });
-  const total = (form.watch("regularQuantity") * eventPrice).toFixed(2);
+  const total = Object.entries(ticketTypes).reduce((acc, [key, value]) => {
+    return acc + form.watch(key) * value.price;
+  }, 0);
 
   const onSubmit = useCallback(
     (values: z.infer<typeof cart>) => {
@@ -56,16 +64,30 @@ const Tickets = ({
 
       setCheckoutProcessing(true);
       const formVals = form.getValues();
-      const total = formVals.regularQuantity * eventPrice;
-      const items: {
-        eventName: string;
-        ticketPrice: number;
-        eventId: string;
-      }[] = Array.from({ length: formVals.regularQuantity }, () => ({
-        eventName,
-        ticketPrice: eventPrice,
-        eventId,
-      }));
+      const total = ticketTypes.reduce((acc, ticketOfType) => {
+        const ticketTypeCount = formVals[ticketOfType.id]!;
+        return acc + ticketTypeCount * ticketOfType.price;
+      }, 0);
+      const eventCurrency = ticketTypes[0]!.price_currency;
+
+      const items: TicketAddedToCard[] = Object.entries(formVals).flatMap(
+        ([ticketTypeId, ticketCount]) => {
+          const ticketsOfTypeInCart: TicketAddedToCard[] = [];
+          for (let i = 0; i < ticketCount; i++) {
+            ticketsOfTypeInCart.push({
+              eventName,
+              eventId,
+              ticketPrice: ticketTypes.find(
+                (ticketType) => ticketType.id === ticketTypeId,
+              )!.price,
+              ticketTypeId: ticketTypes.find(
+                (ticketType) => ticketType.id === ticketTypeId,
+              )!.id,
+            });
+          }
+          return ticketsOfTypeInCart;
+        },
+      );
 
       cartCheckout({
         total,
@@ -77,8 +99,15 @@ const Tickets = ({
         })
         .finally(() => setCheckoutProcessing(false));
     },
-    [eventName, form, eventPrice, eventCurrency, eventId],
+    [eventName, form, eventId, ticketTypes],
   );
+
+  if (!ticketTypes.length)
+    return (
+      <p>
+        No ticket types found. Check with event organiser or contact support.{" "}
+      </p>
+    );
 
   return (
     <Form {...form}>

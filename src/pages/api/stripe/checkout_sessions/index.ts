@@ -16,8 +16,8 @@ const MIN_AMOUNT = 0.5,
 const cartItemSchema = z.object({
   eventName: z.string(),
   ticketPrice: z.number(),
-  accessType: z.literal("regular").optional().default("regular"),
   eventId: z.string(),
+  ticketTypeId: z.string(),
 });
 
 const cartCheckoutSchema = z.object({
@@ -41,9 +41,16 @@ export default async function handler(
       const event = await db.event.findUniqueOrThrow({
         where: { id: eventId },
         select: {
+          ticket_types: {
+            select: {
+              price_currency: true,
+              price: true,
+              id: true,
+              label: true,
+              available_tickets_of_type: true,
+            },
+          },
           organization_id: true,
-          ticket_price: true,
-          price_currency: true,
           poster_media: {
             select: {
               media: {
@@ -62,15 +69,26 @@ export default async function handler(
         },
       });
 
-      console.log(items, event.ticket_price, event.price_currency);
+      console.log(items, event.ticket_types);
 
-      if (event.price_currency !== currency)
+      if (event.ticket_types.some((t) => t.price_currency !== currency))
         throw new Error("Currency doesn't match");
 
-      if (items.some((p) => p.ticketPrice !== event.ticket_price))
+      if (
+        items.some(
+          (p) =>
+            event.ticket_types.find((t) => t.id === p.ticketTypeId)?.price !==
+            p.ticketPrice,
+        )
+      )
         throw new Error("Prices not matching for all items");
 
-      if (items.reduce((acc, p) => acc + p.ticketPrice, 0) !== total)
+      // no count per ticket type as each ticket type is present N times in items array, based on count
+      if (
+        items.reduce((acc, ticketOfType) => {
+          return acc + ticketOfType.ticketPrice;
+        }, 0) !== total
+      )
         throw new Error("Total doesnt match");
 
       const params: Stripe.Checkout.SessionCreateParams = {
@@ -90,8 +108,10 @@ export default async function handler(
                   .map((m) =>
                     S3Service.getFileUrlFromFullPath(m.media.bucket_path),
                   ),
-                name: `Tiket - ${p.eventName}`,
-                description: "Regular access",
+                name: `Ticket - ${p.eventName}`,
+                description: event.ticket_types.find(
+                  (t) => t.id === p.ticketTypeId,
+                )!.label,
               },
             },
             quantity: 1,
@@ -109,8 +129,8 @@ export default async function handler(
           metadata: {
             eventId,
             totalTickets: items.length,
-            ticketPrice: event.ticket_price,
             organizationId: event.organization_id,
+            tickets: JSON.stringify(items),
           } as OrderMetadata,
         },
         checkoutSession: Stripe.Checkout.Session =
@@ -132,9 +152,9 @@ export default async function handler(
 
 export const orderMetadataSchema = z.object({
   eventId: z.string(),
-  totalTickets: z.number(),
-  ticketPrice: z.number(),
+  tickets: z.string(), //json
   organizationId: z.string().uuid(),
+  totalTickets: z.number(),
 });
 
 export type OrderMetadata = z.infer<typeof orderMetadataSchema>;

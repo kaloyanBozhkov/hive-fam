@@ -2,7 +2,7 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import AddOrgForm from "@/app/_components/organisms/forms/AddOrg.form";
 import { isKoko } from "@/server/auth/roleGates";
 import { db } from "@/server/db";
-import { Currency, Prisma } from "@prisma/client";
+import { type Currency, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const errorMessages: Record<string, string> = {

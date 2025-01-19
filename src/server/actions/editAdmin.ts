@@ -1,6 +1,6 @@
 "use server";
 
-import { Role, Prisma } from "@prisma/client";
+import { type Role, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { updateUser } from "../queries/user/updateUser";
 import { encryptPassword } from "../queries/user/createUser";
