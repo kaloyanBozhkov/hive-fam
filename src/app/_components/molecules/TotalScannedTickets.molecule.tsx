@@ -4,14 +4,15 @@ import { type FC } from "react";
 export const TotalScannedTickets: FC<{
   tickets: ticket[];
   eventDate: Date;
-}> = ({ tickets, eventDate }) => {
+  eventEndDate: Date | null;
+}> = ({ tickets, eventDate, eventEndDate }) => {
   return (
     <div className="rounded-lg border p-4">
       <h3 className="text-sm font-medium text-muted-foreground">
-        Total Tickets Scanned 12hr before & after event starting time
+        Tickets scanned starting 4h before event date and ending 4h after
       </h3>
       <p className="mt-2 text-2xl font-bold">
-        {getScannedTicketsForEvent({ tickets, eventDate }).length}
+        {getScannedTicketsForEvent({ tickets, eventDate, eventEndDate }).length}
       </p>
     </div>
   );
@@ -20,13 +21,15 @@ export const TotalScannedTickets: FC<{
 export const getScannedTicketsForEvent = ({
   tickets,
   eventDate,
+  eventEndDate,
 }: {
   tickets: ticket[];
   eventDate: Date;
+  eventEndDate: Date | null;
 }) => {
-  const RANGE = 60 * 60 * 1000 * 12;
+  const RANGE = 60 * 60 * 1000 * 4;
   const countFromMs = eventDate.getTime() - RANGE;
-  const countToMs = eventDate.getTime() + RANGE;
+  const countToMs = (eventEndDate?.getTime() ?? new Date().getTime()) + RANGE;
   const scannedTickets = tickets
     .filter((t) => t.scanned_at)
     .filter(

@@ -368,14 +368,12 @@ const EditEventForm = ({
                                     <FormLabel className="text-base">
                                       Visible
                                     </FormLabel>
-                                    <FormDescription>
-                                      <p className="text-xs">
-                                        Toggle this off to hide the ticket type
-                                        from the public.
-                                        <br />
-                                        Useful when tickes of this type have
-                                        already been sold.
-                                      </p>
+                                    <FormDescription className="text-xs">
+                                      Toggle this off to hide the ticket type
+                                      from the public.
+                                      <br />
+                                      Useful when tickes of this type have
+                                      already been sold.
                                     </FormDescription>
                                   </div>
                                   <FormControl>

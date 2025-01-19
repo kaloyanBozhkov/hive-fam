@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import useResizeObserver from "../../hooks/useResizeObserver";
 import { Input } from "../shadcn/Input.shadcn";
+import { Card, CardHeader, CardTitle } from "../shadcn/Card.shadcn";
 
 export const DateVisualizer: FC<{
   timestamps: string[];
@@ -35,6 +36,20 @@ export const DateVisualizer: FC<{
 
     return isNaN(minutes) ? 0 : Math.max(minutes, 1); // Ensure at least 1 minute
   };
+
+  if (batchedTickets.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <p className="text-lg font-normal">
+              Event must be over for these metric to be shown
+            </p>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
     <div ref={chartRef} style={{ width: "100%", height: "100%" }}>

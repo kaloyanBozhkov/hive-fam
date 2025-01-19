@@ -68,7 +68,11 @@ export default async function EditEventPage({
           </h3>
           <p className="mt-2 text-2xl font-bold">{sold_tickets.length}</p>
         </div>
-        <TotalScannedTickets tickets={sold_tickets} eventDate={event.date} />
+        <TotalScannedTickets
+          tickets={sold_tickets}
+          eventDate={event.date}
+          eventEndDate={event.end_date}
+        />
       </Group>
 
       <div className="h-[400px] w-full">
