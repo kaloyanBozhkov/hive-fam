@@ -51,6 +51,7 @@ export default async function EditEventPage({
   const scannedTickets = getScannedTicketsForEvent({
     tickets: sold_tickets,
     eventDate: event.date,
+    eventEndDate: event.end_date,
   });
 
   return (
