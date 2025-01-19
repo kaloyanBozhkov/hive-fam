@@ -17,7 +17,12 @@ import DateCard from "../molecules/DateCard.molecule";
 import BuyTickets from "./BuyTickets.organism";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
-import { MediaType, type event, type venue } from "@prisma/client";
+import {
+  event_ticket_type,
+  MediaType,
+  type event,
+  type venue,
+} from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
 import {
   Carousel,
@@ -31,6 +36,7 @@ import SlideDots from "../atoms/SlideDots.atom";
 
 type Event = event & {
   venue: venue;
+  ticket_types: event_ticket_type[];
   poster_media: {
     bucket_path: string;
     type: MediaType;
@@ -145,9 +151,8 @@ const EventCard = ({
             <BuyTickets
               eventId={event.id}
               eventName={event.title}
-              eventPrice={event.ticket_price}
-              eventCurrency={event.price_currency}
               isEventFree={event.is_free}
+              ticketTypes={event.ticket_types}
             />
           )}
           {!isPast && (
