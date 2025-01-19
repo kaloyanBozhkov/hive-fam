@@ -21,7 +21,7 @@ import {
   faMinus,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
 import type { Currency } from "@prisma/client";
@@ -144,10 +144,9 @@ const Tickets = ({
               );
 
               return (
-                <>
+                <Fragment key={ticketType.id}>
                   {
                     <FormField
-                      key={ticketType.id}
                       control={form.control}
                       name={ticketType.id}
                       render={() => (
@@ -244,7 +243,7 @@ const Tickets = ({
                   {index < self.length - 1 && (
                     <div className="h-[1px] w-full border-b-[1px] border-solid border-gray-500/15 " />
                   )}
-                </>
+                </Fragment>
               );
             })}
           <div className="mt-2 h-[1px] w-full border-b-[1px] border-solid border-gray-500/15" />
