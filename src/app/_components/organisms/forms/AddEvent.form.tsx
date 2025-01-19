@@ -60,24 +60,33 @@ const event = z
     is_published: z.boolean().default(false),
     is_free: z.boolean(),
     price_currency: z.nativeEnum(Currency),
-    ticket_types: z
-      .array(
-        z.object({
-          id: z.string(),
-          label: z.string(),
-          price: z
-            .number()
-            .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1")
-            .optional(),
-          available_tickets_of_type: z.number().min(0),
-          is_visible: z.boolean(),
-        }),
-      )
-      .min(1, "At least one ticket type is required"),
+    ticket_types: z.array(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        price: z
+          .number()
+          .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1"),
+        available_tickets_of_type: z.number().min(0),
+        is_visible: z.boolean(),
+      }),
+    ),
   })
-  .refine((data) => !data.is_free && data.ticket_types.length === 0, {
-    message: "Ticket types are required if the event is not free",
-    path: ["ticket_types"], // Target field for the error
+  .superRefine((data, ctx) => {
+    if (!data.is_free && data.ticket_types.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ticket types are required if the event is not free",
+        path: ["ticket_types"],
+      });
+    }
+    if (data.is_free && data.ticket_types.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ticket types are not allowed if the event is free",
+        path: ["ticket_types"],
+      });
+    }
   });
 
 const defaultTicketType = {
@@ -121,8 +130,12 @@ const AddEventForm = ({
     },
   });
   const onToggleFreeEvent = useCallback((isFree: boolean) => {
+    if (!form.getFieldState("is_free").isDirty) return;
     form.setValue("ticket_types", isFree ? [] : [defaultTicketType]);
     form.setValue("is_free", isFree);
+    form.trigger("ticket_types").catch((e) => {
+      console.error(e);
+    });
   }, []);
 
   const handleSubmit = async (data: z.infer<typeof event>) => {
@@ -375,14 +388,16 @@ const AddEventForm = ({
                           type="button"
                           variant="outline"
                           onClick={() => {
-                            form.setValue(
-                              "ticket_types",
-                              form
-                                .getValues()
-                                .ticket_types.filter(
-                                  (_, index) => index !== index,
-                                ),
+                            const currentTickets =
+                              form.getValues().ticket_types;
+                            const remaining = currentTickets.filter(
+                              (ticketToDelete) =>
+                                ticketToDelete.id !== ticketType.id,
                             );
+                            form.setValue("ticket_types", remaining);
+                            form.trigger("ticket_types").catch((e) => {
+                              console.error(e);
+                            });
                           }}
                         >
                           Delete
@@ -455,7 +470,6 @@ const AddEventForm = ({
               );
             }}
           />
-
           <Button
             type="submit"
             disabled={!form.formState.isValid}

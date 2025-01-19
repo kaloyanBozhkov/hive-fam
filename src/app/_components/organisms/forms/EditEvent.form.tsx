@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useEffect, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { Currency, MediaType } from "@prisma/client";
@@ -114,10 +114,11 @@ const EditEventForm = ({
     resolver: zodResolver(event),
     defaultValues: initialData,
   });
+  const prevPricing = useRef(initialData.ticket_types);
 
   const onToggleFreeEvent = (isFree: boolean) => {
     if (!form.getFieldState("is_free").isDirty) return;
-    form.setValue("ticket_types", []);
+    form.setValue("ticket_types", isFree ? [] : prevPricing.current);
     form.setValue("is_free", isFree);
     form.trigger("ticket_types").catch((e) => {
       console.error(e);

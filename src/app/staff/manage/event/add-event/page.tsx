@@ -13,12 +13,18 @@ type EventData = {
   poster_media: { bucket_path: string; type: MediaType }[];
   external_event_url?: string | null;
   venue_id: string;
-  ticket_price?: number;
   price_currency: Currency;
   is_free: boolean;
+  ticket_types: {
+    label: string;
+    price: number;
+    available_tickets_of_type: number;
+    is_visible: boolean;
+    id: string;
+  }[];
 };
 
-async function addEvent({ poster_media, ...data }: EventData) {
+async function addEvent({ poster_media, ticket_types, ...data }: EventData) {
   "use server";
 
   try {
@@ -46,6 +52,13 @@ async function addEvent({ poster_media, ...data }: EventData) {
     const event = await db.event.create({
       data: {
         ...data,
+        ticket_types: {
+          createMany: {
+            data: ticket_types.map((ticketType) => ({
+              ...ticketType,
+            })),
+          },
+        },
         organization_id: user.organization_id,
         poster_media: {
           createMany: {
