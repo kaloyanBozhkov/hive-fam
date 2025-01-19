@@ -4,7 +4,7 @@ import EditEventForm from "@/app/_components/organisms/forms/EditEvent.form";
 import { getVenuesData } from "@/server/actions/getVenues";
 import { getOrgId } from "@/server/actions/org";
 import { isManagerOrAbove } from "@/server/auth/roleGates";
-import { MediaType, type event as Event } from "@prisma/client";
+import { type MediaType, type event as Event } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 

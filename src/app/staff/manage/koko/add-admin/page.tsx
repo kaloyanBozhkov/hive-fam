@@ -2,7 +2,7 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import AddAdminForm from "@/app/_components/organisms/forms/AddAdmin.form";
 import { isKoko } from "@/server/auth/roleGates";
 import { getAllOrgs } from "@/server/actions/org";
-import { Role, Prisma } from "@prisma/client";
+import { type Role, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { createUser } from "@/server/queries/user/createUser";
 

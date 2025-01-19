@@ -39,7 +39,7 @@ const QRTickets = ({
           <Card key={idx} id={id}>
             <CardHeader>
               <CardTitle>
-                <p className="text-[20px] font-light">
+                <p className="text-[18px] font-light">
                   #{tickets[idx]!.count} Ticket
                 </p>
                 <p className="text-[22px] font-semibold">

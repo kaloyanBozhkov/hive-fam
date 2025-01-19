@@ -44,7 +44,7 @@ const getTickets = async (sessionId: string) => {
       id,
       count,
       isFree: is_free,
-      ticketType: ticket_type?.label ?? "Free",
+      ticketType: ticket_type?.label ?? "Free Entry",
     })),
     ownerEmail: tickets[0]!.owner?.email,
     eventTitle: tickets[0]!.event.title,

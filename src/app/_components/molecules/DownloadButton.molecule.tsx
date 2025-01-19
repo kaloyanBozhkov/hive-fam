@@ -32,7 +32,9 @@ export const DownloadButton = ({
     }
     const ticket = document.querySelector(selector);
     if (!ticket) return;
-    html2canvas(ticket as HTMLElement, { useCORS: true })
+    html2canvas(ticket as HTMLElement, {
+      useCORS: true,
+    })
       .then((canvas) => {
         forceDownload(canvas.toDataURL(), fileName);
         btn.style.display = "block";

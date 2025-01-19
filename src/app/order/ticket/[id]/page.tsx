@@ -30,6 +30,11 @@ const getTicket = async (ticketId: string) => {
           surname: true,
         },
       },
+      ticket_type: {
+        select: {
+          label: true,
+        },
+      },
       event: {
         select: {
           id: true,
@@ -129,7 +134,7 @@ export default async function TicketOrderPage({
             {
               id: ticket.id,
               count: ticket.count,
-              ticketType: ticket.ticket_type_id ?? "Free",
+              ticketType: ticket.ticket_type?.label ?? "Free Entry",
             },
           ]}
           withShare={false}

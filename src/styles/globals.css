@@ -74,7 +74,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  img {
+    @apply inline-block;
+  }
 }
+
 
 @layer utilities {
   .clip-circlele-44perc {
