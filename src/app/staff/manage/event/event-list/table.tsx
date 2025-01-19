@@ -19,7 +19,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { useTransition, useState, useCallback } from "react";
+import { useTransition, useState, useCallback, Fragment } from "react";
 
 export type Event = {
   id: string;
@@ -77,12 +77,16 @@ export const EventList = ({ data }: { data: Event[] }) => {
       cell: ({ row }) => {
         if (row.original.is_free) return <p>Free</p>;
         return (
-          <Stack className="flex-wrap gap-2">
+          <Stack className="flex-wrap gap-1">
             {row.original.ticket_types.map((ticket_type) => (
-              <p key={ticket_type.id}>
-                {ticket_type.label} - {ticket_type.price}{" "}
-                {row.original.price_currency}
-              </p>
+              <Fragment key={ticket_type.id}>
+                <p className="max-w-[100px] text-[12px] leading-[100%]">
+                  {ticket_type.label}
+                </p>
+                <p className="mb-1 max-w-[100px] text-[8px] leading-[100%]">
+                  {ticket_type.price} {row.original.price_currency}
+                </p>
+              </Fragment>
             ))}
           </Stack>
         );

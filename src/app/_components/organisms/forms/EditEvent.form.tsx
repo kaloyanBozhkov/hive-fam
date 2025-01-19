@@ -359,13 +359,41 @@ const EditEventForm = ({
                                 </FormItem>
                               )}
                             />
+                            <FormField
+                              control={form.control}
+                              name={`ticket_types.${index}.is_visible`}
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Visible
+                                    </FormLabel>
+                                    <FormDescription>
+                                      <p className="text-xs">
+                                        Toggle this off to hide the ticket type
+                                        from the public.
+                                        <br />
+                                        Useful when tickes of this type have
+                                        already been sold.
+                                      </p>
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
                           </Stack>
                         </CardContent>
                         <CardFooter>
                           {ticketTypesIdsThatCannotBeDeleted.includes(
                             ticketType.id,
                           ) ? (
-                            <p className="text-red-500">
+                            <p className="text-xs text-red-500">
                               This ticket type cannot be deleted as it has sold
                               tickets. You can still toggle it as invisible.
                             </p>

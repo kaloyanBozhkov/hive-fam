@@ -127,70 +127,72 @@ const Tickets = ({
         className={twMerge("w-full space-y-8", className)}
       >
         <Stack className="gap-[20px]">
-          {ticketTypes.map((ticketType, index) => {
-            const ticketTypeCount = form.watch(ticketType.id);
-            const TicketTypeTotalPrice = (
-              <p
-                className={twMerge(
-                  "text-nowrap text-[14px] leading-[120%] text-gray-500",
-                  ticketTypeCount <= 0 ? "font-light" : "font-semibold",
-                )}
-              >
-                {eventCurrency}{" "}
-                {(ticketTypeCount * ticketType.price).toFixed(2)}
-              </p>
-            );
+          {ticketTypes
+            .filter((d) => d.is_visible)
+            .map((ticketType, index, self) => {
+              const ticketTypeCount = form.watch(ticketType.id);
+              const TicketTypeTotalPrice = (
+                <p
+                  className={twMerge(
+                    "text-nowrap text-[14px] leading-[120%] text-gray-500",
+                    ticketTypeCount <= 0 ? "font-light" : "font-semibold",
+                  )}
+                >
+                  {eventCurrency}{" "}
+                  {(ticketTypeCount * ticketType.price).toFixed(2)}
+                </p>
+              );
 
-            return (
-              <>
-                {
-                  <FormField
-                    key={ticketType.id}
-                    control={form.control}
-                    name={ticketType.id}
-                    render={() => (
-                      <FormItem className="mt-0 flex flex-col items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
-                        <div className="grid w-full grid-cols-2 items-center justify-between gap-2 md:grid-cols-[1fr_min-content_min-content] md:gap-3">
-                          <FormLabel className="mr-auto -sm:-mb-2">
-                            <Stack className="items-start gap-1">
-                              <p className="text-[18px] font-normal leading-[120%]">
-                                {ticketType.label}
-                              </p>
-                              {ticketType.description && (
-                                <p className="text-[14px] leading-[120%]">
-                                  {ticketType.description}
+              return (
+                <>
+                  {
+                    <FormField
+                      key={ticketType.id}
+                      control={form.control}
+                      name={ticketType.id}
+                      render={() => (
+                        <FormItem className="mt-0 flex flex-col items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
+                          <div className="grid w-full grid-cols-2 items-center justify-between gap-2 md:grid-cols-[1fr_min-content_min-content] md:gap-3">
+                            <FormLabel className="mr-auto -sm:-mb-2">
+                              <Stack className="items-start gap-1">
+                                <p className="text-[18px] font-normal leading-[120%]">
+                                  {ticketType.label}
                                 </p>
-                              )}
-                              <p className="text-[14px] font-light leading-[120%] text-gray-500">
-                                {eventCurrency} {ticketType.price.toFixed(2)}
-                              </p>
-                            </Stack>
-                          </FormLabel>
-                          <FormControl>
-                            <Stack className="items-end gap-2">
-                              <div className=" md:hidden">
-                                {TicketTypeTotalPrice}
-                              </div>
-                              <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
-                                <Button
-                                  onClick={() => {
-                                    const newVal =
-                                      form.getValues(ticketType.id) - 1;
-                                    form.setValue(
-                                      ticketType.id,
-                                      newVal < 0 ? 0 : newVal,
-                                    );
-                                  }}
-                                  type="button"
-                                  className="size-[24px] rounded-full p-0"
-                                  disabled={ticketTypeCount <= 0}
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faMinus}
-                                    className="size-[14px]"
-                                  />
-                                </Button>
-                                {/* <Input
+                                {ticketType.description && (
+                                  <p className="text-[14px] leading-[120%]">
+                                    {ticketType.description}
+                                  </p>
+                                )}
+                                <p className="text-[14px] font-light leading-[120%] text-gray-500">
+                                  {eventCurrency} {ticketType.price.toFixed(2)}
+                                </p>
+                              </Stack>
+                            </FormLabel>
+                            <FormControl>
+                              <Stack className="items-end gap-2">
+                                <div className=" md:hidden">
+                                  {TicketTypeTotalPrice}
+                                </div>
+                                <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
+                                  <Button
+                                    onClick={() => {
+                                      const newVal =
+                                        form.getValues(ticketType.id) - 1;
+                                      form.setValue(
+                                        ticketType.id,
+                                        newVal < 0 ? 0 : newVal,
+                                      );
+                                    }}
+                                    type="button"
+                                    className="size-[24px] rounded-full p-0"
+                                    disabled={ticketTypeCount <= 0}
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faMinus}
+                                      className="size-[14px]"
+                                    />
+                                  </Button>
+                                  {/* <Input
                             type="number"
                             {...field}
                             className="h-[26px] w-[62px]"
@@ -200,51 +202,51 @@ const Tickets = ({
                               field.onChange(+value);
                             }}
                           /> */}
-                                <p className="w-[24px] select-none text-center text-[24px] font-bold leading-[24px]">
-                                  {ticketTypeCount}
+                                  <p className="w-[24px] select-none text-center text-[24px] font-bold leading-[24px]">
+                                    {ticketTypeCount}
+                                  </p>
+                                  <Button
+                                    onClick={() => {
+                                      const newVal =
+                                        form.getValues(ticketType.id) + 1;
+                                      form.setValue(
+                                        ticketType.id,
+                                        newVal > 99 ? 99 : newVal,
+                                      );
+                                    }}
+                                    type="button"
+                                    disabled={ticketTypeCount >= 99}
+                                    className="size-[24px] rounded-full p-0 leading-[100%]"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faPlus}
+                                      className="size-[14px]"
+                                    />
+                                  </Button>
+                                </Group>
+                              </Stack>
+                            </FormControl>
+                            <Stack className={"hidden select-none md:block "}>
+                              {ticketTypeCount > 0 && (
+                                <p className="text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
+                                  {ticketTypeCount} x{" "}
+                                  {ticketType.price.toFixed(2)}
                                 </p>
-                                <Button
-                                  onClick={() => {
-                                    const newVal =
-                                      form.getValues(ticketType.id) + 1;
-                                    form.setValue(
-                                      ticketType.id,
-                                      newVal > 99 ? 99 : newVal,
-                                    );
-                                  }}
-                                  type="button"
-                                  disabled={ticketTypeCount >= 99}
-                                  className="size-[24px] rounded-full p-0 leading-[100%]"
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faPlus}
-                                    className="size-[14px]"
-                                  />
-                                </Button>
-                              </Group>
+                              )}
+                              <div className="">{TicketTypeTotalPrice}</div>
                             </Stack>
-                          </FormControl>
-                          <Stack className={"hidden select-none md:block "}>
-                            {ticketTypeCount > 0 && (
-                              <p className="text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
-                                {ticketTypeCount} x{" "}
-                                {ticketType.price.toFixed(2)}
-                              </p>
-                            )}
-                            <div className="">{TicketTypeTotalPrice}</div>
-                          </Stack>
-                        </div>
-                        <FormMessage className="col-span-2 w-full" />
-                      </FormItem>
-                    )}
-                  />
-                }
-                {index < ticketTypes.length - 1 && (
-                  <div className="h-[1px] w-full border-b-[1px] border-solid border-gray-500/15 " />
-                )}
-              </>
-            );
-          })}
+                          </div>
+                          <FormMessage className="col-span-2 w-full" />
+                        </FormItem>
+                      )}
+                    />
+                  }
+                  {index < self.length - 1 && (
+                    <div className="h-[1px] w-full border-b-[1px] border-solid border-gray-500/15 " />
+                  )}
+                </>
+              );
+            })}
           <div className="mt-2 h-[1px] w-full border-b-[1px] border-solid border-gray-500/15" />
           <div className="grid w-full select-none grid-cols-2 gap-[20px]">
             <p className="mr-auto font-rex-bold text-[20px]">Total</p>
