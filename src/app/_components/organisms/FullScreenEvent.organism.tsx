@@ -15,12 +15,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import DateCard from "../molecules/DateCard.molecule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
-import {
-  event_ticket_type,
-  MediaType,
-  type event,
-  type venue,
-} from "@prisma/client";
+import { MediaType, type event, type venue } from "@prisma/client";
 import TimeCard from "../molecules/TimeCard.molecule";
 import Tickets from "./Tickets.organism";
 import BuyTickets from "./BuyTickets.organism";
@@ -33,6 +28,7 @@ import {
 import { CarouselContent } from "../shadcn/Carousel.shadcn";
 import { Carousel } from "../shadcn/Carousel.shadcn";
 import { S3Service } from "@/utils/s3/service";
+import type { EventTicketType } from "@/utils/types.common";
 
 type Event = event & {
   venue: venue;
@@ -40,7 +36,7 @@ type Event = event & {
     bucket_path: string;
     type: MediaType;
   }[];
-  ticket_types: event_ticket_type[];
+  ticket_types: EventTicketType[];
 };
 
 const MAX_DESC_LENGTH = 100;
@@ -197,6 +193,8 @@ const FullScreenEvent = ({
               eventId={event.id}
               eventName={event.title}
               ticketTypes={event.ticket_types}
+              eventDate={event.date}
+              eventEndDate={event.end_date}
             />
           )}
           {!isPast && (

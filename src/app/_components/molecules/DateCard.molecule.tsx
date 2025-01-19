@@ -4,9 +4,13 @@ import Stack from "../layouts/Stack.layout";
 const DateCard = ({
   className = "",
   date,
+  dateClassName = "",
+  monthClassName = "",
 }: {
   date: Date;
   className?: string;
+  dateClassName?: string;
+  monthClassName?: string;
 }) => {
   return (
     <Stack
@@ -15,10 +19,20 @@ const DateCard = ({
         className,
       )}
     >
-      <p className="font-rex-bold text-[16px] leading-[105%] text-white/90">
+      <p
+        className={twMerge(
+          "font-rex-bold text-[16px] leading-[105%] text-white/90",
+          monthClassName,
+        )}
+      >
         {getMonthAbr(date)}
       </p>
-      <p className="font-rex-bold text-[30px] leading-[105%] text-white">
+      <p
+        className={twMerge(
+          "font-rex-bold text-[30px] leading-[105%] text-white",
+          dateClassName,
+        )}
+      >
         {date.getDate()}
       </p>
     </Stack>

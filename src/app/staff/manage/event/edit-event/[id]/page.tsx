@@ -20,6 +20,13 @@ async function editEvent({
   poster_media: latestEventMedia,
   ...eventData
 }: Partial<Event> & {
+  ticket_types: {
+    id: string;
+    label: string;
+    price: number;
+    available_tickets_of_type: number;
+    is_visible: boolean;
+  }[];
   poster_media: {
     bucket_path: string;
     type: MediaType;
@@ -60,6 +67,17 @@ async function editEvent({
       where: { id: eventData.id, organization_id: user.organization_id },
       data: {
         ...eventData,
+        ticket_types: {
+          upsert: eventData.ticket_types.map((tt) => ({
+            where: { id: tt.id },
+            update: {
+              ...tt,
+            },
+            create: {
+              ...tt,
+            },
+          })),
+        },
         poster_media: {
           createMany: {
             data: mediaWithOrder,
@@ -111,6 +129,26 @@ const getInitialData = async (id: string) => {
     },
   });
 
+  const sold_tickets = await db.ticket.findMany({
+    where: {
+      event_id: id,
+    },
+    select: {
+      ticket_type_id: true,
+    },
+  });
+  const ticketTypesCount = sold_tickets.reduce(
+    (acc, curr) => {
+      if (!curr?.ticket_type_id) return acc;
+      acc[curr.ticket_type_id] = (acc[curr.ticket_type_id] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const ticketTypesThatCannotBeDeleted = event.ticket_types
+    .filter((tt) => ticketTypesCount[tt.id] && ticketTypesCount[tt.id]! > 0)
+    .map((tt) => tt.id);
+
   return {
     ...event,
     poster_media: poster_media.map((pm, order) => ({
@@ -120,6 +158,7 @@ const getInitialData = async (id: string) => {
       type: pm.media.media_type,
     })),
     external_event_url: event.external_event_url ?? undefined,
+    ticketTypesThatCannotBeDeleted,
   };
 };
 
@@ -133,11 +172,12 @@ export default async function EditEventPage({
   const orgId = await getOrgId();
   return (
     <Stack className="gap-y-8">
-      <h1 className="text-[22px] font-semibold leading-[120%]">Edit Admin</h1>
+      <h1 className="text-[22px] font-semibold leading-[120%]">Edit Event</h1>
       <EditEventForm
         onEdit={editEvent}
         venues={await getVenuesData()}
         initialData={event}
+        ticketTypesIdsThatCannotBeDeleted={event.ticketTypesThatCannotBeDeleted}
         organizationId={orgId}
       />
     </Stack>

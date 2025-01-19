@@ -18,7 +18,7 @@ export default function AdminLayout({
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            <Group className="align-between w-full justify-between">
+            <Group className="align-between w-full items-center justify-between">
               <p>Admin area</p>
               <GoBack />
             </Group>

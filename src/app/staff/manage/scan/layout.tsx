@@ -18,7 +18,7 @@ export default function ScanLayout({
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            <Group className="align-between w-full justify-between">
+            <Group className="align-between w-full items-center justify-between">
               <p>Ticket Scanner</p>
               <GoBack />
             </Group>

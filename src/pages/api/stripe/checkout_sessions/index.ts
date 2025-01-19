@@ -89,6 +89,11 @@ export default async function handler(
       )
         throw new Error("Total doesnt match");
 
+      const uniqueItems = items.filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.ticketTypeId === item.ticketTypeId),
+      );
+
       const params: Stripe.Checkout.SessionCreateParams = {
           mode: "payment",
           submit_type: "pay",
@@ -96,7 +101,7 @@ export default async function handler(
           phone_number_collection: {
             enabled: true,
           },
-          line_items: items.map((p) => ({
+          line_items: uniqueItems.map((p) => ({
             price_data: {
               unit_amount: formatAmountForStripe(p.ticketPrice, currency),
               currency,
@@ -110,9 +115,13 @@ export default async function handler(
                 description: event.ticket_types.find(
                   (t) => t.id === p.ticketTypeId,
                 )!.label,
+                metadata: {
+                  ticketTypeId: p.ticketTypeId,
+                } as OrderLineItemMetadata,
               },
             },
-            quantity: 1,
+            quantity: items.filter((t) => t.ticketTypeId === p.ticketTypeId)
+              .length,
           })),
           billing_address_collection: "auto",
           cancel_url: `${req.headers.origin!}/${onCancelRedirectTo}`,
@@ -124,11 +133,10 @@ export default async function handler(
           },
           customer_creation: "always",
           allow_promotion_codes: true,
+          // discounts: // The coupon or promotion code to apply to this Session. Currently, only up to one may be specified.
           metadata: {
             eventId,
-            totalTickets: items.length,
             organizationId: event.organization_id,
-            tickets: JSON.stringify(items),
           } as OrderMetadata,
         },
         checkoutSession: Stripe.Checkout.Session =
@@ -150,9 +158,13 @@ export default async function handler(
 
 export const orderMetadataSchema = z.object({
   eventId: z.string(),
-  tickets: z.string(), //json
   organizationId: z.string().uuid(),
   totalTickets: z.number(),
 });
 
+export const orderLineItemMetadataSchema = z.object({
+  ticketTypeId: z.string(),
+});
+
 export type OrderMetadata = z.infer<typeof orderMetadataSchema>;
+export type OrderLineItemMetadata = z.infer<typeof orderLineItemMetadataSchema>;

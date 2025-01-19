@@ -10,6 +10,11 @@ const getEvents = async (orgId: string) => {
     include: {
       venue: true,
       ticket_types: true,
+      sold_tickets: {
+        select: {
+          ticket_type_id: true,
+        },
+      },
       poster_media: {
         select: {
           order: true,
@@ -31,13 +36,29 @@ const getEvents = async (orgId: string) => {
     },
   });
 
-  return events.map(({ poster_media, ...event }) => ({
-    ...event,
-    poster_media: poster_media.map((pm) => ({
-      bucket_path: pm.media.bucket_path,
-      type: pm.media.media_type,
-    })),
-  }));
+  const getSoldTicketsOfType = (
+    soldTickets: { ticket_type_id: string | null }[],
+    ticketTypeId: string,
+  ) => {
+    return soldTickets.filter((st) => st.ticket_type_id === ticketTypeId)
+      .length;
+  };
+
+  return events.map(
+    ({ poster_media, ticket_types, sold_tickets, ...event }) => ({
+      ...event,
+      poster_media: poster_media.map((pm) => ({
+        bucket_path: pm.media.bucket_path,
+        type: pm.media.media_type,
+      })),
+      ticket_types: ticket_types.map((tt) => ({
+        ...tt,
+        is_sold_out:
+          tt.available_tickets_of_type <=
+          getSoldTicketsOfType(sold_tickets, tt.id),
+      })),
+    }),
+  );
 };
 
 export default async function Home() {

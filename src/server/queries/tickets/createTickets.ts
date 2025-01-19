@@ -4,18 +4,17 @@ import type { Currency } from "@prisma/client";
 
 export const createTickets = async ({
   eventId,
-  totalTickets,
   customerDetails, // who bought the tickets
   orderSessionId,
-  ticketPrice,
+  tickets,
   currency,
 }: {
   eventId: string;
-  totalTickets: number;
   customerDetails: Partial<CustomerDetails> &
     Pick<CustomerDetails, "email" | "name">;
   orderSessionId: string;
-  ticketPrice: number;
+  // ticketTypeId is optional for free tickets
+  tickets: { ticketTypeId?: string | null; quantity: number }[];
   currency: Currency;
 }) => {
   const participantEmail = customerDetails.email;
@@ -40,15 +39,29 @@ export const createTickets = async ({
     create: participantDetails,
   });
 
+  const event = await db.event.findUniqueOrThrow({
+    where: { id: eventId },
+    select: { is_free: true },
+  });
+
+  const ticketTypes = await db.event_ticket_type.findMany({
+    where: { event_id: eventId },
+  });
+
   await db.ticket.createMany({
-    data: Array.from({ length: totalTickets }).map((_, idx) => ({
-      currency,
-      event_id: eventId,
-      owner_id: participant.id,
-      order_session_id: orderSessionId,
-      price: ticketPrice,
-      count: idx + 1,
-      is_free: ticketPrice === 0,
-    })),
+    data: tickets.flatMap((ticket) =>
+      Array.from({ length: ticket.quantity })
+        .map(() => ({
+          currency,
+          event_id: eventId,
+          owner_id: participant.id,
+          order_session_id: orderSessionId,
+          is_free: event.is_free,
+          ticket_type_id: ticket.ticketTypeId,
+          price:
+            ticketTypes.find((t) => t.id === ticket.ticketTypeId)?.price ?? 0,
+        }))
+        .map((t, idx) => ({ ...t, count: idx + 1 })),
+    ),
   });
 };

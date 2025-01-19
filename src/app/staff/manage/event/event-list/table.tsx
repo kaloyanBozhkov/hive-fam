@@ -1,7 +1,7 @@
 "use client";
 
 import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
-import Group from "@/app/_components/layouts/Group.layout";
+import Stack from "@/app/_components/layouts/Stack.layout";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import { DataTable } from "@/app/_components/shadcn/DataTable.shadcn";
 import {
@@ -73,17 +73,18 @@ export const EventList = ({ data }: { data: Event[] }) => {
     },
     {
       accessorKey: "ticket_types",
-      header: "Price",
+      header: "Ticket Types",
       cell: ({ row }) => {
         if (row.original.is_free) return <p>Free</p>;
         return (
-          <Group className="flex-wrap gap-2">
+          <Stack className="flex-wrap gap-2">
             {row.original.ticket_types.map((ticket_type) => (
               <p key={ticket_type.id}>
-                {ticket_type.label} - {ticket_type.price}
+                {ticket_type.label} - {ticket_type.price}{" "}
+                {row.original.price_currency}
               </p>
             ))}
-          </Group>
+          </Stack>
         );
       },
     },

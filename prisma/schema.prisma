@@ -273,12 +273,15 @@ model event_ticket_type {
   updated_at DateTime @updatedAt
 
   label                     String
+  description               String?
   price                     Float
   is_visible                Boolean
   available_tickets_of_type Int
 
   event    event  @relation(fields: [event_id], references: [id])
   event_id String
+
+  tickets_of_type ticket[]
 }
 
 model event {
@@ -289,10 +292,11 @@ model event {
   title              String
   description        String
   date               DateTime
+  end_date           DateTime?
   external_event_url String?
   event_photos_url   String? // when event is completed
-  is_published       Boolean  @default(false)
-  is_free            Boolean  @default(false)
+  is_published       Boolean   @default(false)
+  is_free            Boolean   @default(false)
 
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String
@@ -348,6 +352,10 @@ model ticket {
 
   event    event  @relation(fields: [event_id], references: [id])
   event_id String
+
+  // free tickets dont have a type that's why it's optional
+  ticket_type    event_ticket_type? @relation(fields: [ticket_type_id], references: [id])
+  ticket_type_id String?
 
   order_session_id String
 }

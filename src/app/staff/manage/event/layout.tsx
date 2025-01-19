@@ -18,7 +18,7 @@ export default function ManageLayout({
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            <Group className="align-between w-full justify-between">
+            <Group className="align-between w-full items-center justify-between">
               <p>Events area</p>
               <GoBack />
             </Group>

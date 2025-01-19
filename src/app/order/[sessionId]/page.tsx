@@ -21,6 +21,11 @@ const getTickets = async (sessionId: string) => {
       order_session_id: sessionId,
     },
     include: {
+      ticket_type: {
+        select: {
+          label: true,
+        },
+      },
       owner: {
         select: {
           email: true,
@@ -28,19 +33,22 @@ const getTickets = async (sessionId: string) => {
       },
       event: {
         select: {
+          id: true,
           title: true,
         },
       },
     },
   });
   return {
-    tickets: tickets.map(({ id, count, is_free }) => ({
+    tickets: tickets.map(({ id, count, is_free, ticket_type }) => ({
       id,
       count,
       isFree: is_free,
+      ticketType: ticket_type?.label ?? "Free",
     })),
-    ownerEmail: tickets[0]?.owner?.email,
-    eventTitle: tickets[0]?.event?.title,
+    ownerEmail: tickets[0]!.owner?.email,
+    eventTitle: tickets[0]!.event.title,
+    eventId: tickets[0]!.event.id,
   };
 };
 
@@ -54,7 +62,8 @@ export default async function OrderPage({
   const { sessionId } = await params;
   if (!sessionId) return redirect("/error");
 
-  const { tickets, ownerEmail, eventTitle } = await getTickets(sessionId);
+  const { tickets, ownerEmail, eventTitle, eventId } =
+    await getTickets(sessionId);
   if (!tickets.length) return redirect("/error");
 
   const isSingleTicket = tickets.length === 1;
@@ -99,7 +108,7 @@ export default async function OrderPage({
       </Card>
       <Suspense fallback={<p>Rendering your tickets..</p>}>
         <div id="tickets">
-          <QRTicketsServer tickets={tickets} />
+          <QRTicketsServer tickets={tickets} eventId={eventId} />
         </div>
       </Suspense>
     </Stack>

@@ -3,17 +3,43 @@ import QRTickets from "../organisms/QRTickets.organism";
 import { getOrgId } from "@/server/actions/org";
 import { fetchPostJSON } from "@/utils/common";
 import { getDomainFromOrgId } from "@/server/config";
+import { db } from "@/server/db";
+
+const getEventInfo = async (eventId: string) => {
+  const event = await db.event.findFirstOrThrow({
+    where: {
+      id: eventId,
+    },
+    select: {
+      title: true,
+      date: true,
+      end_date: true,
+      venue: {
+        select: {
+          name: true,
+          street_addr: true,
+          city: true,
+        },
+      },
+    },
+  });
+
+  return event;
+};
 
 const QRTicketsServer = async ({
   tickets,
   withShare = true,
+  eventId,
 }: {
   tickets: {
     id: string;
     // count the order of ticket for sharing purposes
     count: number;
+    ticketType: string;
   }[];
   withShare?: boolean;
+  eventId: string;
 }) => {
   const orgId = await getOrgId();
   const orgDomain = getDomainFromOrgId(orgId)!;
@@ -32,9 +58,18 @@ const QRTicketsServer = async ({
       orgId,
     },
   );
+  const event = await getEventInfo(eventId);
 
   return (
-    <QRTickets qrCodes={qrCodes} tickets={tickets} withShare={withShare} />
+    <QRTickets
+      qrCodes={qrCodes}
+      tickets={tickets}
+      withShare={withShare}
+      eventName={event.title}
+      eventDate={event.date}
+      eventEndDate={event.end_date}
+      eventLocation={`${event.venue.street_addr}, ${event.venue.city}`}
+    />
   );
 };
 

@@ -10,17 +10,26 @@ import {
 import { getTicketShareUrl } from "@/utils/tickets";
 import { ButtonCopy } from "../molecules/CopyButton.moleule";
 import { DownloadButton } from "../molecules/DownloadButton.molecule";
+import { EventInfoCard } from "../molecules/EventInfoCard.molecule";
 
 const QRTickets = ({
   qrCodes,
   withShare = true,
   tickets,
+  eventName,
+  eventDate,
+  eventLocation,
+  eventEndDate,
 }: {
   qrCodes: {
     dataURL: string;
   }[];
-  tickets: { id: string; count: number }[];
+  tickets: { id: string; count: number; ticketType: string }[];
   withShare?: boolean;
+  eventName: string;
+  eventDate: Date;
+  eventLocation?: string;
+  eventEndDate?: Date | null;
 }) => {
   return (
     <Stack className="gap-4">
@@ -29,14 +38,29 @@ const QRTickets = ({
         return (
           <Card key={idx} id={id}>
             <CardHeader>
-              <CardTitle>Ticket #{tickets[idx]!.count}</CardTitle>
+              <CardTitle>
+                <p className="text-[20px] font-light">
+                  #{tickets[idx]!.count} Ticket
+                </p>
+                <p className="text-[22px] font-semibold">
+                  {tickets[idx]!.ticketType}
+                </p>
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex w-full flex-col gap-8 sm:flex-row">
               <Stack className="w-fit gap-2">
                 <img
-                  className="w-full max-w-[350px]"
+                  className="w-full max-w-[400px]"
                   src={dataURL}
-                  alt={`Ticket #${idx + 1}`}
+                  alt={`Ticket #${idx + 1} [${tickets[idx]!.ticketType}]`}
+                />
+                <EventInfoCard
+                  withCardWrapper
+                  className="my-4 max-w-[400px]"
+                  eventName={eventName}
+                  eventDate={eventDate}
+                  eventEndDate={eventEndDate}
+                  eventLocation={eventLocation}
                 />
                 {withShare && (
                   <ButtonCopy

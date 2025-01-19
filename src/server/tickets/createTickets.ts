@@ -8,23 +8,21 @@ export const createOrderTicketsAndSendEmail = async ({
   currency,
   customerDetails,
   checkoutSessionId,
-  ticketPrice,
-  totalTickets,
+  tickets,
 }: {
   eventId: string;
   currency: Currency;
   customerDetails: Partial<CustomerDetails> &
     Pick<CustomerDetails, "email" | "name">;
   checkoutSessionId: string;
-  ticketPrice: number;
-  totalTickets: number;
+  // ticketTypeId is optional for free tickets
+  tickets: { ticketTypeId?: string | null; quantity: number }[];
 }) => {
   await createTickets({
     customerDetails,
     eventId,
     currency,
-    totalTickets: totalTickets,
-    ticketPrice: ticketPrice,
+    tickets,
     orderSessionId: checkoutSessionId,
   });
 

@@ -7,33 +7,54 @@ import Link from "next/link";
 import { isPastEvent } from "@/utils/specific";
 
 const getEvent = async (id: string) => {
-  const { poster_media, ...event } = await db.event.findFirstOrThrow({
-    where: {
-      id,
-    },
-    include: {
-      venue: true,
-      ticket_types: true,
-      poster_media: {
-        select: {
-          order: true,
-          media: {
-            select: {
-              bucket_path: true,
-              media_type: true,
-            },
+  const { poster_media, ticket_types, sold_tickets, ...event } =
+    await db.event.findFirstOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        venue: true,
+        ticket_types: true,
+        sold_tickets: {
+          select: {
+            ticket_type_id: true,
           },
         },
-        orderBy: {
-          order: "asc",
+        poster_media: {
+          select: {
+            order: true,
+            media: {
+              select: {
+                bucket_path: true,
+                media_type: true,
+              },
+            },
+          },
+          orderBy: {
+            order: "asc",
+          },
         },
       },
-    },
-  });
+    });
+
+  const getSoldTicketsOfType = (
+    soldTickets: { ticket_type_id: string | null }[],
+    ticketTypeId: string,
+  ) => {
+    return soldTickets.filter((st) => st.ticket_type_id === ticketTypeId)
+      .length;
+  };
+
   return {
     poster_media: poster_media.map((pm) => ({
       bucket_path: pm.media.bucket_path,
       type: pm.media.media_type,
+    })),
+    ticket_types: ticket_types.map((tt) => ({
+      ...tt,
+      is_sold_out:
+        tt.available_tickets_of_type <=
+        getSoldTicketsOfType(sold_tickets, tt.id),
     })),
     ...event,
   };

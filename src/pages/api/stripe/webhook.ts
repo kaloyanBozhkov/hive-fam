@@ -6,6 +6,7 @@ import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
 import type { Currency } from "@prisma/client";
 import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
+import { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -61,8 +62,22 @@ const cors = Cors({
 
           if (!session.metadata) throw Error("No metadata found");
 
-          const { eventId, totalTickets, ticketPrice } = session.metadata;
-          if (!eventId || !totalTickets || !ticketPrice)
+          const lineItems = await stripeCli.checkout.sessions.listLineItems(
+            session.id,
+            // to include the product metadata
+            { expand: ["data.price.product"] },
+          );
+          const lineItemsData = lineItems.data.map((item) => ({
+            quantity: item.quantity ?? 1,
+            metadata: (
+              item.price!.product as unknown as {
+                metadata: OrderLineItemMetadata;
+              }
+            ).metadata,
+          }));
+
+          const { eventId } = session.metadata as unknown as OrderMetadata;
+          if (!eventId || lineItemsData.length === 0)
             throw Error("Invalid metadata");
 
           // also sends email
@@ -71,8 +86,10 @@ const cors = Cors({
             customerDetails,
             currency,
             checkoutSessionId,
-            totalTickets: Number(totalTickets),
-            ticketPrice: Number(ticketPrice),
+            tickets: lineItemsData.map((t) => ({
+              ticketTypeId: t.metadata.ticketTypeId,
+              quantity: t.quantity,
+            })),
           });
 
           break;

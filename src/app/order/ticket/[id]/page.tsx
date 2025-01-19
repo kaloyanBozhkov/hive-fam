@@ -129,9 +129,11 @@ export default async function TicketOrderPage({
             {
               id: ticket.id,
               count: ticket.count,
+              ticketType: ticket.ticket_type_id ?? "Free",
             },
           ]}
           withShare={false}
+          eventId={ticket.event.id}
         />
       </Suspense>
     </Stack>

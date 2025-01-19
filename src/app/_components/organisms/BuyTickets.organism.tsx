@@ -14,8 +14,10 @@ import {
   DialogTrigger,
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
-import type { Currency, event_ticket_type } from "@prisma/client";
+import type { Currency } from "@prisma/client";
 import FreeTickets from "./FreeTickets.organism";
+import type { EventTicketType } from "@/utils/types.common";
+import { EventInfoCard } from "../molecules/EventInfoCard.molecule";
 
 const BuyTickets = ({
   className = "",
@@ -24,13 +26,19 @@ const BuyTickets = ({
   ticketTypes,
   isEventFree,
   eventCurrency,
+  eventDate,
+  eventLocation,
+  eventEndDate,
 }: {
   className?: string;
   eventId: string;
   eventName: string;
-  ticketTypes: event_ticket_type[];
+  ticketTypes: EventTicketType[];
   isEventFree: boolean;
   eventCurrency: Currency;
+  eventDate: Date;
+  eventLocation?: string;
+  eventEndDate?: Date | null;
 }) => {
   return (
     <div className={twMerge("w-full", className)}>
@@ -52,7 +60,15 @@ const BuyTickets = ({
         </DialogTrigger>
         <DialogContent className="rounded-lg -sm:max-w-[90vw]">
           <DialogHeader>
-            <DialogTitle className="text-left">Get Your Tickets</DialogTitle>
+            <DialogTitle>
+              <EventInfoCard
+                className="mb-4"
+                eventName={eventName}
+                eventDate={eventDate}
+                eventLocation={eventLocation}
+                eventEndDate={eventEndDate}
+              />
+            </DialogTitle>
             {isEventFree ? (
               // TODO free tickets of different types
               <FreeTickets eventId={eventId} eventName={eventName} />

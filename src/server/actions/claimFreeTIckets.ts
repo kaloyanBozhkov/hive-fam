@@ -58,8 +58,8 @@ export const claimFreeTickets = async ({
     customerDetails: { email, name },
     currency: org.default_currency,
     checkoutSessionId,
-    totalTickets: quantity,
-    ticketPrice: 0,
+    // free tickets dont have a type that's why it's null
+    tickets: [{ quantity, ticketTypeId: null }],
   });
 
   return { success: true, sessionId: checkoutSessionId };

@@ -6,17 +6,13 @@ import {
 } from "@/app/_components/shadcn/Tabs.shadcn";
 import Center from "../layouts/Center.layout";
 import Stack from "../layouts/Stack.layout";
-import {
-  type MediaType,
-  type event,
-  type venue,
-  type event_ticket_type,
-} from "@prisma/client";
+import { type MediaType, type event, type venue } from "@prisma/client";
 import EventCard from "./Event.organism";
+import type { EventTicketType } from "@/utils/types.common";
 
 type Event = event & {
   venue: venue;
-  ticket_types: event_ticket_type[];
+  ticket_types: EventTicketType[];
   poster_media: {
     bucket_path: string;
     type: MediaType;

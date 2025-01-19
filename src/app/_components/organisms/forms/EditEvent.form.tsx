@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { Fragment, useEffect, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { Currency, MediaType } from "@prisma/client";
@@ -29,42 +29,67 @@ import {
 import { Switch } from "../../shadcn/Switch.shadcn";
 import { MultiMediaUploadField } from "./fields/MultiMediaUploadField";
 import { Checkbox } from "../../shadcn/Checkbox.shadcn";
-import { DEFAULT_TICKET_PRICE, MIN_TICKET_PRICE } from "./AddEvent.form";
+import { MIN_TICKET_PRICE } from "./AddEvent.form";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardHeader,
+} from "../../shadcn/Card.shadcn";
+import { createUUID } from "@/utils/common";
 
-const event = z.object({
-  id: z.string().uuid(),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  date: z.date(),
-  // array of bucketPaths for media, in order of appearance
-  poster_media: z
-    .array(
+const event = z
+  .object({
+    id: z.string().uuid(),
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    date: z.date(),
+    // array of bucketPaths for media, in order of appearance
+    poster_media: z
+      .array(
+        z.object({
+          bucket_path: z.string(),
+          type: z.nativeEnum(MediaType),
+          id: z.string(),
+          order: z.number(),
+        }),
+      )
+      .min(1),
+    external_event_url: z.string().url("Invalid URL").optional(),
+    venue_id: z.string().uuid("Invalid venue ID"),
+    is_published: z.boolean(),
+    event_photos_url: z.string().url().optional().nullable(),
+    is_free: z.boolean(),
+    price_currency: z.nativeEnum(Currency),
+    ticket_types: z.array(
       z.object({
-        bucket_path: z.string(),
-        type: z.nativeEnum(MediaType),
         id: z.string(),
-        order: z.number(),
+        label: z.string(),
+        price: z
+          .number()
+          .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1"),
+        available_tickets_of_type: z.number().min(0),
+        is_visible: z.boolean(),
       }),
-    )
-    .min(1),
-  external_event_url: z.string().url("Invalid URL").optional(),
-  venue_id: z.string().uuid("Invalid venue ID"),
-  is_published: z.boolean(),
-  event_photos_url: z.string().url().optional().nullable(),
-  is_free: z.boolean(),
-  price_currency: z.nativeEnum(Currency),
-  ticket_types: z.array(
-    z.object({
-      label: z.string(),
-      price: z
-        .number()
-        .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1")
-        .optional(),
-      available_tickets_of_type: z.number().min(0),
-      is_visible: z.boolean(),
-    }),
-  ),
-});
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.is_free && data.ticket_types.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ticket types are required if the event is not free",
+        path: ["ticket_types"],
+      });
+    }
+    if (data.is_free && data.ticket_types.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ticket types are not allowed if the event is free",
+        path: ["ticket_types"],
+      });
+    }
+  });
 
 const EditEventForm = ({
   className,
@@ -72,6 +97,7 @@ const EditEventForm = ({
   onEdit,
   venues,
   organizationId,
+  ticketTypesIdsThatCannotBeDeleted,
 }: {
   className?: string;
   initialData: z.infer<typeof event>;
@@ -80,6 +106,7 @@ const EditEventForm = ({
   ) => Promise<{ success: boolean; error?: string }>;
   venues: { id: string; name: string }[];
   organizationId: string;
+  ticketTypesIdsThatCannotBeDeleted: string[];
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -92,6 +119,9 @@ const EditEventForm = ({
     if (!form.getFieldState("is_free").isDirty) return;
     form.setValue("ticket_types", []);
     form.setValue("is_free", isFree);
+    form.trigger("ticket_types").catch((e) => {
+      console.error(e);
+    });
   };
   const handleSubmit = (data: z.infer<typeof event>) => {
     startTransition(async () => {
@@ -231,69 +261,186 @@ const EditEventForm = ({
             )}
           />
           {!form.getValues().is_free && (
-            <Stack>
-              {form.watch("ticket_types").map((ticketType, index) => {
-                return (
-                  <Fragment key={index}>
-                    <FormField
-                      control={form.control}
-                      name={`ticket_types.${index}.price`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            <Stack>
-                              <p>Ticket Price</p>
-                              <p className="font-light text-gray-400">
-                                Note: minimum price is around 0.1 USD
-                              </p>
-                            </Stack>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value === ""
-                                    ? ""
-                                    : Number(e.target.value),
-                                )
-                              }
+            <>
+              <Stack className="gap-4">
+                {form.watch("ticket_types").map((ticketType, index) => {
+                  return (
+                    <Stack key={ticketType.id} className="gap-2">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="-mb-10 text-[22px]">
+                            Ticket #{index + 1}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <Stack className="gap-2 pt-6">
+                            <FormField
+                              control={form.control}
+                              name={`ticket_types.${index}.label`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    <Stack>
+                                      <p>Ticket Name</p>
+                                    </Stack>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="text"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value === ""
+                                            ? ""
+                                            : String(e.target.value),
+                                        )
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </Fragment>
-                );
-              })}
-            </Stack>
+                            <FormField
+                              control={form.control}
+                              name={`ticket_types.${index}.price`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    <Stack>
+                                      <p>Ticket Price</p>
+                                      <p className="font-light text-gray-400">
+                                        Note: minimum price is around 0.1 USD
+                                      </p>
+                                    </Stack>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value === ""
+                                            ? ""
+                                            : Number(e.target.value),
+                                        )
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name={`ticket_types.${index}.available_tickets_of_type`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    <Stack>
+                                      <p>Available Tickets</p>
+                                    </Stack>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value === ""
+                                            ? ""
+                                            : Number(e.target.value),
+                                        )
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </Stack>
+                        </CardContent>
+                        <CardFooter>
+                          {ticketTypesIdsThatCannotBeDeleted.includes(
+                            ticketType.id,
+                          ) ? (
+                            <p className="text-red-500">
+                              This ticket type cannot be deleted as it has sold
+                              tickets. You can still toggle it as invisible.
+                            </p>
+                          ) : (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                const currentTickets =
+                                  form.getValues().ticket_types;
+                                const remaining = currentTickets.filter(
+                                  (ticketToDelete) =>
+                                    ticketToDelete.id !== ticketType.id,
+                                );
+                                form.setValue("ticket_types", remaining);
+                                form.trigger("ticket_types").catch((e) => {
+                                  console.error(e);
+                                });
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </CardFooter>
+                      </Card>
+                    </Stack>
+                  );
+                })}
+                <Button
+                  className="lg:w-fit"
+                  type="button"
+                  onClick={() => {
+                    form.setValue("ticket_types", [
+                      ...form.getValues().ticket_types,
+                      {
+                        label: "Regular Admission",
+                        price: 10,
+                        available_tickets_of_type: 100,
+                        is_visible: true,
+                        id: createUUID(),
+                      },
+                    ]);
+                    form.trigger("ticket_types").catch((e) => {
+                      console.error(e);
+                    });
+                  }}
+                >
+                  Add New Ticket Type
+                </Button>
+              </Stack>
+              <FormField
+                control={form.control}
+                name={`price_currency`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currency</FormLabel>
+                    <FormControl>
+                      <Select {...field}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(Currency).map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {currency}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
           )}
-          <FormField
-            control={form.control}
-            name={`price_currency`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Currency</FormLabel>
-                <FormControl>
-                  <Select {...field}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(Currency).map((currency) => (
-                        <SelectItem key={currency} value={currency}>
-                          {currency}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="is_free"
