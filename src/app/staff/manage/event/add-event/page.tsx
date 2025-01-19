@@ -3,7 +3,7 @@ import AddEventForm from "@/app/_components/organisms/forms/AddEvent.form";
 import { getOrg, getOrgId } from "@/server/actions/org";
 import { isManagerOrAbove } from "@/server/auth/roleGates";
 import { db } from "@/server/db";
-import { type Currency, type MediaType } from "@prisma/client";
+import { Currency, type MediaType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 type EventData = {

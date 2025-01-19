@@ -1,6 +1,7 @@
 "use client";
 
 import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
+import Group from "@/app/_components/layouts/Group.layout";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import { DataTable } from "@/app/_components/shadcn/DataTable.shadcn";
 import {
@@ -33,8 +34,12 @@ export type Event = {
   created_at: Date;
   is_published: boolean;
   is_free: boolean;
-  ticket_price: number;
   price_currency: Currency;
+  ticket_types: {
+    id: string;
+    label: string;
+    price: number;
+  }[];
 };
 
 export const EventList = ({ data }: { data: Event[] }) => {
@@ -67,14 +72,18 @@ export const EventList = ({ data }: { data: Event[] }) => {
       header: "Venue",
     },
     {
-      accessorKey: "ticket_price",
+      accessorKey: "ticket_types",
       header: "Price",
       cell: ({ row }) => {
         if (row.original.is_free) return <p>Free</p>;
         return (
-          <p>
-            {row.original.ticket_price} {row.original.price_currency}
-          </p>
+          <Group className="flex-wrap gap-2">
+            {row.original.ticket_types.map((ticket_type) => (
+              <p key={ticket_type.id}>
+                {ticket_type.label} - {ticket_type.price}
+              </p>
+            ))}
+          </Group>
         );
       },
     },

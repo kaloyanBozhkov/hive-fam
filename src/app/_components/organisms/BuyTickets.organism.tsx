@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/app/_components/shadcn/Dialog.shadcn";
 import Tickets from "./Tickets.organism";
-import type { event_ticket_type } from "@prisma/client";
+import type { Currency, event_ticket_type } from "@prisma/client";
 import FreeTickets from "./FreeTickets.organism";
 
 const BuyTickets = ({
@@ -23,12 +23,14 @@ const BuyTickets = ({
   eventName,
   ticketTypes,
   isEventFree,
+  eventCurrency,
 }: {
   className?: string;
   eventId: string;
   eventName: string;
   ticketTypes: event_ticket_type[];
   isEventFree: boolean;
+  eventCurrency: Currency;
 }) => {
   return (
     <div className={twMerge("w-full", className)}>
@@ -59,6 +61,7 @@ const BuyTickets = ({
                 eventId={eventId}
                 eventName={eventName}
                 ticketTypes={ticketTypes}
+                eventCurrency={eventCurrency}
               />
             )}
           </DialogHeader>

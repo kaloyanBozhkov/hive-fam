@@ -20,7 +20,7 @@ import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useMemo, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
-import type { event_ticket_type } from "@prisma/client";
+import type { Currency, event_ticket_type } from "@prisma/client";
 
 const cart = z.record(z.number());
 type TicketAddedToCard = {
@@ -35,11 +35,13 @@ const Tickets = ({
   className,
   eventId,
   ticketTypes,
+  eventCurrency,
 }: {
   eventId: string;
   eventName: string;
   ticketTypes: event_ticket_type[];
   className?: string;
+  eventCurrency: Currency;
 }) => {
   const [checkoutProcessing, setCheckoutProcessing] = useState(false);
   const form = useForm<z.infer<typeof cart>>({
@@ -68,7 +70,6 @@ const Tickets = ({
         const ticketTypeCount = formVals[ticketOfType.id]!;
         return acc + ticketTypeCount * ticketOfType.price;
       }, 0);
-      const eventCurrency = ticketTypes[0]!.price_currency;
 
       const items: TicketAddedToCard[] = Object.entries(formVals).flatMap(
         ([ticketTypeId, ticketCount]) => {
@@ -116,58 +117,60 @@ const Tickets = ({
         className={twMerge("w-full space-y-8", className)}
       >
         <Stack className="gap-[20px]">
-          <FormField
-            control={form.control}
-            name="regularQuantity"
-            render={({ field }) => (
-              <FormItem className="mt-0 grid grid-cols-2 items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
-                <FormLabel className="mr-auto -sm:-mb-2">
-                  <Stack>
-                    <p className="text-[18px] leading-[120%]">Regular Access</p>
-                  </Stack>
-                </FormLabel>
-                <FormControl>
-                  <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
-                    <Button
-                      onClick={() => {
-                        const newVal = form.getValues("regularQuantity") - 1;
-                        form.setValue(
-                          "regularQuantity",
-                          newVal < 0 ? 0 : newVal,
-                        );
-                      }}
-                      type="button"
-                    >
-                      -
-                    </Button>
-                    <Input
-                      type="number"
-                      {...field}
-                      className="w-[62px] -sm:w-full"
-                      min={0}
-                      max={99}
-                      onChange={({ currentTarget: { value } }) => {
-                        field.onChange(+value);
-                      }}
-                    />
-                    <Button
-                      onClick={() => {
-                        const newVal = form.getValues("regularQuantity") + 1;
-                        form.setValue(
-                          "regularQuantity",
-                          newVal > 99 ? 99 : newVal,
-                        );
-                      }}
-                      type="button"
-                    >
-                      +
-                    </Button>
-                  </Group>
-                </FormControl>
-                <FormMessage className="col-span-2 w-full" />
-              </FormItem>
-            )}
-          />
+          {ticketTypes.map((ticketType) => (
+            <FormField
+              key={ticketType.id}
+              control={form.control}
+              name={ticketType.id}
+              render={({ field }) => (
+                <FormItem className="mt-0 grid grid-cols-2 items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
+                  <FormLabel className="mr-auto -sm:-mb-2">
+                    <Stack>
+                      <p className="text-[18px] leading-[120%]">
+                        {ticketType.label}
+                      </p>
+                    </Stack>
+                  </FormLabel>
+                  <FormControl>
+                    <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
+                      <Button
+                        onClick={() => {
+                          const newVal = form.getValues(ticketType.id) - 1;
+                          form.setValue(ticketType.id, newVal < 0 ? 0 : newVal);
+                        }}
+                        type="button"
+                      >
+                        -
+                      </Button>
+                      <Input
+                        type="number"
+                        {...field}
+                        className="w-[62px] -sm:w-full"
+                        min={0}
+                        max={99}
+                        onChange={({ currentTarget: { value } }) => {
+                          field.onChange(+value);
+                        }}
+                      />
+                      <Button
+                        onClick={() => {
+                          const newVal = form.getValues(ticketType.id) + 1;
+                          form.setValue(
+                            ticketType.id,
+                            newVal > 99 ? 99 : newVal,
+                          );
+                        }}
+                        type="button"
+                      >
+                        +
+                      </Button>
+                    </Group>
+                  </FormControl>
+                  <FormMessage className="col-span-2 w-full" />
+                </FormItem>
+              )}
+            />
+          ))}
           <div className="h-[1px] w-full border-b-[1px] border-dashed border-black " />
           <div className="grid w-full grid-cols-2 gap-[20px]">
             <p className="mr-auto font-rex-bold text-[20px]">Total</p>

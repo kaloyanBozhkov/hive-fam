@@ -15,6 +15,7 @@ const getData = async () => {
     },
     include: {
       venue: true,
+      ticket_types: true,
     },
     orderBy: {
       date: "desc",

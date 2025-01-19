@@ -151,6 +151,7 @@ const EventCard = ({
             <BuyTickets
               eventId={event.id}
               eventName={event.title}
+              eventCurrency={event.price_currency}
               isEventFree={event.is_free}
               ticketTypes={event.ticket_types}
             />

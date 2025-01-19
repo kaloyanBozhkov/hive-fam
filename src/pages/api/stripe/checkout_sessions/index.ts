@@ -41,9 +41,9 @@ export default async function handler(
       const event = await db.event.findUniqueOrThrow({
         where: { id: eventId },
         select: {
+          price_currency: true,
           ticket_types: {
             select: {
-              price_currency: true,
               price: true,
               id: true,
               label: true,
@@ -69,9 +69,7 @@ export default async function handler(
         },
       });
 
-      console.log(items, event.ticket_types);
-
-      if (event.ticket_types.some((t) => t.price_currency !== currency))
+      if (event.price_currency !== currency)
         throw new Error("Currency doesn't match");
 
       if (

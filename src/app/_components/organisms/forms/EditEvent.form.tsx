@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useEffect, useTransition } from "react";
+import { Fragment, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { Currency, MediaType } from "@prisma/client";
@@ -50,13 +50,20 @@ const event = z.object({
   external_event_url: z.string().url("Invalid URL").optional(),
   venue_id: z.string().uuid("Invalid venue ID"),
   is_published: z.boolean(),
-  ticket_price: z
-    .number()
-    .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1")
-    .optional(),
-  price_currency: z.nativeEnum(Currency),
   event_photos_url: z.string().url().optional().nullable(),
   is_free: z.boolean(),
+  price_currency: z.nativeEnum(Currency),
+  ticket_types: z.array(
+    z.object({
+      label: z.string(),
+      price: z
+        .number()
+        .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1")
+        .optional(),
+      available_tickets_of_type: z.number().min(0),
+      is_visible: z.boolean(),
+    }),
+  ),
 });
 
 const EditEventForm = ({
@@ -83,7 +90,7 @@ const EditEventForm = ({
 
   const onToggleFreeEvent = (isFree: boolean) => {
     if (!form.getFieldState("is_free").isDirty) return;
-    form.setValue("ticket_price", DEFAULT_TICKET_PRICE);
+    form.setValue("ticket_types", []);
     form.setValue("is_free", isFree);
   };
   const handleSubmit = (data: z.infer<typeof event>) => {
@@ -224,61 +231,69 @@ const EditEventForm = ({
             )}
           />
           {!form.getValues().is_free && (
-            <>
-              <FormField
-                control={form.control}
-                name="ticket_price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <Stack>
-                        <p>Ticket Price</p>
-                        <p className="font-light text-gray-400">
-                          Note: minimum price is around 0.1 USD
-                        </p>
-                      </Stack>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value === "" ? "" : Number(e.target.value),
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="price_currency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Currency</FormLabel>
-                    <FormControl>
-                      <Select {...field}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(Currency).map((currency) => (
-                            <SelectItem key={currency} value={currency}>
-                              {currency}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
+            <Stack>
+              {form.watch("ticket_types").map((ticketType, index) => {
+                return (
+                  <Fragment key={index}>
+                    <FormField
+                      control={form.control}
+                      name={`ticket_types.${index}.price`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            <Stack>
+                              <p>Ticket Price</p>
+                              <p className="font-light text-gray-400">
+                                Note: minimum price is around 0.1 USD
+                              </p>
+                            </Stack>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value === ""
+                                    ? ""
+                                    : Number(e.target.value),
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </Fragment>
+                );
+              })}
+            </Stack>
           )}
+          <FormField
+            control={form.control}
+            name={`price_currency`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Currency</FormLabel>
+                <FormControl>
+                  <Select {...field}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(Currency).map((currency) => (
+                        <SelectItem key={currency} value={currency}>
+                          {currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="is_free"

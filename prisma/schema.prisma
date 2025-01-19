@@ -277,9 +277,8 @@ model event_ticket_type {
   is_visible                Boolean
   available_tickets_of_type Int
 
-  event          event    @relation(fields: [event_id], references: [id])
-  event_id       String
-  price_currency Currency @default(EUR)
+  event    event  @relation(fields: [event_id], references: [id])
+  event_id String
 }
 
 model event {
@@ -300,6 +299,8 @@ model event {
 
   organization    organization? @relation(fields: [organization_id], references: [id])
   organization_id String?
+
+  price_currency Currency @default(EUR)
 
   poster_media event_media[]
   sold_tickets ticket[]

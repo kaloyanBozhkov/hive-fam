@@ -185,12 +185,14 @@ const FullScreenEvent = ({
                 eventId={event.id}
                 eventName={event.title}
                 ticketTypes={event.ticket_types}
+                eventCurrency={event.price_currency}
               />
               <div className="-mx-1 my-1 h-px w-full bg-black/10" />
             </Stack>
           )}
           {!isPast && isView && (
             <BuyTickets
+              eventCurrency={event.price_currency}
               isEventFree={event.is_free}
               eventId={event.id}
               eventName={event.title}

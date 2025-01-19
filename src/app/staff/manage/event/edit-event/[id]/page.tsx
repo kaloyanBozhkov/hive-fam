@@ -93,6 +93,7 @@ const getInitialData = async (id: string) => {
       organization_id: user.organization_id,
     },
     include: {
+      ticket_types: true,
       poster_media: {
         select: {
           id: true,
