@@ -17,6 +17,7 @@ type Event = {
     price: number;
     currency: string;
     scanned: boolean;
+    is_free: boolean;
   }[];
 };
 
@@ -35,16 +36,22 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
     );
   }
 
-  const totalTickets = selectedEvent?.sold_tickets.length ?? 0;
-  const scannedTickets =
-    selectedEvent?.sold_tickets.filter((ticket) => ticket.scanned).length ?? 0;
+  const freeTickets = selectedEvent?.sold_tickets.filter((t) => t.is_free);
+  const paidTickets = selectedEvent?.sold_tickets.filter((t) => !t.is_free);
+  const totalFreeTickets = freeTickets?.length ?? 0;
+  const totalPaidTickets = paidTickets?.length ?? 0;
+  const scannedFreeTickets =
+    freeTickets?.filter((ticket) => ticket.scanned).length ?? 0;
+  const scannedSoldTickets =
+    paidTickets?.filter((ticket) => ticket.scanned).length ?? 0;
 
+  // TODO totalRevenue
   const totalRevenue =
-    selectedEvent?.sold_tickets.reduce((acc, ticket) => {
+    paidTickets?.reduce((acc, ticket) => {
       return acc + ticket.price;
     }, 0) ?? 0;
 
-  const currency = selectedEvent?.sold_tickets[0]?.currency ?? "USD";
+  const currency = paidTickets?.[0]?.currency ?? "USD";
 
   return (
     <Stack className="gap-6">
@@ -83,13 +90,33 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
             <h3 className="text-sm font-medium text-muted-foreground">
               Total Tickets Sold
             </h3>
-            <p className="mt-2 text-2xl font-bold">{totalTickets}</p>
+            <p className="mt-2 text-2xl font-bold">{totalPaidTickets}</p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Total Free Tickets
+            </h3>
+            <p className="mt-2 text-2xl font-bold">{totalFreeTickets}</p>
           </div>
           <div className="rounded-lg border p-4">
             <h3 className="text-sm font-medium text-muted-foreground">
               Scanned Tickets
             </h3>
-            <p className="mt-2 text-2xl font-bold">{scannedTickets}</p>
+            <p className="mt-2 text-2xl font-bold">
+              {scannedSoldTickets + scannedFreeTickets}
+            </p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Scanned Paid Tickets
+            </h3>
+            <p className="mt-2 text-2xl font-bold">{scannedSoldTickets}</p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Scanned Free Tickets
+            </h3>
+            <p className="mt-2 text-2xl font-bold">{scannedFreeTickets}</p>
           </div>
         </div>
       )}

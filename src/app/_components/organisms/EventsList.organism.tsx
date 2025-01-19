@@ -82,14 +82,15 @@ function categorizeAndSortEvents(events: Event[]): CategorizedEvents {
     date: new Date(event.date),
   }));
 
-  const eventsSorted = eventsParsed.sort(
-    (a, b) => a.date.getTime() - b.date.getTime(),
-  );
   const rightNow = Date.now();
 
   return {
-    past: eventsSorted.filter((e) => e.date.getTime() < rightNow),
-    upcoming: eventsSorted.filter((e) => e.date.getTime() > rightNow),
+    past: eventsParsed
+      .filter((e) => e.date.getTime() < rightNow)
+      .sort((a, b) => b.date.getTime() - a.date.getTime()),
+    upcoming: eventsParsed
+      .filter((e) => e.date.getTime() > rightNow)
+      .sort((a, b) => a.date.getTime() - b.date.getTime()),
   };
 }
 

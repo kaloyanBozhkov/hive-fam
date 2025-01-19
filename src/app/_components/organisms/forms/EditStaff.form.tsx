@@ -46,7 +46,6 @@ const EditAdminForm = ({
   onEdit,
 }: {
   className?: string;
-  orgs: { id: string; name: string }[];
   initialData: z.infer<typeof staff>;
   onEdit: (
     staffData: z.infer<typeof staff>,

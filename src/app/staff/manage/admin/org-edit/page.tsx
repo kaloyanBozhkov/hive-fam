@@ -1,14 +1,45 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { db } from "@/server/db";
-import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
 import EditOrganizationForm from "@/app/_components/organisms/forms/EditOrganization.form";
-import { editOrg } from "@/server/actions/editOrg";
+import { isAdminOrAbove } from "@/server/auth/roleGates";
+import { Prisma, type organization as Organization } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+
+const errorMessages: Record<string, string> = {
+  P2002: "An organization with this name already exists.",
+  P2003: "Invalid input data.",
+  P2025: "Unable to update organization.",
+  default: "An unexpected error occurred. Please try again.",
+};
+
+async function editOrg(orgData: Partial<Organization>) {
+  "use server";
+
+  try {
+    await isAdminOrAbove();
+
+    await db.organization.update({
+      where: { id: orgData.id },
+      data: orgData,
+    });
+
+    revalidatePath("/staff/manage/admin");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to edit organization:", error);
+
+    let errorMessage = errorMessages.default;
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = errorMessages[error.code] ?? errorMessages.default;
+    }
+
+    return { success: false, error: errorMessage };
+  }
+}
 
 const getOrgDetails = async () => {
-  const user = await getJWTUser();
-  if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))
-    throw Error("Unauthorized");
+  const user = await isAdminOrAbove();
 
   const org = await db.organization.findFirst({
     where: {

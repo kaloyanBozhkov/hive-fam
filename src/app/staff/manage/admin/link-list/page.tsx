@@ -1,16 +1,13 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { LinkList } from "./table";
 import { db } from "@/server/db";
-import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 import Group from "@/app/_components/layouts/Group.layout";
+import { isAdminOrAbove } from "@/server/auth/roleGates";
 
 const getLinks = async () => {
-  const user = await getJWTUser();
-  if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))
-    throw Error("Unauthorized");
+  const user = await isAdminOrAbove();
 
   const links = await db.link.findMany({
     where: {

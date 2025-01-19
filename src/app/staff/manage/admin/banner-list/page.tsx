@@ -1,15 +1,12 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { BannerList } from "./table";
 import { db } from "@/server/db";
-import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
+import { isAdminOrAbove } from "@/server/auth/roleGates";
 
 const getBanners = async () => {
-  const user = await getJWTUser();
-  if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))
-    throw Error("Unauthorized");
+  const user = await isAdminOrAbove();
 
   const banners = await db.banner_slide.findMany({
     where: {

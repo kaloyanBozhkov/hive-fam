@@ -1,14 +1,11 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { ProfitsList } from "./table";
 import { db } from "@/server/db";
-import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
 import Group from "@/app/_components/layouts/Group.layout";
+import { isAdminOrAbove } from "@/server/auth/roleGates";
 
 const getEvents = async () => {
-  const user = await getJWTUser();
-  if (!([Role.ADMIN, Role.KOKO] as Role[]).includes(user.role))
-    throw Error("Unauthorized");
+  const user = await isAdminOrAbove();
 
   const events = await db.event.findMany({
     where: {
@@ -22,6 +19,7 @@ const getEvents = async () => {
           price: true,
           currency: true,
           scanned: true,
+          is_free: true,
         },
       },
     },

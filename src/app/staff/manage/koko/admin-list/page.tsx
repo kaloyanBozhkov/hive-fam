@@ -5,11 +5,10 @@ import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 import Group from "@/app/_components/layouts/Group.layout";
 import { Role } from "@prisma/client";
-import { getJWTUser } from "@/server/auth/getJWTUser";
+import { isKoko } from "@/server/auth/roleGates";
 
 const getAdmins = async () => {
-  const user = await getJWTUser();
-  if (user.role !== Role.KOKO) throw new Error("Unauthorized");
+  await isKoko();
   const admins = await db.staff.findMany({
     where: {
       role: Role.ADMIN,

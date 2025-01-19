@@ -1,21 +1,12 @@
 import Stack from "@/app/_components/layouts/Stack.layout";
 import { OrgTable } from "./table";
-import { db } from "@/server/db";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 import Group from "@/app/_components/layouts/Group.layout";
-import { getJWTUser } from "@/server/auth/getJWTUser";
-import { Role } from "@prisma/client";
-
-const getOrgs = async () => {
-  const user = await getJWTUser();
-  if (user.role !== Role.KOKO) throw new Error("Unauthorized");
-  const orgs = await db.organization.findMany();
-  return orgs;
-};
+import { getAllOrgs } from "@/server/actions/org";
 
 export default async function OrgList() {
-  const data = await getOrgs();
+  const data = await getAllOrgs();
   return (
     <Stack className="gap-4">
       <Group className="align-between w-full justify-between">

@@ -1,13 +1,11 @@
 "use server";
-import { Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
+import { isKoko } from "../auth/roleGates";
 
 export async function deleteAdmin(data: { id: string }) {
   try {
-    const user = await getJWTUser();
-    if (user.role !== Role.KOKO) throw new Error("Unauthorized");
+    await isKoko();
 
     await db.staff.delete({
       where: {

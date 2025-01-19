@@ -111,6 +111,12 @@ export const EventList = ({ data }: { data: Event[] }) => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
+                <Link href={`/staff/manage/event/event-metrics/${event.id}`}>
+                  Metrics
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
                 <Link href={`/staff/manage/event/edit-event/${event.id}`}>
                   Edit Event
                 </Link>

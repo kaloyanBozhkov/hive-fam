@@ -1,18 +1,20 @@
 "use server";
 
-import { Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { getJWTUser } from "../auth/getJWTUser";
 import { db } from "@/server/db";
+import { isAdminOrAbove } from "../auth/roleGates";
 
 export async function deleteBannerSlide(data: { id: string }) {
   try {
-    const user = await getJWTUser();
-    if (!([Role.KOKO, Role.ADMIN] as Role[]).includes(user.role))
-      throw new Error("Unauthorized");
+    const user = await isAdminOrAbove();
 
     const banner = await db.banner_slide.findUnique({
-      where: { id: data.id },
+      where: {
+        id: data.id,
+        ...(user.role === "KOKO"
+          ? {}
+          : { organization_id: user.organization_id }),
+      },
       include: { info_slide: true, album_slide: true },
     });
 

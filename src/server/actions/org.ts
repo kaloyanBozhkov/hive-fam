@@ -4,6 +4,7 @@ import { ORG_ID_COOKIE_NAME } from "../auth/constants";
 import { db } from "../db";
 import { env } from "@/env";
 import { DOMAIN_CONFIG } from "../config";
+import { isKoko } from "../auth/roleGates";
 
 export const setCookie = async (org_id: string) => {
   const cookieStore = await cookies();
@@ -35,4 +36,16 @@ export const getOrg = async () => {
     },
   });
   return org;
+};
+
+export const getAllOrgs = async () => {
+  await isKoko();
+  const organizations = await db.organization.findMany({
+    select: {
+      id: true,
+      name: true,
+      created_at: true,
+    },
+  });
+  return organizations;
 };

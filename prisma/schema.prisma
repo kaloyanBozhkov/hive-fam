@@ -256,7 +256,10 @@ model media {
 }
 
 model event_media {
-  id       String  @id @default(uuid())
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   order    Int
   event    event?  @relation(fields: [event_id], references: [id], onDelete: Cascade)
   event_id String?
@@ -265,7 +268,10 @@ model event_media {
 }
 
 model event {
-  id                 String   @id @default(uuid())
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   title              String
   description        String
   date               DateTime
@@ -279,8 +285,6 @@ model event {
   venue    venue  @relation(fields: [venue_id], references: [id])
   venue_id String
 
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
   organization    organization? @relation(fields: [organization_id], references: [id])
   organization_id String?
 
@@ -314,6 +318,9 @@ model ticket {
   currency   Currency  @default(BGN)
   scanned    Boolean   @default(false)
   scanned_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // for free events (or at a point were free)
   is_free Boolean @default(false)
