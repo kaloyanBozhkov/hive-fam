@@ -6,7 +6,7 @@ import { stripeCli } from "@/server/stripe/stripe";
 import { env } from "@/env";
 import type { Currency } from "@prisma/client";
 import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
-import { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
+import type { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
