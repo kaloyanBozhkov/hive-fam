@@ -141,6 +141,63 @@ const Tickets = ({
                 </p>
               );
 
+              const PriceControls = (
+                <>
+                  <FormControl>
+                    <Stack className="items-end gap-2">
+                      <div className=" md:hidden">{TicketTypeTotalPrice}</div>
+                      <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
+                        <Button
+                          onClick={() => {
+                            const newVal = form.getValues(ticketType.id) - 1;
+                            form.setValue(
+                              ticketType.id,
+                              newVal < 0 ? 0 : newVal,
+                            );
+                          }}
+                          type="button"
+                          className="size-[24px] rounded-full p-0"
+                          disabled={ticketTypeCount <= 0}
+                        >
+                          <FontAwesomeIcon
+                            icon={faMinus}
+                            className="size-[14px]"
+                          />
+                        </Button>
+                        <p className="w-[24px] select-none text-center text-[24px] font-bold leading-[24px]">
+                          {ticketTypeCount}
+                        </p>
+                        <Button
+                          onClick={() => {
+                            const newVal = form.getValues(ticketType.id) + 1;
+                            form.setValue(
+                              ticketType.id,
+                              newVal > 99 ? 99 : newVal,
+                            );
+                          }}
+                          type="button"
+                          disabled={ticketTypeCount >= 99}
+                          className="size-[24px] rounded-full p-0 leading-[100%]"
+                        >
+                          <FontAwesomeIcon
+                            icon={faPlus}
+                            className="size-[14px]"
+                          />
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </FormControl>
+                  <Stack className={"hidden select-none md:block "}>
+                    {ticketTypeCount > 0 && (
+                      <p className="text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
+                        {ticketTypeCount} x {ticketType.price.toFixed(2)}
+                      </p>
+                    )}
+                    <div className="">{TicketTypeTotalPrice}</div>
+                  </Stack>
+                </>
+              );
+
               return (
                 <Fragment key={ticketType.id}>
                   {
@@ -152,7 +209,7 @@ const Tickets = ({
                           <div className="grid w-full grid-cols-2 items-center justify-between gap-2 md:grid-cols-[1fr_min-content_min-content] md:gap-3">
                             <FormLabel className="mr-auto -sm:-mb-2">
                               <Stack className="items-start gap-1 text-left">
-                                <p className="text-[18px] font-normal leading-[120%]">
+                                <p className="text-[18px] font-normal capitalize leading-[120%]">
                                   {ticketType.label}
                                 </p>
                                 {ticketType.description && (
@@ -165,73 +222,11 @@ const Tickets = ({
                                 </p>
                               </Stack>
                             </FormLabel>
-                            <FormControl>
-                              <Stack className="items-end gap-2">
-                                <div className=" md:hidden">
-                                  {TicketTypeTotalPrice}
-                                </div>
-                                <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
-                                  <Button
-                                    onClick={() => {
-                                      const newVal =
-                                        form.getValues(ticketType.id) - 1;
-                                      form.setValue(
-                                        ticketType.id,
-                                        newVal < 0 ? 0 : newVal,
-                                      );
-                                    }}
-                                    type="button"
-                                    className="size-[24px] rounded-full p-0"
-                                    disabled={ticketTypeCount <= 0}
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faMinus}
-                                      className="size-[14px]"
-                                    />
-                                  </Button>
-                                  {/* <Input
-                            type="number"
-                            {...field}
-                            className="h-[26px] w-[62px]"
-                            min={0}
-                            max={99}
-                            onChange={({ currentTarget: { value } }) => {
-                              field.onChange(+value);
-                            }}
-                          /> */}
-                                  <p className="w-[24px] select-none text-center text-[24px] font-bold leading-[24px]">
-                                    {ticketTypeCount}
-                                  </p>
-                                  <Button
-                                    onClick={() => {
-                                      const newVal =
-                                        form.getValues(ticketType.id) + 1;
-                                      form.setValue(
-                                        ticketType.id,
-                                        newVal > 99 ? 99 : newVal,
-                                      );
-                                    }}
-                                    type="button"
-                                    disabled={ticketTypeCount >= 99}
-                                    className="size-[24px] rounded-full p-0 leading-[100%]"
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faPlus}
-                                      className="size-[14px]"
-                                    />
-                                  </Button>
-                                </Group>
-                              </Stack>
-                            </FormControl>
-                            <Stack className={"hidden select-none md:block "}>
-                              {ticketTypeCount > 0 && (
-                                <p className="text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
-                                  {ticketTypeCount} x{" "}
-                                  {ticketType.price.toFixed(2)}
-                                </p>
-                              )}
-                              <div className="">{TicketTypeTotalPrice}</div>
-                            </Stack>
+                            {ticketType.is_sold_out ? (
+                              <p className="text-nowrap font-bold">Sold Out</p>
+                            ) : (
+                              PriceControls
+                            )}
                           </div>
                           <FormMessage className="col-span-2 w-full" />
                         </FormItem>
