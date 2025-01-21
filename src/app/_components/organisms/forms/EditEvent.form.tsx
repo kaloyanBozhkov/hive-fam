@@ -381,6 +381,7 @@ const EditEventForm = ({
                                     <Input
                                       type="text"
                                       {...field}
+                                      value={field.value ?? ""}
                                       onChange={(e) =>
                                         field.onChange(
                                           e.target.value === ""
@@ -524,6 +525,7 @@ const EditEventForm = ({
                         available_tickets_of_type: 100,
                         is_visible: true,
                         id: createUUID(),
+                        description: null,
                       },
                     ]);
                     form.trigger("ticket_types").catch((e) => {
