@@ -193,7 +193,7 @@ const Tickets = ({
                         {ticketTypeCount} x {ticketType.price.toFixed(2)}
                       </p>
                     )}
-                    <div className="">{TicketTypeTotalPrice}</div>
+                    <div>{TicketTypeTotalPrice}</div>
                   </Stack>
                 </>
               );

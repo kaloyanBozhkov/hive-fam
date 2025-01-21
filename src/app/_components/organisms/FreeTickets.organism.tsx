@@ -16,7 +16,7 @@ import {
 } from "@/app/_components/shadcn/Form.shadcn";
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTicket } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTicket } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState } from "react";
 import DotsLoader from "../atoms/DotsLoader.atom";
 import { claimFreeTickets } from "@/server/actions/claimFreeTIckets";
@@ -76,6 +76,8 @@ const FreeTickets = ({
     [eventName, form, eventId, router],
   );
 
+  const ticketQuantity = form.watch("quantity");
+
   return (
     <Form {...form}>
       <form
@@ -121,38 +123,40 @@ const FreeTickets = ({
               </FormItem>
             )}
           />
+          <div className="mt-2 h-[1px] w-full border-b-[1px] border-solid border-gray-500/15" />
           <FormField
             control={form.control}
             name="quantity"
-            render={({ field }) => (
+            render={() => (
               <FormItem className="grid grid-cols-2 items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
                 <FormLabel className="mr-auto -sm:-mb-2">
-                  <Stack>
-                    <p>Number of Tickets</p>
+                  <Stack className="gap-[4px]">
+                    <p className="text-[18px] font-normal capitalize leading-[120%]">
+                      Regular Ticket
+                    </p>
+                    <p className="text-[14px] font-light leading-[120%] text-gray-500">
+                      FREE
+                    </p>
                   </Stack>
                 </FormLabel>
                 <FormControl>
                   <Group className="!mt-0 ml-auto gap-[12px] -sm:ml-[unset]">
                     <Button
+                      className="size-[24px] rounded-full p-0 leading-[100%]"
+                      disabled={ticketQuantity <= 0}
                       onClick={() => {
                         const newVal = form.getValues("quantity") - 1;
                         form.setValue("quantity", newVal < 0 ? 0 : newVal);
                       }}
                       type="button"
                     >
-                      -
+                      <FontAwesomeIcon icon={faMinus} className="size-[14px]" />
                     </Button>
-                    <Input
-                      type="number"
-                      {...field}
-                      className="w-[62px] -sm:w-full"
-                      min={0}
-                      max={MAX_FREE_TICKETS_AT_ONCE}
-                      onChange={({ currentTarget: { value } }) => {
-                        field.onChange(+value);
-                      }}
-                    />
+                    <p className="w-[24px] select-none text-center text-[24px] font-bold leading-[24px]">
+                      {ticketQuantity}
+                    </p>
                     <Button
+                      className="size-[24px] rounded-full p-0 leading-[100%]"
                       onClick={() => {
                         const newVal = form.getValues("quantity") + 1;
                         form.setValue(
@@ -163,8 +167,9 @@ const FreeTickets = ({
                         );
                       }}
                       type="button"
+                      disabled={ticketQuantity >= MAX_FREE_TICKETS_AT_ONCE}
                     >
-                      +
+                      <FontAwesomeIcon icon={faPlus} className="size-[14px]" />
                     </Button>
                   </Group>
                 </FormControl>
@@ -172,14 +177,14 @@ const FreeTickets = ({
               </FormItem>
             )}
           />
-          <div className="h-[1px] w-full border-b-[1px] border-dashed border-black " />
-          <Button type="submit" disabled={form.watch("quantity") < 1}>
+          <div className="mt-2 h-[1px] w-full border-b-[1px] border-solid border-gray-500/15" />
+          <Button type="submit" disabled={ticketQuantity < 1}>
             {checkoutProcessing ? (
               <DotsLoader modifier="primary" />
             ) : (
               <Group className="items-center gap-[12px]">
                 <FontAwesomeIcon icon={faTicket} />
-                <span>CLAIM TICKET{form.watch("quantity") > 1 ? "S" : ""}</span>
+                <span>CLAIM TICKET{ticketQuantity > 1 ? "S" : ""}</span>
               </Group>
             )}
           </Button>

@@ -48,20 +48,22 @@ export const createTickets = async ({
     where: { event_id: eventId },
   });
 
+  const ticketsToCreate = tickets.flatMap((ticket) =>
+    Array.from({ length: ticket.quantity })
+      .map(() => ({
+        currency,
+        event_id: eventId,
+        owner_id: participant.id,
+        order_session_id: orderSessionId,
+        is_free: event.is_free,
+        ticket_type_id: ticket.ticketTypeId,
+        price:
+          ticketTypes.find((t) => t.id === ticket.ticketTypeId)?.price ?? 0,
+      }))
+      .map((t, idx) => ({ ...t, count: idx + 1 })),
+  );
+
   await db.ticket.createMany({
-    data: tickets.flatMap((ticket) =>
-      Array.from({ length: ticket.quantity })
-        .map(() => ({
-          currency,
-          event_id: eventId,
-          owner_id: participant.id,
-          order_session_id: orderSessionId,
-          is_free: event.is_free,
-          ticket_type_id: ticket.ticketTypeId,
-          price:
-            ticketTypes.find((t) => t.id === ticket.ticketTypeId)?.price ?? 0,
-        }))
-        .map((t, idx) => ({ ...t, count: idx + 1 })),
-    ),
+    data: ticketsToCreate,
   });
 };
