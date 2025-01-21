@@ -99,7 +99,7 @@ const LINKS: Record<
         icon: faUser,
       },
       {
-        label: "Link List",
+        label: "Menu Links",
         href: "/staff/manage/admin/link-list",
         icon: faLink,
       },
@@ -112,6 +112,11 @@ const LINKS: Record<
         label: "Organization Details",
         href: "/staff/manage/admin/org-edit",
         icon: faFileAlt,
+      },
+      {
+        label: "Tree Links",
+        href: "/staff/manage/admin/link-tree-list",
+        icon: faLink,
       },
     ],
   },

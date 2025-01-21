@@ -87,10 +87,7 @@ const AddAdminForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="mr-auto">Organization</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select an organization" />

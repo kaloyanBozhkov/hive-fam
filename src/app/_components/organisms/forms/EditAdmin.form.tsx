@@ -89,10 +89,7 @@ const EditAdminForm = ({
                     <p className="text-[18px] leading-[120%]">Organization</p>
                   </Stack>
                 </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select an organization" />

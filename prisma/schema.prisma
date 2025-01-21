@@ -88,6 +88,7 @@ model organization {
   venue        venue[]
   links        link[]
   banner_slide banner_slide[]
+  link_tree    link_tree[]
 }
 
 enum Currency {
@@ -403,4 +404,63 @@ enum Role {
   VIP
   FREQUENT_GUEST
   GUEST
+}
+
+enum ButtonColor {
+  DEFAULT
+  SECONDARY
+  OUTLINE
+}
+
+enum FontAwesomeIcon {
+  LINK
+  LOCATION
+  EVENT
+  INSTAGRAM
+  FACEBOOK
+  TWITTER
+  YOUTUBE
+  SOUNDCLOUD
+  GLOBE
+  ENVELOPE
+  PHONE
+  USER
+  SHOP
+  FILE_PDF
+  FILE_WORD
+  FILE_EXCEL
+  FILE_IMAGE
+  VIDEO
+  MUSIC
+  LINKEDIN
+}
+
+model link_tree {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  url  String
+  name String @unique
+
+  button_color ButtonColor     @default(SECONDARY)
+  button_icon  FontAwesomeIcon @default(LINK)
+
+  to_visits link_tree_visit[]
+
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+}
+
+model link_tree_visit {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  link_tree_id String
+  link_tree    link_tree @relation(fields: [link_tree_id], references: [id], onDelete: Cascade)
+
+  ip_address String?
+  user_agent String?
+  referrer   String?
 }

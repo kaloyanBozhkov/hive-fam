@@ -102,10 +102,7 @@ const AddLinkForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Link Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select link type" />

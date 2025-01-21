@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import Stack from "../../layouts/Stack.layout";
-import { LinkType } from "@prisma/client";
 import {
   FormControl,
   FormField,
@@ -15,6 +14,14 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ButtonColor,
+  FontAwesomeIcon as FontAwesomeIconEnum,
+} from "@prisma/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIconMap } from "@/server/other/linkIcons";
 import {
   Select,
   SelectContent,
@@ -22,39 +29,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../shadcn/Select.shadcn";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 
-const link = z.object({
+export const linkTreeSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Name is required"),
   url: z.string().url("Invalid URL"),
-  type: z.nativeEnum(LinkType),
+  button_color: z.nativeEnum(ButtonColor).default(ButtonColor.SECONDARY),
+  button_icon: z
+    .nativeEnum(FontAwesomeIconEnum)
+    .default(FontAwesomeIconEnum.LINK),
 });
 
-const EditLinkForm = ({
+const EditLinkTreeForm = ({
   className,
   initialData,
   onEdit,
 }: {
   className?: string;
-  initialData: z.infer<typeof link>;
+  initialData: z.infer<typeof linkTreeSchema>;
   onEdit: (
-    linkData: z.infer<typeof link>,
+    linkTreeData: z.infer<typeof linkTreeSchema>,
   ) => Promise<{ success: boolean; error?: string }>;
 }) => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof link>>({
-    resolver: zodResolver(link),
+  const form = useForm<z.infer<typeof linkTreeSchema>>({
+    resolver: zodResolver(linkTreeSchema),
     defaultValues: initialData,
   });
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (data: z.infer<typeof link>) => {
+  const handleSubmit = (data: z.infer<typeof linkTreeSchema>) => {
     startTransition(async () => {
       const result = await onEdit(data);
       if (result.success) {
-        router.push("/staff/manage/admin/link-list");
+        router.push("/staff/manage/admin/link-tree-list");
       } else {
         form.setError("name", { message: result.error });
       }
@@ -73,7 +81,7 @@ const EditLinkForm = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Name</FormLabel>
+                <FormLabel>Link Tree Name</FormLabel>
                 <FormControl>
                   <Input type="text" {...field} />
                 </FormControl>
@@ -96,20 +104,42 @@ const EditLinkForm = ({
           />
           <FormField
             control={form.control}
-            name="type"
+            name="button_color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Type</FormLabel>
+                <FormLabel>Button Color</FormLabel>
                 <Select onChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select link type" />
+                      <SelectValue placeholder="Select link background color" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {Object.values(LinkType).map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
+                    <SelectItem value="DEFAULT">Primary</SelectItem>
+                    <SelectItem value="SECONDARY">Secondary</SelectItem>
+                    <SelectItem value="OUTLINE">Outlined</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="button_icon"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Button Icon</FormLabel>
+                <Select onChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select icon" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.values(FontAwesomeIconEnum).map((icon) => (
+                      <SelectItem key={icon} value={icon}>
+                        <FontAwesomeIcon icon={FontAwesomeIconMap[icon]} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -124,7 +154,7 @@ const EditLinkForm = ({
             disabled={!form.formState.isValid}
             isLoading={isPending}
           >
-            Update Link
+            Update Link Tree
           </Button>
         </Stack>
       </form>
@@ -132,4 +162,4 @@ const EditLinkForm = ({
   );
 };
 
-export default EditLinkForm;
+export default EditLinkTreeForm;

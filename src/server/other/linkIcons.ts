@@ -1,0 +1,48 @@
+import {
+  faLink,
+  faMapMarkerAlt,
+  faCalendarAlt,
+  faGlobe,
+  faEnvelope,
+  faPhone,
+  faUser,
+  faShoppingCart,
+  faFilePdf,
+  faFileWord,
+  faFileExcel,
+  faFileImage,
+  faVideo,
+  faMusic,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faLinkedin,
+  faInstagram,
+  faFacebook,
+  faTwitter,
+  faYoutube,
+  faSoundcloud,
+} from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@prisma/client";
+
+export const FontAwesomeIconMap = {
+  [FontAwesomeIcon.LINK]: faLink,
+  [FontAwesomeIcon.LOCATION]: faMapMarkerAlt,
+  [FontAwesomeIcon.EVENT]: faCalendarAlt,
+  [FontAwesomeIcon.INSTAGRAM]: faInstagram,
+  [FontAwesomeIcon.FACEBOOK]: faFacebook,
+  [FontAwesomeIcon.TWITTER]: faTwitter,
+  [FontAwesomeIcon.YOUTUBE]: faYoutube,
+  [FontAwesomeIcon.SOUNDCLOUD]: faSoundcloud,
+  [FontAwesomeIcon.GLOBE]: faGlobe,
+  [FontAwesomeIcon.ENVELOPE]: faEnvelope,
+  [FontAwesomeIcon.PHONE]: faPhone,
+  [FontAwesomeIcon.USER]: faUser,
+  [FontAwesomeIcon.SHOP]: faShoppingCart,
+  [FontAwesomeIcon.FILE_PDF]: faFilePdf,
+  [FontAwesomeIcon.FILE_WORD]: faFileWord,
+  [FontAwesomeIcon.FILE_EXCEL]: faFileExcel,
+  [FontAwesomeIcon.FILE_IMAGE]: faFileImage,
+  [FontAwesomeIcon.VIDEO]: faVideo,
+  [FontAwesomeIcon.MUSIC]: faMusic,
+  [FontAwesomeIcon.LINKEDIN]: faLinkedin,
+};
