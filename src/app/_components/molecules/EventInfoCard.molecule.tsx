@@ -38,7 +38,7 @@ export const EventInfoCard = ({
         dateClassName="text-[22px] leading-[100%]"
         monthClassName="text-[14px] leading-[100%]"
       />
-      <Stack className="flex-1 gap-0">
+      <Stack className="flex-1 items-start gap-[2px] text-left">
         <p className="text-lg font-semibold leading-[100%]">{eventName}</p>
         <p className="text-[13px] font-light text-gray-500">
           {formatEventDate(

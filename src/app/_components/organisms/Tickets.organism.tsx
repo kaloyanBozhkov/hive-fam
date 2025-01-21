@@ -153,7 +153,7 @@ const Tickets = ({
                         <FormItem className="mt-0 flex flex-col items-center gap-[20px] -sm:grid-cols-1 -sm:items-start -sm:pt-2">
                           <div className="grid w-full grid-cols-2 items-center justify-between gap-2 md:grid-cols-[1fr_min-content_min-content] md:gap-3">
                             <FormLabel className="mr-auto -sm:-mb-2">
-                              <Stack className="items-start gap-1">
+                              <Stack className="items-start gap-1 text-left">
                                 <p className="text-[18px] font-normal leading-[120%]">
                                   {ticketType.label}
                                 </p>

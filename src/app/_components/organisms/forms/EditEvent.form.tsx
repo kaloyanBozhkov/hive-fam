@@ -66,6 +66,7 @@ const event = z
       z.object({
         id: z.string(),
         label: z.string(),
+        description: z.string().optional(),
         price: z
           .number()
           .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1"),
@@ -283,6 +284,33 @@ const EditEventForm = ({
                                   <FormLabel>
                                     <Stack>
                                       <p>Ticket Name</p>
+                                    </Stack>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="text"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value === ""
+                                            ? ""
+                                            : String(e.target.value),
+                                        )
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name={`ticket_types.${index}.description`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    <Stack>
+                                      <p>Ticket Description (optional)</p>
                                     </Stack>
                                   </FormLabel>
                                   <FormControl>
