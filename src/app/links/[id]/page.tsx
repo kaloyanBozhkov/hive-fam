@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 export default async function VisitTreeLinkPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 
