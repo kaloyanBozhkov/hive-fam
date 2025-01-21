@@ -84,7 +84,7 @@ export default async function EventPage({
 
   return (
     <>
-      <Stack className="m-auto min-h-[400px] max-w-[500px] gap-4">
+      <Stack className="m-auto min-h-[400px] w-full max-w-[500px] gap-4">
         <FullScreenEvent
           event={event}
           isPast={isPastEvent(event)}

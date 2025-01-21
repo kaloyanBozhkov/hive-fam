@@ -11,6 +11,11 @@ const validateTicket = async (ticketId: string) => {
       id: ticketId,
     },
     include: {
+      ticket_type: {
+        select: {
+          label: true,
+        },
+      },
       event: {
         select: {
           id: true,
@@ -37,6 +42,11 @@ const validateTicket = async (ticketId: string) => {
         scanned_at: new Date(),
       },
       include: {
+        ticket_type: {
+          select: {
+            label: true,
+          },
+        },
         event: {
           select: {
             id: true,
@@ -73,6 +83,13 @@ export default async function ValidateTicket({
         />
       )}
       <InfoLineCard title="Event" label={ticket.event.title} />
+      <InfoLineCard
+        title="Ticket Type"
+        label={
+          ticket.ticket_type?.label ??
+          (ticket.is_free ? "Free Ticket" : "Paid Ticket")
+        }
+      />
     </Stack>
   );
 }
