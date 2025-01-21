@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonCopy } from "../molecules/CopyButton.moleule";
-import { ButtonProps } from "../shadcn/Button.shadcn";
+import type { ButtonProps } from "../shadcn/Button.shadcn";
 
 export const CopyUrlButton = ({
   value = typeof window !== "undefined" ? window.location.href : "",

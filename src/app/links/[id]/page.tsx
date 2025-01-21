@@ -14,9 +14,9 @@ export default async function VisitTreeLinkPage({
   try {
     if (!id) redirect("/links");
     const headersList = await headers();
-    const ip_address = headersList.get("x-forwarded-for") || "";
-    const user_agent = headersList.get("user-agent") || "";
-    const referrer = headersList.get("referer") || "";
+    const ip_address = headersList.get("x-forwarded-for") ?? "";
+    const user_agent = headersList.get("user-agent") ?? "";
+    const referrer = headersList.get("referer") ?? "";
     await db.link_tree_visit.create({
       data: {
         link_tree_id: id,
