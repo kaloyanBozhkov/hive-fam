@@ -72,8 +72,6 @@ const Tickets = ({
     (values: z.infer<typeof cart>) => {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
-      console.log(values);
-
       setCheckoutProcessing(true);
       const formVals = form.getValues();
       const total = ticketTypes.reduce((acc, ticketOfType) => {

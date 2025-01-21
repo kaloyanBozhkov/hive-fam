@@ -49,6 +49,7 @@ const event = z
     title: z.string().min(1, "Title is required"),
     description: z.string().min(1, "Description is required"),
     date: z.date(),
+    end_date: z.date().nullable().default(null),
     // array of bucketPaths for media, in order of appearance
     poster_media: z
       .array(
@@ -64,7 +65,7 @@ const event = z
       z.object({
         id: z.string(),
         label: z.string(),
-        description: z.string().optional(),
+        description: z.string().nullable().default(null),
         price: z
           .number()
           .min(MIN_TICKET_PRICE, "Ticket price must be greater than 1"),
@@ -88,6 +89,14 @@ const event = z
         path: ["ticket_types"],
       });
     }
+
+    if (data.end_date && data.end_date < data.date) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date must be after start date",
+        path: ["end_date"],
+      });
+    }
   });
 
 const defaultTicketType = {
@@ -96,6 +105,7 @@ const defaultTicketType = {
   price: DEFAULT_TICKET_PRICE,
   available_tickets_of_type: 100,
   is_visible: true,
+  description: null,
 };
 
 const AddEventForm = ({
@@ -121,6 +131,7 @@ const AddEventForm = ({
       title: "",
       description: "",
       date: addDays(new Date(), 1),
+      end_date: null,
       poster_media: [],
       external_event_url: undefined,
       venue_id: "",
@@ -250,8 +261,59 @@ const AddEventForm = ({
                   <Input
                     type="datetime-local"
                     {...field}
-                    value={field.value.toISOString().slice(0, 16)}
+                    max={
+                      form.watch("end_date")?.toISOString().slice(0, 16) ??
+                      undefined
+                    }
+                    value={
+                      field.value instanceof Date &&
+                      !isNaN(field.value.getTime())
+                        ? field.value.toISOString().slice(0, 16)
+                        : ""
+                    }
                     onChange={(e) => {
+                      if (!e.target.value) {
+                        field.onChange(null);
+                        return "";
+                      }
+                      const localDate = new Date(e.target.value);
+                      const utcDate = new Date(
+                        localDate.getTime() -
+                          localDate.getTimezoneOffset() * 60000,
+                      );
+                      field.onChange(utcDate);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="end_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>End Date</FormLabel>
+                <FormControl>
+                  <Input
+                    type="datetime-local"
+                    {...field}
+                    min={
+                      form.watch("date")?.toISOString().slice(0, 16) ??
+                      undefined
+                    }
+                    value={
+                      field.value instanceof Date &&
+                      !isNaN(field.value.getTime())
+                        ? field.value.toISOString().slice(0, 16)
+                        : ""
+                    }
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        field.onChange(null);
+                        return "";
+                      }
                       const localDate = new Date(e.target.value);
                       const utcDate = new Date(
                         localDate.getTime() -
