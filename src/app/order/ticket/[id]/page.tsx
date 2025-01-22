@@ -16,47 +16,65 @@ import InfoLineCard from "@/app/_components/molecules/InfoLineCard";
 import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { getOrderTickets } from "@/server/actions/getOrderTickets";
+import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
 
 const getTicket = async (ticketId: string) => {
-  const ticket = await db.ticket.findUnique({
-    where: {
-      id: ticketId,
-    },
-    include: {
-      owner: {
-        select: {
-          email: true,
-          name: true,
-          surname: true,
+  try {
+    const { event, owner, ticket_type, ...ticket } =
+      await db.ticket.findUniqueOrThrow({
+        where: {
+          id: ticketId,
         },
-      },
-      ticket_type: {
-        select: {
-          label: true,
-        },
-      },
-      event: {
-        select: {
-          id: true,
-          title: true,
-          date: true,
-          venue: {
+        include: {
+          owner: {
             select: {
+              email: true,
               name: true,
-              street_addr: true,
-              city: true,
-              country: true,
-              maps_url: true,
+              surname: true,
+            },
+          },
+          ticket_type: {
+            select: {
+              label: true,
+            },
+          },
+          event: {
+            select: {
+              id: true,
+              title: true,
+              date: true,
+              venue: {
+                select: {
+                  name: true,
+                  street_addr: true,
+                  city: true,
+                  country: true,
+                  maps_url: true,
+                },
+              },
             },
           },
         },
+      });
+
+    const sessionId = ticket.order_session_id;
+    const { tickets } = await getOrderTickets(sessionId);
+    const ticketNumber = tickets.find((t) => t.id === ticket.id)?.ticketNumber;
+    if (!ticketNumber) throw new Error("Ticket number not found");
+
+    return {
+      ticket: {
+        ...ticket,
+        ticketNumber,
       },
-    },
-  });
-  return {
-    ticket,
-    owner: ticket?.owner,
-  };
+      owner,
+      event,
+      ticket_type,
+    };
+  } catch (err) {
+    return {};
+  }
 };
 
 export default async function TicketOrderPage({
@@ -67,8 +85,8 @@ export default async function TicketOrderPage({
   const { id: ticketId } = await params;
   if (!ticketId) return redirect("/error");
 
-  const { ticket, owner } = await getTicket(ticketId);
-  if (!ticket || !owner) return redirect("/error");
+  const { ticket, owner, event, ticket_type } = await getTicket(ticketId);
+  if (!ticket || !owner || !event || !ticket_type) return redirect("/error");
 
   return (
     <Stack className="gap-4">
@@ -87,27 +105,24 @@ export default async function TicketOrderPage({
             </p>
             <Group className="flex-col justify-between gap-4 rounded-lg border p-4 sm:flex-row">
               <Stack className="gap-1">
-                <InfoLineCard title="Event" label={ticket.event.title} />
+                <InfoLineCard title="Event" label={event.title} />
                 <Group className="flex-col gap-4 lg:flex-row">
                   <Stack className="gap-2">
                     <InfoLineCard
                       title="Time"
-                      label={format(ticket.event.date, "HH:mm")}
+                      label={format(event.date, "HH:mm")}
                     />
                     <InfoLineCard
                       title="Date"
-                      label={format(ticket.event.date, "dd MMMM yyyy")}
+                      label={format(event.date, "dd MMMM yyyy")}
                     />
-                    <InfoLineCard
-                      title="Venue"
-                      label={ticket.event.venue.name}
-                    />
+                    <InfoLineCard title="Venue" label={event.venue.name} />
                   </Stack>
                 </Group>
               </Stack>
               <Stack className="gap-2">
                 <Button className="w-full sm:w-[150px]" asChild>
-                  <Link href={`/event/${ticket.event.venue.maps_url}as=view`}>
+                  <Link href={`/event/${event.venue.maps_url}as=view`}>
                     View Location
                   </Link>
                 </Button>
@@ -116,7 +131,7 @@ export default async function TicketOrderPage({
                   variant="secondary"
                   asChild
                 >
-                  <Link href={`/event/${ticket.event.id}as=view`}>
+                  <Link href={`/event/${event.id}as=view`}>
                     <Group className="items-center justify-center gap-2">
                       <FontAwesomeIcon icon={faCalendarAlt} />{" "}
                       <span>See Event</span>
@@ -128,17 +143,30 @@ export default async function TicketOrderPage({
           </Stack>
         </CardContent>
       </Card>
-      <Suspense fallback={<p>Rendering your ticket..</p>}>
+      <Suspense
+        fallback={
+          <Stack className="min-h-[400px] w-full gap-4">
+            <Card className="bg-white">
+              <CardHeader className="block">
+                <Stack className="items-center justify-center gap-2">
+                  <DotsLoader modifier="secondary" size="sm" />
+                  <p>Getting your ticket..</p>
+                </Stack>
+              </CardHeader>
+            </Card>
+          </Stack>
+        }
+      >
         <QRTicketsServer
           tickets={[
             {
               id: ticket.id,
-              count: ticket.count,
-              ticketType: ticket.ticket_type?.label ?? "Free Entry",
+              ticketNumber: ticket.ticketNumber,
+              ticketType: ticket_type?.label ?? "Free Entry",
             },
           ]}
           withShare={false}
-          eventId={ticket.event.id}
+          eventId={event.id}
         />
       </Suspense>
     </Stack>

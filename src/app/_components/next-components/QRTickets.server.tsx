@@ -35,7 +35,7 @@ const QRTicketsServer = async ({
   tickets: {
     id: string;
     // count the order of ticket for sharing purposes
-    count: number;
+    ticketNumber: number;
     ticketType: string;
   }[];
   withShare?: boolean;

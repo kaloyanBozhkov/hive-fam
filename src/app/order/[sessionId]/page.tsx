@@ -14,43 +14,8 @@ import QRTicketsServer from "@/app/_components/next-components/QRTickets.server"
 import { Suspense } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-const getTickets = async (sessionId: string) => {
-  const tickets = await db.ticket.findMany({
-    where: {
-      order_session_id: sessionId,
-    },
-    include: {
-      ticket_type: {
-        select: {
-          label: true,
-        },
-      },
-      owner: {
-        select: {
-          email: true,
-        },
-      },
-      event: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-    },
-  });
-  return {
-    tickets: tickets.map(({ id, count, is_free, ticket_type }) => ({
-      id,
-      count,
-      isFree: is_free,
-      ticketType: ticket_type?.label ?? "Free Entry",
-    })),
-    ownerEmail: tickets[0]!.owner?.email,
-    eventTitle: tickets[0]!.event.title,
-    eventId: tickets[0]!.event.id,
-  };
-};
+import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
+import { getOrderTickets } from "@/server/actions/getOrderTickets";
 
 export default async function OrderPage({
   params,
@@ -63,7 +28,7 @@ export default async function OrderPage({
   if (!sessionId) return redirect("/error");
 
   const { tickets, ownerEmail, eventTitle, eventId } =
-    await getTickets(sessionId);
+    await getOrderTickets(sessionId);
   if (!tickets.length) return redirect("/error");
 
   const isSingleTicket = tickets.length === 1;
@@ -94,7 +59,7 @@ export default async function OrderPage({
                 selector="#tickets"
                 label={`Download ${ticketWord}`}
                 fileName={`${eventTitle ?? "event"}-${ticketWord}`}
-                alsoHideSelector="button"
+                alsoHideSelector="[data-print='hide-info'], [data-print='hide-copy'], button"
               />
               <Button className="w-full shadow-md" variant="secondary">
                 <Group className="items-center justify-center gap-2">
@@ -106,7 +71,20 @@ export default async function OrderPage({
           </Stack>
         </CardContent>
       </Card>
-      <Suspense fallback={<p>Rendering your tickets..</p>}>
+      <Suspense
+        fallback={
+          <Stack className="min-h-[400px] w-full gap-4">
+            <Card className="bg-white">
+              <CardHeader className="block">
+                <Stack className="items-center justify-center gap-2">
+                  <DotsLoader modifier="secondary" size="sm" />
+                  <p>Getting your tickets..</p>
+                </Stack>
+              </CardHeader>
+            </Card>
+          </Stack>
+        }
+      >
         <div id="tickets">
           <QRTicketsServer tickets={tickets} eventId={eventId} />
         </div>

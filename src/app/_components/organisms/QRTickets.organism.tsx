@@ -25,7 +25,7 @@ const QRTickets = ({
   qrCodes: {
     dataURL: string;
   }[];
-  tickets: { id: string; count: number; ticketType: string }[];
+  tickets: { id: string; ticketNumber: number; ticketType: string }[];
   withShare?: boolean;
   eventName: string;
   eventDate: Date;
@@ -35,14 +35,14 @@ const QRTickets = ({
   return (
     <Stack className="gap-4">
       {qrCodes.map(({ dataURL }, idx) => {
-        const id = `ticket-${tickets[idx]!.count}`;
+        const id = `ticket-${tickets[idx]!.ticketNumber}`;
         return (
           <Card key={idx} id={id}>
             <CardHeader>
               <CardTitle>
                 <Group className="items-center justify-between gap-2">
                   <p className="text-[18px] font-light">
-                    #{tickets[idx]!.count} Ticket
+                    #{tickets[idx]!.ticketNumber} Ticket
                   </p>
                   <p className="text-[14px] font-light text-gray-500">
                     {tickets[idx]!.id}
@@ -60,14 +60,16 @@ const QRTickets = ({
                   src={dataURL}
                   alt={`Ticket #${idx + 1} [${tickets[idx]!.ticketType}]`}
                 />
-                <EventInfoCard
-                  withCardWrapper
-                  className="my-4 max-w-[400px]"
-                  eventName={eventName}
-                  eventDate={eventDate}
-                  eventEndDate={eventEndDate}
-                  eventLocation={eventLocation}
-                />
+                <div data-print="hide-info">
+                  <EventInfoCard
+                    withCardWrapper
+                    className="my-4 max-w-[400px]"
+                    eventName={eventName}
+                    eventDate={eventDate}
+                    eventEndDate={eventEndDate}
+                    eventLocation={eventLocation}
+                  />
+                </div>
                 {withShare && (
                   <ButtonCopy
                     data-print="hide-copy"
@@ -76,10 +78,10 @@ const QRTickets = ({
                 )}
                 <DownloadButton
                   selector={`#${id}`}
-                  fileName={`ticket-${tickets[idx]!.count}`}
+                  fileName={`ticket-${tickets[idx]!.ticketNumber}`}
                   variant={withShare ? "secondary" : "default"}
                   className={withShare ? "shadow-md" : ""}
-                  alsoHideSelector={withShare ? "[data-print='hide-copy']" : ""}
+                  alsoHideSelector="[data-print='hide-info'], [data-print='hide-copy']"
                 />
               </Stack>
             </CardContent>
