@@ -246,7 +246,7 @@ const Tickets = ({
               {eventCurrency} {total.toFixed(2)}
             </p>
           </div>
-          <Button disabled={form.watch("regularQuantity") <= 0} type="submit">
+          <Button disabled={total <= 0} type="submit">
             {checkoutProcessing ? (
               <DotsLoader modifier="primary" />
             ) : (

@@ -11,7 +11,8 @@ import { Currency } from "@prisma/client";
 import { S3Service } from "@/utils/s3/service";
 
 const MIN_AMOUNT = 0.5,
-  MAX_AMOUNT = 100000;
+  MAX_AMOUNT = 100000,
+  TAX_RATE = 0.05;
 
 const cartItemSchema = z.object({
   eventName: z.string(),
@@ -101,28 +102,44 @@ export default async function handler(
           phone_number_collection: {
             enabled: true,
           },
-          line_items: uniqueItems.map((p) => ({
-            price_data: {
-              unit_amount: formatAmountForStripe(p.ticketPrice, currency),
-              currency,
-              product_data: {
-                images: event.poster_media
-                  .filter((m) => m.media.media_type === "IMAGE")
-                  .map((m) =>
-                    S3Service.getFileUrlFromFullPath(m.media.bucket_path),
-                  ),
-                name: `Ticket - ${p.eventName}`,
-                description: event.ticket_types.find(
-                  (t) => t.id === p.ticketTypeId,
-                )!.label,
-                metadata: {
-                  ticketTypeId: p.ticketTypeId,
-                } as OrderLineItemMetadata,
+          line_items: [
+            ...uniqueItems.map((p) => ({
+              price_data: {
+                unit_amount: formatAmountForStripe(p.ticketPrice, currency),
+                currency,
+                product_data: {
+                  images: event.poster_media
+                    .filter((m) => m.media.media_type === "IMAGE")
+                    .map((m) =>
+                      S3Service.getFileUrlFromFullPath(m.media.bucket_path),
+                    ),
+                  name: `Ticket - ${p.eventName}`,
+                  description: event.ticket_types.find(
+                    (t) => t.id === p.ticketTypeId,
+                  )!.label,
+                  metadata: {
+                    ticketTypeId: p.ticketTypeId,
+                  } as OrderLineItemMetadata,
+                },
               },
+              quantity: items.filter((t) => t.ticketTypeId === p.ticketTypeId)
+                .length,
+            })),
+            {
+              price_data: {
+                unit_amount: formatAmountForStripe(
+                  Number((total * TAX_RATE).toFixed(2)),
+                  currency,
+                ),
+                currency,
+                product_data: {
+                  name: LINE_ITEM_PRODUCT_NAME_FOR_TAX,
+                  description: `Static tax of ${TAX_RATE * 100}%`,
+                },
+              },
+              quantity: 1,
             },
-            quantity: items.filter((t) => t.ticketTypeId === p.ticketTypeId)
-              .length,
-          })),
+          ],
           billing_address_collection: "auto",
           cancel_url: `${req.headers.origin!}/${onCancelRedirectTo}`,
           success_url: `${req.headers.origin!}/order/{CHECKOUT_SESSION_ID}`,
@@ -138,6 +155,11 @@ export default async function handler(
             eventId,
             organizationId: event.organization_id,
           } as OrderMetadata,
+
+          // needs addres collectiont to automatically determine the tax
+          // automatic_tax: {
+          //   enabled: true,
+          // },
         },
         checkoutSession: Stripe.Checkout.Session =
           await stripeCli.checkout.sessions.create(params);
@@ -165,6 +187,8 @@ export const orderMetadataSchema = z.object({
 export const orderLineItemMetadataSchema = z.object({
   ticketTypeId: z.string(),
 });
+
+export const LINE_ITEM_PRODUCT_NAME_FOR_TAX = "Tax";
 
 export type OrderMetadata = z.infer<typeof orderMetadataSchema>;
 export type OrderLineItemMetadata = z.infer<typeof orderLineItemMetadataSchema>;

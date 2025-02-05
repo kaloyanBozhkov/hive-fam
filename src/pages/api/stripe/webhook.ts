@@ -67,14 +67,17 @@ const cors = Cors({
             // to include the product metadata
             { expand: ["data.price.product"] },
           );
-          const lineItemsData = lineItems.data.map((item) => ({
-            quantity: item.quantity ?? 1,
-            metadata: (
-              item.price!.product as unknown as {
-                metadata: OrderLineItemMetadata;
-              }
-            ).metadata,
-          }));
+          const lineItemsData = lineItems.data
+            .map((item) => ({
+              quantity: item.quantity ?? 1,
+              metadata: (
+                item.price!.product as unknown as {
+                  metadata: OrderLineItemMetadata;
+                }
+              ).metadata,
+            }))
+            // skip tax line item or any line item without a ticket type id
+            .filter((item) => item.metadata?.ticketTypeId);
 
           const { eventId } = session.metadata as unknown as OrderMetadata;
           if (!eventId || lineItemsData.length === 0)
