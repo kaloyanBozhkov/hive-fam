@@ -223,7 +223,9 @@ const Tickets = ({
                               </Stack>
                             </FormLabel>
                             {ticketType.is_sold_out ? (
-                              <p className="text-nowrap font-bold">Sold Out</p>
+                              <p className="ml-auto text-nowrap text-right font-bold">
+                                Sold Out
+                              </p>
                             ) : (
                               PriceControls
                             )}
