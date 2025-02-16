@@ -382,13 +382,14 @@ model participant {
 }
 
 model staff {
-  id       String @id @default(uuid())
-  email    String @unique
-  name     String
-  surname  String
-  password String
-  role     Role
-  phone    String
+  id                String  @id @default(uuid())
+  email             String  @unique
+  name              String
+  surname           String
+  password          String
+  role              Role
+  phone             String
+  stripe_account_id String?
 
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
