@@ -29,6 +29,7 @@ async function addStaff(staffData: {
       ...staffData,
       // can only add to own organization
       organization_id: user.organization_id,
+      is_org_owner: false,
     });
 
     revalidatePath("/staff/manage");
