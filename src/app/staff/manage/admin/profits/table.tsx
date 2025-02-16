@@ -29,7 +29,7 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
 
   if (events.length === 0) {
     return (
-      <div className="text-center text-muted-foreground">
+      <div className="text-left text-muted-foreground">
         No events found. Create an event and sell some tickets to see earnings
         here.
       </div>

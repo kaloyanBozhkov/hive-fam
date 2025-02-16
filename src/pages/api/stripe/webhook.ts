@@ -7,6 +7,7 @@ import { env } from "@/env";
 import type { Currency } from "@prisma/client";
 import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
 import type { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
+import { confirmPayoutsAccountLink } from "@/server/actions/stripe/getPayoutsAccountLink";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -113,6 +114,23 @@ const cors = Cors({
         case "charge.succeeded": {
           const charge = event.data.object;
           console.log(`💵 Charge id: ${charge.id}`);
+          break;
+        }
+        case "account.external_account.created": {
+          const account = event.data.object;
+          console.log(`💵 Account id: ${account.id}`);
+          break;
+        }
+        case "account.updated": {
+          const account = event.data.object;
+          if (account.charges_enabled && account.details_submitted) {
+            console.log(
+              `✅ Account ${account.id} is now fully set up and ready to process payments`,
+            );
+            await confirmPayoutsAccountLink(account.id);
+
+            // now it's time to transfer all their money into the account
+          }
           break;
         }
         default:

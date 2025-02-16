@@ -42,17 +42,22 @@ const QRTicketsServer = async ({
   eventId: string;
 }) => {
   const orgId = await getOrgId();
-  const orgDomain = getDomainFromOrgId(orgId)!;
-  if (!orgDomain) console.warn("orgDomain inQRTicketsServer was undefined");
+  let orgDomain = getDomainFromOrgId(orgId)!;
+  if (!orgDomain) console.warn("orgDomain in QRTicketsServer was undefined");
 
   const contents = formatTicketSignedUrls(
     orgDomain,
     tickets.map(({ id }) => id),
   );
-
   const qrs = contents.map((urlContent) => ({ urlContent }));
+
+  let protocol = "https";
+  if (orgDomain.includes("localhost")) {
+    orgDomain = "localhost:3000";
+    protocol = "http";
+  }
   const qrCodes = await fetchPostJSON<{ dataURL: string }[]>(
-    `https://${orgDomain}/api/qr/getQRCodes`,
+    `${protocol}://${orgDomain}/api/qr/getQRCodes`,
     {
       qrs,
       orgId,

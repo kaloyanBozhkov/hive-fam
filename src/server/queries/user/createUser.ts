@@ -11,6 +11,7 @@ export const userCreateSchema = z.object({
   surname: z.string(),
   organization_id: z.string(),
   phone: z.string(),
+  is_org_owner: z.boolean(),
 });
 
 export const createUser = async ({
@@ -21,6 +22,7 @@ export const createUser = async ({
   password,
   phone,
   organization_id,
+  is_org_owner,
 }: z.infer<typeof userCreateSchema>) => {
   return db.staff.create({
     data: {
@@ -35,6 +37,7 @@ export const createUser = async ({
           id: organization_id,
         },
       },
+      is_org_owner,
     },
   });
 };

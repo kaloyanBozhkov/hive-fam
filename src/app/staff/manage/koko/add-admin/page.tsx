@@ -22,6 +22,7 @@ async function addAdmin(staffData: {
   password: string;
   phone: string;
   organization_id: string;
+  is_org_owner: boolean;
 }) {
   "use server";
 

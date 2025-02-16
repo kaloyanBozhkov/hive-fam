@@ -4,24 +4,32 @@ import { getJWTUser } from "./getJWTUser";
 
 export const isManagerOrAbove = async () => {
   const user = await getJWTUser();
-  if (
-    !([Role.KOKO, Role.ADMIN, Role.EVENT_MANAGER] as Role[]).includes(user.role)
-  )
-    throw new Error("Unauthorized");
-
+  isRoleManagerOrAbove(user.role);
   return user;
 };
 
 export const isAdminOrAbove = async () => {
   const user = await getJWTUser();
-  if (!([Role.KOKO, Role.ADMIN] as Role[]).includes(user.role))
-    throw new Error("Unauthorized");
-
+  isRoleAdminOrAbove(user.role);
   return user;
 };
 
 export const isKoko = async () => {
   const user = await getJWTUser();
-  if (user.role !== Role.KOKO) throw new Error("Unauthorized");
+  isRoleKoko(user.role);
   return user;
+};
+
+export const isRoleAdminOrAbove = (role: Role) => {
+  if (!([Role.KOKO, Role.ADMIN] as Role[]).includes(role))
+    throw new Error("Unauthorized");
+};
+
+export const isRoleManagerOrAbove = (role: Role) => {
+  if (!([Role.KOKO, Role.ADMIN, Role.EVENT_MANAGER] as Role[]).includes(role))
+    throw new Error("Unauthorized");
+};
+
+export const isRoleKoko = (role: Role) => {
+  if (role !== Role.KOKO) throw new Error("Unauthorized");
 };

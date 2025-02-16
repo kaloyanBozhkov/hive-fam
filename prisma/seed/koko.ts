@@ -1,3 +1,4 @@
+import { DOMAIN_CONFIG } from "@/server/config";
 import { PrismaClient, Role } from "@prisma/client";
 import { hash } from "bcrypt";
 
@@ -7,6 +8,7 @@ async function main() {
   // Create the organization
   const organization = await prisma.organization.create({
     data: {
+      id: DOMAIN_CONFIG.localhost,
       name: "Koko's Org",
     },
   });

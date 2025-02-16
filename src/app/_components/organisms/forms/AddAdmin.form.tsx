@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
   Form,
+  FormDescription,
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
@@ -25,6 +26,7 @@ import {
 } from "../../shadcn/Select.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Switch } from "../../shadcn/Switch.shadcn";
 
 const admin = z.object({
   email: z.string().email(),
@@ -34,6 +36,7 @@ const admin = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long"),
   phone: z.string(),
   organization_id: z.string().uuid(),
+  is_org_owner: z.boolean().default(false),
 });
 
 const AddAdminForm = ({
@@ -58,6 +61,7 @@ const AddAdminForm = ({
       role: Role.ADMIN,
       phone: "",
       organization_id: "",
+      is_org_owner: true,
     },
   });
   const [isPending, startTransition] = useTransition();
@@ -102,6 +106,31 @@ const AddAdminForm = ({
                   </SelectContent>
                 </Select>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="is_org_owner"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    Is Organization Owner
+                  </FormLabel>
+                  <FormDescription>
+                    Make this user the owner of the organization, they will
+                    control payouts.
+                    <br />
+                    Note: Any other admins will be demoted.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

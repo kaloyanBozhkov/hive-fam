@@ -9,6 +9,7 @@ import { db } from "@/server/db";
 import { z } from "zod";
 import { Currency } from "@prisma/client";
 import { S3Service } from "@/utils/s3/service";
+import { getTransferDataForPaymentIntentCheckoutSession } from "@/server/actions/stripe/getOrganisationOwnerStripeAccountId";
 
 const MIN_AMOUNT = 0.5,
   MAX_AMOUNT = 100000,
@@ -160,6 +161,10 @@ export default async function handler(
           // automatic_tax: {
           //   enabled: true,
           // },
+
+          ...(await getTransferDataForPaymentIntentCheckoutSession(
+            event.organization_id!,
+          )),
         },
         checkoutSession: Stripe.Checkout.Session =
           await stripeCli.checkout.sessions.create(params);
