@@ -42,7 +42,7 @@ export default async function RootLayout({
         {org?.description && (
           <meta name="description" content={org.description} />
         )}
-        {(org.brand_logo_data_url || org.brand_logo_data_url) && (
+        {(org.brand_logo_data_url ?? org.brand_logo_data_url) && (
           <link
             rel="icon"
             href={
