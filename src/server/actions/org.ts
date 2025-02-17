@@ -30,7 +30,14 @@ export const getOrgId = async () => {
 
 export const getOrg = async () => {
   const orgId = await getOrgId();
-  console.log("found org id", orgId);
+  console.log(
+    "found orgs",
+    JSON.stringify(
+      await db.organization.findMany({
+        select: { id: true, name: true },
+      }),
+    ),
+  );
   const org = await db.organization.findUniqueOrThrow({
     where: {
       id: orgId,
