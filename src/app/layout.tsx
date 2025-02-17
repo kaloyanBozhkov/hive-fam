@@ -11,26 +11,6 @@ import Header from "./_components/organisms/Header.organism";
 import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
 import { getOrg } from "@/server/actions/org";
-import { headers } from "next/headers";
-
-export async function generateMetadata() {
-  const headersList = await headers();
-  const host = headersList.get("host");
-  console.log("generateMetadata host", host);
-  const org = await getOrg();
-  console.log("generateMetadata", org);
-  return {
-    title: org?.display_name,
-    description: org?.description,
-    icons: [
-      {
-        rel: "icon",
-        url:
-          org?.favicon_data_url ?? org?.brand_logo_data_url ?? "/favicon.ico",
-      },
-    ],
-  };
-}
 
 export default async function RootLayout({
   children,
@@ -44,6 +24,20 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style type="text/css">{cssVariables}</style>
         <GoogleAnalytics gaId="G-9XF47FL1PM" />
+        {org?.display_name && <title>{org?.display_name}</title>}
+        {org?.description && (
+          <meta name="description" content={org?.description} />
+        )}
+        {(org?.favicon_data_url ?? org?.brand_logo_data_url) && (
+          <link
+            rel="icon"
+            href={
+              org?.favicon_data_url ??
+              org?.brand_logo_data_url ??
+              "/favicon.ico"
+            }
+          />
+        )}
       </head>
       <body>
         <TRPCReactProvider>
