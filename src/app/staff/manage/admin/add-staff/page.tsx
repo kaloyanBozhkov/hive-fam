@@ -29,6 +29,7 @@ async function addStaff(staffData: {
       ...staffData,
       // can only add to own organization
       organization_id: user.organization_id,
+      // only admin added by koko can be org owner.
       is_org_owner: false,
     });
 
