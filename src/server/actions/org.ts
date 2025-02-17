@@ -31,11 +31,13 @@ export const getOrgId = async () => {
 
 export const getOrg = async () => {
   const orgId = await getOrgId();
+  console.log("getOrgId", getOrgId);
   const org = await db.organization.findUniqueOrThrow({
     where: {
       id: orgId,
     },
   });
+  console.log("org", org);
   return org;
 };
 
