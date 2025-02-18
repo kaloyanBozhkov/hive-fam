@@ -38,6 +38,7 @@ import {
   CardHeader,
 } from "../../shadcn/Card.shadcn";
 import { createUUID } from "@/utils/common";
+import LexicalEditor from "../../molecules/LexicalEditor";
 
 const event = z
   .object({
@@ -148,6 +149,7 @@ const EditEventForm = ({
 
   useEffect(() => {
     onToggleFreeEvent(isFreeField);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFreeField]);
 
   return (
@@ -214,7 +216,7 @@ const EditEventForm = ({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
@@ -222,6 +224,23 @@ const EditEventForm = ({
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <LexicalEditor
+                    editable
+                    onChanged={field.onChange}
+                    initialValue={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

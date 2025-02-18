@@ -29,6 +29,7 @@ import {
 import { S3Service } from "@/utils/s3/service";
 import SlideDots from "../atoms/SlideDots.atom";
 import type { EventTicketType } from "@/utils/types.common";
+import LexicalEditor from "../molecules/LexicalEditor";
 
 type Event = event & {
   venue: venue;
@@ -64,13 +65,13 @@ const EventCard = ({
             </CardTitle>
           </Link>
         </div>
-        <CardDescription>
-          {event.description.split("\n").map((e, idx) => (
-            <Fragment key={idx}>
-              {e}
-              <br />
-            </Fragment>
-          ))}
+        <CardDescription asChild>
+          <div>
+            <LexicalEditor
+              editable={false}
+              initialValue={event.description ?? ""}
+            />
+          </div>
         </CardDescription>
       </CardHeader>
       {event.poster_media.length > 0 && (
@@ -112,10 +113,10 @@ const EventCard = ({
                   })}
                 </CarouselContent>
                 {event.poster_media.length > 1 && (
-                  <>
+                  <Fragment key="carousel-controls">
                     <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
                     <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
-                  </>
+                  </Fragment>
                 )}
               </Carousel>
             </Link>
