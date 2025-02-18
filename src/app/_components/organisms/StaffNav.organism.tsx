@@ -63,7 +63,7 @@ export const StaffNav = ({
   );
 };
 
-const LINKS: Record<
+export const LINKS: Record<
   string,
   {
     label: string;

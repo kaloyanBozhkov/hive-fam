@@ -31,13 +31,16 @@ model album_slide {
 }
 
 model info_slide {
-  id                   String         @id @default(uuid())
+  id                   String  @id @default(uuid())
   subtitle             String
   title                String
   content              String
   background_data_url  String
   background_video_url String?
-  banner_slide         banner_slide[]
+
+  action_participants_for_event    event?         @relation(fields: [action_participants_for_event_id], references: [id])
+  action_participants_for_event_id String?
+  banner_slide                     banner_slide[]
 }
 
 model banner_slide {
@@ -68,7 +71,7 @@ enum ThemeColors {
 }
 
 model organization {
-  id                  String      @id @default(uuid())
+  id                  String   @id @default(uuid())
   name                String
   description         String?
   display_name        String? // used for tab title, page title etc..
@@ -77,11 +80,14 @@ model organization {
   favicon_data_url    String?
   // TODO add qr brand text
   qr_brand_text       String? // used for ticket branding
-  default_currency    Currency    @default(EUR)
+  default_currency    Currency @default(EUR)
+  bg_image            String?
+  bg_color            String?
+
   // TODO add theme
-  theme_colors        ThemeColors @default(DARK_GREEN)
-  created_at          DateTime    @default(now())
-  updated_at          DateTime    @updatedAt
+  theme_colors ThemeColors @default(DARK_GREEN)
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
 
   events       event[]
   staff        staff[]
@@ -310,6 +316,25 @@ model event {
   poster_media event_media[]
   sold_tickets ticket[]
   ticket_types event_ticket_type[]
+  contestants  event_contestant[]
+  info_slide   info_slide[]
+}
+
+model event_contestant {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  email          String  @unique
+  phone          String
+  name           String
+  surname        String
+  country        String
+  approved       Boolean @default(false)
+  custom_payload Json?
+
+  event    event  @relation(fields: [event_id], references: [id])
+  event_id String
 }
 
 model venue {

@@ -39,10 +39,10 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body>
+      <body className="relative">
         <TRPCReactProvider>
           <AOS>
-            <div className="grid-page min-h-screen w-full pb-4">
+            <div className="grid-page relative z-[1] min-h-screen w-full pb-4">
               <Header brandName={org?.display_name ?? ""} />
               {children}
               <Toaster />
@@ -50,6 +50,12 @@ export default async function RootLayout({
             </div>
           </AOS>
         </TRPCReactProvider>
+        <div
+          className={`bg-fit pointer-events-none fixed inset-0 z-0 bg-repeat opacity-30`}
+          style={{
+            backgroundImage: `url('/assets/bgs/${"subtle-grunge"}.png')`,
+          }}
+        />
       </body>
     </html>
   );
