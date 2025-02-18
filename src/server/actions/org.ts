@@ -22,7 +22,6 @@ export const getOrgId = async () => {
   const domainID =
     domainName in DOMAIN_CONFIG ? DOMAIN_CONFIG[domainName] : null;
 
-  console.log("domainName", domainName);
   orgId = orgId ?? domainID ?? env.TMP_ORG_ID;
 
   if (!orgId) console.warn("Org ID not found");

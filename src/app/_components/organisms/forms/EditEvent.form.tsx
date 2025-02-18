@@ -85,13 +85,14 @@ const event = z
         path: ["ticket_types"],
       });
     }
-    if (data.is_free && data.ticket_types.length > 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ticket types are not allowed if the event is free",
-        path: ["ticket_types"],
-      });
-    }
+    // for edit we can allow ticket types to be set while its free
+    // if (data.is_free && data.ticket_types.length > 0) {
+    //   ctx.addIssue({
+    //     code: z.ZodIssueCode.custom,
+    //     message: "Ticket types are not allowed if the event is free",
+    //     path: ["ticket_types"],
+    //   });
+    // }
     if (data.end_date && data.end_date < data.date) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
