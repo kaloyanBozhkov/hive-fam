@@ -388,7 +388,6 @@ export const BGS = [
   "wild-flowers.png",
   "wild-oliva.png",
   "wine-cork.png",
-  "wkNIEaPeeSCek0yG0oE7h_c129f8868d22476088b30f405131dec6.jpg",
   "wood-pattern.png",
   "wood.png",
   "worn-dots.png",

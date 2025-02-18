@@ -51,6 +51,7 @@ const getOrgDetails = async () => {
 
 export default async function OrgEditPage() {
   const data = await getOrgDetails();
+  console.log(data);
   if (!data) return <p>No organization details found</p>;
   return (
     <Stack className="gap-4">

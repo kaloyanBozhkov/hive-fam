@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Path, useForm } from "react-hook-form";
+import { type Path, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import Stack from "../../layouts/Stack.layout";
@@ -11,13 +11,18 @@ import {
   FormLabel,
   FormMessage,
   Form,
+  FormDescription,
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { FileUploadField } from "./fields/FileUploadField";
+import { BGChooser } from "../../molecules/BGChooser.molecule";
+import { Switch } from "../../shadcn/Switch.shadcn";
+import usePreviewSettingsStore from "@/zustand/previewSettings";
+import { ColorPicker } from "../../shadcn/ColorPicker.molecule";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -26,6 +31,8 @@ const organization = z.object({
   description: z.string().optional().nullable(),
   brand_logo_data_url: z.string().optional().nullable(),
   favicon_data_url: z.string().optional().nullable(),
+  bg_image: z.string().optional().nullable(),
+  bg_color: z.string().optional().nullable(),
 });
 
 const EditOrganizationForm = ({
@@ -43,6 +50,13 @@ const EditOrganizationForm = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [withBG, setWithBG] = useState(!!initialData.bg_image);
+  const setPreviewBG = usePreviewSettingsStore(
+    ({ setPreviewBG }) => setPreviewBG,
+  );
+  const setPreviewBGColor = usePreviewSettingsStore(
+    ({ setPreviewBGColor }) => setPreviewBGColor,
+  );
 
   const form = useForm<z.infer<typeof organization>>({
     resolver: zodResolver(organization),
@@ -167,6 +181,77 @@ const EditOrganizationForm = ({
                 </FormItem>
               );
             }}
+          />
+          <FormField
+            control={form.control}
+            name="bg_color"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    With Custom Background Color
+                  </FormLabel>
+                  <FormDescription>
+                    This will set a custom background color to the whole
+                    website.
+                  </FormDescription>
+                </div>
+                <Stack className="gap-2">
+                  <FormControl>
+                    <ColorPicker
+                      onChange={(bg) => {
+                        field.onChange(bg);
+                        setPreviewBGColor(bg);
+                      }}
+                      value={form.getValues("bg_color") ?? ""}
+                    />
+                  </FormControl>
+                </Stack>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bg_image"
+            render={({ field }) => (
+              <FormItem className="flex flex-row flex-wrap items-stretch justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    With Baground Image/Effect
+                  </FormLabel>
+                  <FormDescription>
+                    This will set a bg effect to the whole website.
+                  </FormDescription>
+                </div>
+                <Stack className="gap-2">
+                  <FormControl>
+                    <Switch
+                      checked={withBG}
+                      onCheckedChange={() => {
+                        setWithBG((prev) => {
+                          if (!prev) {
+                            field.onChange(null);
+                            setPreviewBG(null);
+                          }
+                          return !prev;
+                        });
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+                {withBG && (
+                  <div className="basis-full flex-wrap">
+                    <BGChooser
+                      onSelect={(bg) => {
+                        field.onChange(bg);
+                        setPreviewBG(bg);
+                      }}
+                      selectedBg={form.getValues("bg_image") ?? ""}
+                    />
+                  </div>
+                )}
+              </FormItem>
+            )}
           />
           <input type="hidden" {...form.register("id")} />
           <Button

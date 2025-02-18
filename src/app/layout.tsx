@@ -11,6 +11,7 @@ import Header from "./_components/organisms/Header.organism";
 import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
 import { getOrg } from "@/server/actions/org";
+import { BGTemplate } from "./_components/templates/BG.template";
 
 export default async function RootLayout({
   children,
@@ -50,12 +51,7 @@ export default async function RootLayout({
             </div>
           </AOS>
         </TRPCReactProvider>
-        <div
-          className={`bg-fit pointer-events-none fixed inset-0 z-0 bg-repeat opacity-30`}
-          style={{
-            backgroundImage: `url('/assets/bgs/${"subtle-grunge"}.png')`,
-          }}
-        />
+        <BGTemplate bg={org?.bg_image} bgColor={org?.bg_color} />
       </body>
     </html>
   );
