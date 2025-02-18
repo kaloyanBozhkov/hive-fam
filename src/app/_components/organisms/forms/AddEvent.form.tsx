@@ -153,7 +153,6 @@ const AddEventForm = ({
 
   const handleSubmit = async (data: z.infer<typeof event>) => {
     startTransition(async () => {
-      console.log(data);
       const result = await onAdd(data);
       if (result.success) {
         form.reset();

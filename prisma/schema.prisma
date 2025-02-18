@@ -71,18 +71,19 @@ enum ThemeColors {
 }
 
 model organization {
-  id                  String   @id @default(uuid())
-  name                String
-  description         String?
-  display_name        String? // used for tab title, page title etc..
-  brand_logo_data_url String? // used for ticket branding
+  id                    String   @id @default(uuid())
+  name                  String
+  description           String?
+  display_name          String? // used for tab title, page title etc..
+  brand_logo_data_url   String? // used for ticket branding
   // TODO add favicon
-  favicon_data_url    String?
+  favicon_data_url      String?
   // TODO add qr brand text
-  qr_brand_text       String? // used for ticket branding
-  default_currency    Currency @default(EUR)
-  bg_image            String?
-  bg_color            String?
+  qr_brand_text         String? // used for ticket branding
+  default_currency      Currency @default(EUR)
+  bg_image              String?
+  bg_color              String?
+  large_banners_desktop Boolean  @default(false)
 
   // TODO add theme
   theme_colors ThemeColors @default(DARK_GREEN)

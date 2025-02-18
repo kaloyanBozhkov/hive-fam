@@ -51,7 +51,7 @@ export default async function RootLayout({
             </div>
           </AOS>
         </TRPCReactProvider>
-        <BGTemplate bg={org?.bg_image} bgColor={org?.bg_color} />
+        <BGTemplate org={org} />
       </body>
     </html>
   );

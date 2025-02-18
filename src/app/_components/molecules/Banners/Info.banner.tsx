@@ -31,7 +31,7 @@ const InfoBanner = ({
           alt="landing banner background"
           width={1920}
           height={1280}
-          className="absolute inset-0 z-[5] m-auto object-cover  object-center md:w-full -md:h-full"
+          className="absolute inset-0 z-[5] m-auto h-full w-full object-cover object-center"
           priority
         />
       </div>

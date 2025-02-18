@@ -10,7 +10,6 @@ import { db } from "../db";
   orgId: string,
   { qrSize }: { qrSize: number } = { qrSize: QR_CANVAS_CONFIG.qrSize },
 ): Promise<{ dataURL: string }[]> => {
-  console.log("orgId", orgId);
   const org = await db.organization.findUniqueOrThrow({
     where: {
       id: orgId,

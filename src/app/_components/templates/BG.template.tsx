@@ -1,16 +1,18 @@
 "use client";
 import usePreviewSettingsStore from "@/zustand/previewSettings";
+import { useLayoutEffect } from "react";
+import type { organization } from "@prisma/client";
 
-export const BGTemplate = ({
-  bg,
-  bgColor,
-}: {
-  bg: string | null;
-  bgColor: string | null;
-}) => {
-  const { previewBG, previewBGColor } = usePreviewSettingsStore();
-  const currentBG = previewBG ?? bg;
-  const currentBGColor = previewBGColor ?? bgColor;
+// todo pass less data
+export const BGTemplate = ({ org }: { org: organization }) => {
+  const { previewBG, previewBGColor, setInitialSettings } =
+    usePreviewSettingsStore();
+  const currentBG = previewBG ?? org.bg_image;
+  const currentBGColor = previewBGColor ?? org.bg_color;
+
+  useLayoutEffect(() => {
+    setInitialSettings(org);
+  }, [org, setInitialSettings]);
 
   return (
     <>

@@ -33,6 +33,7 @@ const organization = z.object({
   favicon_data_url: z.string().optional().nullable(),
   bg_image: z.string().optional().nullable(),
   bg_color: z.string().optional().nullable(),
+  large_banners_desktop: z.boolean().optional(),
 });
 
 const EditOrganizationForm = ({
@@ -250,6 +251,28 @@ const EditOrganizationForm = ({
                     />
                   </div>
                 )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="large_banners_desktop"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    Large Desktop Banners
+                  </FormLabel>
+                  <FormDescription>
+                    Make your landing page banners larger on desktop
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value ?? false}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

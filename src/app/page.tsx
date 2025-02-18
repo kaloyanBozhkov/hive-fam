@@ -4,6 +4,8 @@ import EventsList from "@/app/_components/organisms/EventsList.organism";
 import LandingBanner from "@/app/_components/molecules/LandingBanner.molecule";
 import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";
+import { twMerge } from "tailwind-merge";
+import { BannerWrapper } from "./_components/templates/BannerWrapper.template";
 
 const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
@@ -63,14 +65,15 @@ const getEvents = async (orgId: string) => {
 
 export default async function Home() {
   const orgId = await getOrgId();
+  const events = await getEvents(orgId);
 
   return (
     <>
-      <div className="full-width mb-4 h-[420px] overflow-hidden border-y-[1px] border-white sm:h-[600px]">
+      <BannerWrapper>
         <LandingBanner />
-      </div>
+      </BannerWrapper>
       <Stack className="mt-2 min-h-[400px] gap-4 px-[10px]">
-        <EventsList events={await getEvents(orgId)} />
+        <EventsList events={events} />
       </Stack>
     </>
   );
