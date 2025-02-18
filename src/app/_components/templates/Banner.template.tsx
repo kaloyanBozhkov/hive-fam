@@ -22,7 +22,7 @@ const Banner = ({
       )}
     >
       <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
-      <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3 -sm:m-auto">
         <p className="font-regular p-text text-white">{subtitle}</p>
         <Stack className="col-span-2 gap-[24px]">
           <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>

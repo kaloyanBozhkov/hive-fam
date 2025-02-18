@@ -7,18 +7,20 @@ const VideoPlay = ({ className, src }: { className?: string; src: string }) => {
 
   return (
     <video
-      src={src}
       preload="metadata"
       autoPlay
       loop
       muted
+      playsInline
       className={twMerge(
-        `h-full w-full object-cover object-center ${isVideoLoaded ? "" : "hidden"}`,
+        `z-10 h-full w-full object-cover object-center ${isVideoLoaded ? "" : "hidden"}`,
         className,
       )}
       controls={false}
       onLoadedData={() => setIsVideoLoaded(true)}
-    />
+    >
+      <source src={src} type="video/mp4" />
+    </video>
   );
 };
 

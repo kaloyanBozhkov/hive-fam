@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "../../_components/shadcn/Card.shadcn";
 import { Button } from "../../_components/shadcn/Button.shadcn";
-import { db } from "@/server/db";
 import Group from "@/app/_components/layouts/Group.layout";
 import { DownloadButton } from "@/app/_components/molecules/DownloadButton.molecule";
 import QRTicketsServer from "@/app/_components/next-components/QRTickets.server";

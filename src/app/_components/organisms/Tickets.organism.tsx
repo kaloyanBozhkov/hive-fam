@@ -2,7 +2,6 @@
 import { z } from "zod";
 import Group from "../layouts/Group.layout";
 import Stack from "../layouts/Stack.layout";
-import { Input } from "../shadcn/Input.shadcn";
 import { Button } from "../shadcn/Button.shadcn";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -108,7 +107,7 @@ const Tickets = ({
         })
         .finally(() => setCheckoutProcessing(false));
     },
-    [eventName, form, eventId, ticketTypes],
+    [eventName, form, eventId, ticketTypes, eventCurrency],
   );
 
   if (!ticketTypes.length)

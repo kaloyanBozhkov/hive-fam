@@ -31,7 +31,7 @@ const InfoBanner = ({
           alt="landing banner background"
           width={1920}
           height={1280}
-          className="h-full object-cover object-center"
+          className="z-[5] h-full object-cover object-center"
           priority
         />
       </div>
