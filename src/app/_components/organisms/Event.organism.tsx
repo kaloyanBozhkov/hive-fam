@@ -144,6 +144,7 @@ const EventCard = ({
           </Group>
           {!isPast && (
             <BuyTickets
+              isModalMode
               eventId={event.id}
               eventName={event.title}
               eventCurrency={event.price_currency}

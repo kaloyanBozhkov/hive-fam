@@ -29,6 +29,7 @@ const BuyTickets = ({
   eventDate,
   eventLocation,
   eventEndDate,
+  isModalMode = false,
 }: {
   className?: string;
   eventId: string;
@@ -39,6 +40,7 @@ const BuyTickets = ({
   eventDate: Date;
   eventLocation?: string;
   eventEndDate?: Date | null;
+  isModalMode?: boolean;
 }) => {
   return (
     <div className={twMerge("w-full", className)}>
@@ -74,6 +76,7 @@ const BuyTickets = ({
               <FreeTickets eventId={eventId} eventName={eventName} />
             ) : (
               <Tickets
+                isModalMode={isModalMode}
                 eventId={eventId}
                 eventName={eventName}
                 ticketTypes={ticketTypes}

@@ -10,7 +10,11 @@ const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
     include: {
       venue: true,
-      ticket_types: true,
+      ticket_types: {
+        orderBy: {
+          created_at: "asc",
+        },
+      },
       sold_tickets: {
         select: {
           ticket_type_id: true,

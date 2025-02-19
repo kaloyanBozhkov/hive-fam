@@ -54,8 +54,9 @@ async function addEvent({ poster_media, ticket_types, ...data }: EventData) {
         ...data,
         ticket_types: {
           createMany: {
-            data: ticket_types.map((ticketType) => ({
+            data: ticket_types.map((ticketType, index) => ({
               ...ticketType,
+              created_at: new Date(Date.now() + index), // ensure order of creation persists
             })),
           },
         },
