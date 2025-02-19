@@ -6,30 +6,28 @@ import Link from "next/link";
 import { RapBattleParticipantSignUp } from "@/app/_components/organisms/forms/specific/RapBattleParticipantSignUp";
 
 const getEvent = async (id: string) => {
-  const { poster_media, ticket_types, ...event } =
-    await db.event.findFirstOrThrow({
-      where: {
-        id,
-      },
-      include: {
-        venue: true,
-        ticket_types: true,
-        poster_media: {
-          select: {
-            order: true,
-            media: {
-              select: {
-                bucket_path: true,
-                media_type: true,
-              },
+  const { poster_media, ...event } = await db.event.findFirstOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      venue: true,
+      poster_media: {
+        select: {
+          order: true,
+          media: {
+            select: {
+              bucket_path: true,
+              media_type: true,
             },
           },
-          orderBy: {
-            order: "asc",
-          },
+        },
+        orderBy: {
+          order: "asc",
         },
       },
-    });
+    },
+  });
 
   return {
     poster_media: poster_media.map((pm) => ({

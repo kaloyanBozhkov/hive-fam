@@ -4,7 +4,6 @@ import EventsList from "@/app/_components/organisms/EventsList.organism";
 import LandingBanner from "@/app/_components/molecules/LandingBanner.molecule";
 import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";
-import { twMerge } from "tailwind-merge";
 import { BannerWrapper } from "./_components/templates/BannerWrapper.template";
 
 const getEvents = async (orgId: string) => {
