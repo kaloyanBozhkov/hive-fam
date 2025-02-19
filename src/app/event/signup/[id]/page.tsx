@@ -81,16 +81,21 @@ export default async function SignupEventPage({
 
   return (
     <>
-      <Stack className="m-auto min-h-[400px] w-full gap-4">
+      <Stack className="mx-auto min-h-[400px] w-full gap-4">
         <RapBattleParticipantSignUp
           event={event}
           onSignUp={async (data) => {
             "use server";
-            await addParticipant({
-              ...data,
-              event_id: event.id,
-              custom_payload: JSON.stringify(data.custom_payload),
-            });
+            try {
+              await addParticipant({
+                ...data,
+                event_id: event.id,
+                custom_payload: JSON.stringify(data.custom_payload),
+              });
+              return "success";
+            } catch (err) {
+              return "failed";
+            }
           }}
         />
         <Button variant="outline">

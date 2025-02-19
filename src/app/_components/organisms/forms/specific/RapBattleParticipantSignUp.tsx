@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import SignUpParticipant, { ParticipantData } from "../user/SignUpParticipant";
 import { event as Eventt, MediaType, venue as Venuee } from "@prisma/client";
 import { format } from "date-fns";
@@ -23,6 +23,8 @@ import {
 } from "@/app/_components/shadcn/Carousel.shadcn";
 import { Carousel } from "@/app/_components/shadcn/Carousel.shadcn";
 import SlideDots from "@/app/_components/atoms/SlideDots.atom";
+import { Textarea } from "@/app/_components/shadcn/Textarea.shadcn";
+import { useToast } from "@/app/hooks/shadcn/useToast.shadcn";
 
 type Event = Eventt & {
   venue: Venuee;
@@ -37,11 +39,14 @@ export const RapBattleParticipantSignUp = ({
   onSignUp,
 }: {
   event: Event;
-  onSignUp: (data: ParticipantData) => void;
+  onSignUp: (data: ParticipantData) => Promise<"success" | "failed">;
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>("Free Style");
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false);
+  const [isErrorSignup, setIsErrorSignup] = useState<boolean>(false);
   const [active, setActive] = useState(0);
+  const [optionalText, setOptionalText] = useState("");
+  const { toast } = useToast();
   const customPayload = useMemo(() => {
     return {
       event_id: event.id,
@@ -50,16 +55,53 @@ export const RapBattleParticipantSignUp = ({
   }, [event.id, selectedOption]);
 
   const handleSignUp = (data: ParticipantData) => {
-    setIsSignedUp(true);
-    onSignUp(data);
+    onSignUp({
+      ...data,
+      custom_payload: {
+        ...data.custom_payload,
+        special_requests: optionalText,
+      },
+    }).then((result) => {
+      if (result === "success") {
+        setIsSignedUp(true);
+      } else {
+        setIsSignedUp(false);
+        setIsErrorSignup(true);
+      }
+    });
   };
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
   };
 
+  useEffect(() => {
+    if (isErrorSignup) {
+      toast({
+        title: "Could not sign you up",
+        description:
+          "Either you are already signed up with this email, or there was an error.",
+      });
+      setIsErrorSignup(false);
+    }
+  }, [isErrorSignup, toast]);
+
   const RapBattleNotes = (
     <Stack className="gap-y-4">
+      {!isSignedUp && (
+        <Stack className="mb-4 gap-6">
+          <hr />
+          <Stack className="gap-2">
+            <p>Special Requests (optional):</p>
+            <Textarea
+              placeholder="If you want to request songs for one or all rounds, you can provide website links pointing to youtube videos, or any other requests in here."
+              value={optionalText}
+              onChange={(e) => setOptionalText(e.target.value)}
+            />
+          </Stack>
+          <hr />
+        </Stack>
+      )}
       <h1>You must prepare verses on these topics:</h1>
       <Stack className="gap-y-1">
         <span className="font-semibold">Topic for Round 1:</span>
@@ -121,6 +163,11 @@ export const RapBattleParticipantSignUp = ({
             </p>
             {selectedOption === "Rap Battle" && (
               <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <h2>Here's the rules again, just in case you need them.</h2>
+                  </CardTitle>
+                </CardHeader>
                 <CardContent className="p-6">{RapBattleNotes}</CardContent>
               </Card>
             )}
