@@ -40,7 +40,7 @@ import {
   CardTitle,
   CardHeader,
 } from "../../shadcn/Card.shadcn";
-import LexicalEditor from "../../molecules/LexicalEditor";
+import TextEditor from "../../molecules/lexical/TextEditor";
 
 export const DEFAULT_TICKET_PRICE = 10;
 export const MIN_TICKET_PRICE = 1;
@@ -245,10 +245,9 @@ const AddEventForm = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <LexicalEditor
-                    editable
+                  <TextEditor
                     onChanged={field.onChange}
-                    initialValue={field.value}
+                    content={field.value}
                   />
                 </FormControl>
                 <FormMessage />

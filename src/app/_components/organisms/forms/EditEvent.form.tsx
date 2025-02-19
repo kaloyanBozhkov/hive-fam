@@ -37,7 +37,7 @@ import {
   CardHeader,
 } from "../../shadcn/Card.shadcn";
 import { createUUID } from "@/utils/common";
-import LexicalEditor from "../../molecules/LexicalEditor";
+import TextEditor from "../../molecules/lexical/TextEditor";
 
 const event = z
   .object({
@@ -223,10 +223,9 @@ const EditEventForm = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <LexicalEditor
-                    editable
+                  <TextEditor
                     onChanged={field.onChange}
-                    initialValue={field.value}
+                    content={field.value}
                   />
                 </FormControl>
                 <FormMessage />

@@ -24,6 +24,7 @@ type InfoBannerData = {
   content: string;
   background_data_url: string;
   background_video_url?: string | null;
+  action_participants_for_event_id?: string | null;
 };
 
 type AlbumBannerData = {
@@ -71,6 +72,8 @@ async function editBanner(bannerData: BannerData) {
             content: bannerData.content,
             background_data_url: bannerData.background_data_url,
             background_video_url: bannerData.background_video_url,
+            action_participants_for_event_id:
+              bannerData.action_participants_for_event_id,
           },
         });
       } else if (isAlbumBanner(bannerData) && banner.album_slide) {

@@ -8,12 +8,14 @@ const InfoBanner = ({
   content,
   backgroundSrc,
   bgVideoSrc,
+  actionParticipantsForEventId,
 }: {
   backgroundSrc: string;
   bgVideoSrc?: string;
   title: string;
   subtitle: string;
   content: string;
+  actionParticipantsForEventId?: string;
 }) => {
   return (
     <div className="relative z-0 h-full w-full">
@@ -22,6 +24,7 @@ const InfoBanner = ({
         subtitle={subtitle}
         title={title}
         content={content}
+        actionParticipantsForEventId={actionParticipantsForEventId}
       />
       {/* bg */}
       <div className="absolute inset-0 -z-10">

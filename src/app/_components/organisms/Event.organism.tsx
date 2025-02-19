@@ -29,7 +29,7 @@ import {
 import { S3Service } from "@/utils/s3/service";
 import SlideDots from "../atoms/SlideDots.atom";
 import type { EventTicketType } from "@/utils/types.common";
-import LexicalEditor from "../molecules/LexicalEditor";
+import RichTextReader from "../molecules/lexical/RichTextReader";
 
 type Event = event & {
   venue: venue;
@@ -67,9 +67,9 @@ const EventCard = ({
         </div>
         <CardDescription asChild>
           <div>
-            <LexicalEditor
-              editable={false}
-              initialValue={event.description ?? ""}
+            <RichTextReader
+              className="text-[16px]"
+              content={event.description ?? ""}
             />
           </div>
         </CardDescription>

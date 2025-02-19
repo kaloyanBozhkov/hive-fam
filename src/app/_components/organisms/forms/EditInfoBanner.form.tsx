@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
   Form,
+  FormDescription,
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
@@ -18,7 +19,8 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
-import LexicalEditor from "../../molecules/LexicalEditor";
+import { SelectEvent } from "../staff/admin/SelectEvent.organism";
+import TextEditor from "../../molecules/lexical/TextEditor";
 
 const infoBanner = z.object({
   id: z.string(),
@@ -29,6 +31,7 @@ const infoBanner = z.object({
   background_data_url: z.string().min(1, "Background image is required"),
   background_video_url: z.string().url().optional().nullable(),
   order: z.number().int().min(0),
+  action_participants_for_event_id: z.string().optional(),
 });
 
 const EditInfoBannerForm = ({
@@ -140,12 +143,11 @@ const EditInfoBannerForm = ({
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Content</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <LexicalEditor
-                    editable
+                  <TextEditor
                     onChanged={field.onChange}
-                    initialValue={field.value}
+                    content={field.value}
                   />
                 </FormControl>
                 <FormMessage />
@@ -185,6 +187,29 @@ const EditInfoBannerForm = ({
             label="Background Video (Optional)"
             organizationId={organizationId}
             accept="video/mp4"
+          />
+          <FormField
+            control={form.control}
+            name="action_participants_for_event_id"
+            render={({ field }) => (
+              <FormItem className="flex flex-col items-start justify-between gap-2 rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    Action Participants for Event
+                  </FormLabel>
+                  <FormDescription>
+                    This will add an action button to the banner that will
+                    enable participants to sign up for the selected event.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <SelectEvent
+                    onChange={field.onChange}
+                    defaultValue={field.value}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
           />
           <input type="hidden" {...form.register("id")} />
           <input type="hidden" {...form.register("type")} />

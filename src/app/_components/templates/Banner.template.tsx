@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-
 import { twMerge } from "tailwind-merge";
 import Stack from "../layouts/Stack.layout";
-import LexicalEditor from "../molecules/LexicalEditor";
+import { Button } from "../shadcn/Button.shadcn";
+import RichTextReader from "../molecules/lexical/RichTextReader";
 
 const Banner = ({
   title,
@@ -10,12 +10,14 @@ const Banner = ({
   subtitle,
   content,
   className = "",
+  actionParticipantsForEventId,
 }: {
   title: ReactNode;
   body?: ReactNode;
   content?: string;
   subtitle: ReactNode;
   className?: string;
+  actionParticipantsForEventId?: string;
 }) => {
   return (
     <div
@@ -31,11 +33,15 @@ const Banner = ({
           <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>
           {body && <p className="p-text font-light text-white">{body}</p>}
           {content && (
-            <LexicalEditor
-              editable={false}
-              initialValue={content}
+            <RichTextReader
+              content={content}
               className="p-text font-light text-white"
             />
+          )}
+          {actionParticipantsForEventId && (
+            <Button variant="secondary" className="px-10 font-bold sm:w-fit">
+              Sign Up
+            </Button>
           )}
         </Stack>
       </div>

@@ -12,6 +12,7 @@ import { Toaster } from "./_components/shadcn/Toaster.shadcn";
 import { URLToasts } from "./_components/organisms/URLToasts.organism";
 import { getOrg } from "@/server/actions/org";
 import { BGTemplate } from "./_components/templates/BG.template";
+import MainPageLoader from "./_components/templates/MainPageLoader.template";
 
 export default async function RootLayout({
   children,
@@ -41,17 +42,19 @@ export default async function RootLayout({
         )}
       </head>
       <body className="relative">
-        <TRPCReactProvider>
-          <AOS>
-            <div className="grid-page relative z-[1] min-h-screen w-full pb-4">
-              <Header brandName={org?.display_name ?? ""} />
-              {children}
-              <Toaster />
-              <URLToasts />
-            </div>
-          </AOS>
-        </TRPCReactProvider>
-        <BGTemplate org={org} />
+        <MainPageLoader>
+          <TRPCReactProvider>
+            <AOS>
+              <div className="grid-page relative z-[1] min-h-screen w-full pb-4">
+                <Header brandName={org?.display_name ?? ""} />
+                {children}
+                <Toaster />
+                <URLToasts />
+              </div>
+            </AOS>
+          </TRPCReactProvider>
+          <BGTemplate org={org} />
+        </MainPageLoader>
       </body>
     </html>
   );

@@ -18,6 +18,7 @@ const getSlies = async () => {
           subtitle: true,
           background_data_url: true,
           background_video_url: true,
+          action_participants_for_event_id: true,
         },
       },
       album_slide: {
@@ -47,6 +48,8 @@ const getSlies = async () => {
       bgVideoSrc: info_slide?.background_video_url,
       bgSrc: info_slide?.background_data_url,
       coverSrc: album_slide?.cover_data_url,
+      actionParticipantsForEventId:
+        info_slide?.action_participants_for_event_id,
     })) as BannerSlide[];
 };
 

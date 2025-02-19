@@ -14,12 +14,11 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
-import LexicalEditor from "../../molecules/LexicalEditor";
+import TextEditor from "../../molecules/lexical/TextEditor";
 
 const infoBanner = z.object({
   subtitle: z.string().min(1, "Subtitle is required"),
@@ -151,10 +150,9 @@ const AddInfoBannerForm = ({
               <FormItem>
                 <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <LexicalEditor
-                    editable
+                  <TextEditor
                     onChanged={field.onChange}
-                    initialValue={field.value}
+                    content={field.value}
                   />
                 </FormControl>
                 <FormMessage />

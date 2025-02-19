@@ -10,7 +10,7 @@ export const BannerWrapper = ({ children }: { children: ReactNode }) => {
       className={twMerge(
         "full-width mb-4 overflow-hidden border-y-[1px] border-white transition-all duration-300",
         largeBannersDesktop
-          ? "h-[max(420px,fit-content)] md:h-[600px] lg:h-[900px]"
+          ? "h-[max(420px,fit-content)] md:h-[600px] lg:h-[800px]"
           : "h-[max(420px,fit-content)] md:h-[600px]",
       )}
     >

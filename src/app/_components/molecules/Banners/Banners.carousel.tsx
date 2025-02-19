@@ -20,6 +20,7 @@ export type BannerSlide =
       content: string;
       bgSrc: string;
       bgVideoSrc?: string;
+      actionParticipantsForEventId?: string;
     }
   | {
       type: "ALBUM";
@@ -28,6 +29,7 @@ export type BannerSlide =
       albumName: string;
       albumSubtitle: string;
       isSingle: boolean;
+      actionParticipantsForEventId?: string;
     };
 
 const Banners = ({
@@ -71,6 +73,9 @@ const Banners = ({
                           idx={idx}
                           startAnim={startAnim}
                           active={active}
+                          // actionParticipantsForEventId={
+                          //   slide.actionParticipantsForEventId
+                          // }
                         />
                       );
                     case "INFO":
@@ -81,6 +86,9 @@ const Banners = ({
                           content={slide.content}
                           backgroundSrc={slide.bgSrc}
                           bgVideoSrc={slide.bgVideoSrc}
+                          actionParticipantsForEventId={
+                            slide.actionParticipantsForEventId
+                          }
                         />
                       );
                     default:
@@ -92,8 +100,8 @@ const Banners = ({
           </CarouselContent>
           {slides.length > 1 && (
             <>
-              <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
-              <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+              <CarouselPrevious className="absolute left-[20px] z-10 -sm:hidden" />
+              <CarouselNext className="absolute right-[20px] z-10 -sm:hidden" />
             </>
           )}
         </Carousel>
