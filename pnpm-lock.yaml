@@ -203,6 +203,9 @@ importers:
       next:
         specifier: ^15.0.1
         version: 15.1.0(@babel/core@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      nookies:
+        specifier: ^2.5.2
+        version: 2.5.2
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -215,6 +218,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-flag-kit:
+        specifier: ^1.1.1
+        version: 1.1.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.53.1
         version: 7.54.1(react@18.3.1)
@@ -2632,6 +2638,10 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
+  cookie@0.4.2:
+    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
+    engines: {node: '>= 0.6'}
+
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
@@ -3769,6 +3779,9 @@ packages:
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
 
+  nookies@2.5.2:
+    resolution: {integrity: sha512-x0TRSaosAEonNKyCrShoUaJ5rrT5KHRNZ5DwPCuizjgrnkpE5DRf3VL7AyyQin4htict92X1EQ7ejDbaHDVdYA==}
+
   nopt@5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
@@ -4159,6 +4172,12 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
+  react-flag-kit@1.1.1:
+    resolution: {integrity: sha512-sgelSGSl0HxSL8lMM1TEBidgiGV2hOi+GaLNKeg10aBnL07vpwKvmfILlc1SzOdVyH48NElFyMj4NQn8F+/FHw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: ^16.6.0 || ^17.0.0 || ^18.0.0
+
   react-hook-form@7.54.1:
     resolution: {integrity: sha512-PUNzFwQeQ5oHiiTUO7GO/EJXGEtuun2Y1A59rLnZBBj+vNEOWt/3ERTiG1/zt7dVeJEM+4vDX/7XQ/qanuvPMg==}
     engines: {node: '>=18.0.0'}
@@ -4360,6 +4379,9 @@ packages:
 
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
+
+  set-cookie-parser@2.7.1:
+    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -7085,6 +7107,8 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
+  cookie@0.4.2: {}
+
   cookie@0.7.2: {}
 
   copy-anything@3.0.5:
@@ -8379,6 +8403,11 @@ snapshots:
 
   node-releases@2.0.19: {}
 
+  nookies@2.5.2:
+    dependencies:
+      cookie: 0.4.2
+      set-cookie-parser: 2.7.1
+
   nopt@5.0.0:
     dependencies:
       abbrev: 1.1.1
@@ -8767,6 +8796,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  react-flag-kit@1.1.1(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
   react-hook-form@7.54.1(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -8984,6 +9017,8 @@ snapshots:
   server-only@0.0.1: {}
 
   set-blocking@2.0.0: {}
+
+  set-cookie-parser@2.7.1: {}
 
   set-function-length@1.2.2:
     dependencies:

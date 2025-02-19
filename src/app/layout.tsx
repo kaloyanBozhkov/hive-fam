@@ -13,6 +13,8 @@ import { URLToasts } from "./_components/organisms/URLToasts.organism";
 import { getOrg } from "@/server/actions/org";
 import { BGTemplate } from "./_components/templates/BG.template";
 import MainPageLoader from "./_components/templates/MainPageLoader.template";
+import { LanguageSwitcher } from "./_components/organisms/translations/LanguageSwitcher.organism";
+import { ScriptsForTranslation } from "./_components/organisms/translations/ScriptsForTranslations";
 
 export default async function RootLayout({
   children,
@@ -40,8 +42,10 @@ export default async function RootLayout({
             }
           />
         )}
+        <ScriptsForTranslation />
       </head>
       <body className="relative">
+        <LanguageSwitcher />
         <MainPageLoader>
           <TRPCReactProvider>
             <AOS>
