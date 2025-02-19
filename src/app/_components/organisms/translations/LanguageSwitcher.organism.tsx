@@ -62,7 +62,7 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="notranslate fixed bottom-[-1px] z-[100] text-center duration-300 animate-in slide-in-from-bottom lg:right-[50px]">
+    <div className="notranslate animate-it-in fixed bottom-[-1px] z-[100] text-center lg:right-[50px]">
       <DropdownMenu>
         <DropdownMenuTrigger className="notranslate text-center">
           <div className="mx-3 flex cursor-pointer items-center gap-2 rounded-tl-lg rounded-tr-lg border-l border-r border-t bg-white px-4 py-1 shadow-lg">
