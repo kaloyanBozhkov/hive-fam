@@ -21,7 +21,7 @@ const InfoBanner = ({
         className="bg-[rgb(0,0,0,0.3)]"
         subtitle={subtitle}
         title={title}
-        body={content}
+        content={content}
       />
       {/* bg */}
       <div className="absolute inset-0 -z-10">

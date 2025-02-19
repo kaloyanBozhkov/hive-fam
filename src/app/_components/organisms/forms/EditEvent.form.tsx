@@ -17,7 +17,6 @@ import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
 import { useEffect, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { Currency, MediaType } from "@prisma/client";
 import {
   Select,

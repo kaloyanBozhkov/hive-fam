@@ -12,6 +12,7 @@ import {
   $getSelection,
   FORMAT_TEXT_COMMAND,
   type EditorState,
+  TextNode,
 } from "lexical";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import {
@@ -22,6 +23,13 @@ import {
 } from "@lexical/link";
 import ErrorBoundary from "./ErrorBoundary";
 import { twMerge } from "tailwind-merge";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { ListItemNode, ListNode } from "@lexical/list";
+import {
+  INSERT_UNORDERED_LIST_COMMAND,
+  INSERT_ORDERED_LIST_COMMAND,
+  REMOVE_LIST_COMMAND,
+} from "@lexical/list";
 
 const LexicalEditor = ({
   onChanged,
@@ -42,11 +50,19 @@ const LexicalEditor = ({
       onError(error: unknown) {
         console.error(error);
       },
-      nodes: [LinkNode, AutoLinkNode],
+      nodes: [LinkNode, AutoLinkNode, ListNode, ListItemNode],
       theme: {
-        link: "text-blue-500 underline hover:text-blue-700",
+        link: "text-blue-500 hover:underline cursor-pointer",
+        list: {
+          listitem: "pl-2",
+          nested: {
+            listitem: "pl-2",
+          },
+          ol: "list-decimal ml-8",
+          ul: "list-disc ml-8",
+        },
       },
-      editorState: initialValue,
+      editorState: !!initialValue ? initialValue : undefined,
       editable,
     }),
     [namespace, initialValue, editable],
@@ -80,6 +96,7 @@ const LexicalEditor = ({
             }
           />
           <LinkPlugin />
+          <ListPlugin />
           {editable && <HistoryPlugin />}
           {editable && <OnChangePlugin onChange={onChange} />}
         </>
@@ -107,31 +124,68 @@ const Toolbar = () => {
     });
   };
 
+  const insertOrderedList = () => {
+    editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+  };
+
+  const insertUnorderedList = () => {
+    editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+  };
+
+  const removeList = () => {
+    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+  };
+
   return (
     <div className="mb-2 flex gap-2 border-b pb-2">
       <button
         type="button"
         onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
-        className="rounded border p-1"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Bold
       </button>
       <button
         type="button"
         onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
-        className="rounded border p-1"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Italic
       </button>
-      <button
+      {/* <button
         type="button"
         onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
-        className="rounded border p-1"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Underline
-      </button>
-      <button type="button" onClick={insertLink} className="rounded border p-1">
+      </button> */}
+      <button
+        type="button"
+        onClick={insertLink}
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
         Link
+      </button>
+      <button
+        type="button"
+        onClick={insertOrderedList}
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Ordered List
+      </button>
+      <button
+        type="button"
+        onClick={insertUnorderedList}
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Unordered List
+      </button>
+      <button
+        type="button"
+        onClick={removeList}
+        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Remove List
       </button>
     </div>
   );

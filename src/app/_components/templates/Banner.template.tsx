@@ -2,15 +2,18 @@ import type { ReactNode } from "react";
 
 import { twMerge } from "tailwind-merge";
 import Stack from "../layouts/Stack.layout";
+import LexicalEditor from "../molecules/LexicalEditor";
 
 const Banner = ({
   title,
   body,
   subtitle,
+  content,
   className = "",
 }: {
   title: ReactNode;
-  body: ReactNode;
+  body?: ReactNode;
+  content?: string;
   subtitle: ReactNode;
   className?: string;
 }) => {
@@ -26,7 +29,14 @@ const Banner = ({
         <p className="font-regular p-text text-white">{subtitle}</p>
         <Stack className="col-span-2 gap-[24px]">
           <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>
-          <p className="p-text font-light text-white">{body}</p>
+          {body && <p className="p-text font-light text-white">{body}</p>}
+          {content && (
+            <LexicalEditor
+              editable={false}
+              initialValue={content}
+              className="p-text font-light text-white"
+            />
+          )}
         </Stack>
       </div>
     </div>

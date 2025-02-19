@@ -19,6 +19,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
+import LexicalEditor from "../../molecules/LexicalEditor";
 
 const infoBanner = z.object({
   subtitle: z.string().min(1, "Subtitle is required"),
@@ -150,7 +151,11 @@ const AddInfoBannerForm = ({
               <FormItem>
                 <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <LexicalEditor
+                    editable
+                    onChanged={field.onChange}
+                    initialValue={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

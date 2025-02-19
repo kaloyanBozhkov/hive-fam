@@ -14,11 +14,11 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
+import LexicalEditor from "../../molecules/LexicalEditor";
 
 const infoBanner = z.object({
   id: z.string(),
@@ -142,7 +142,11 @@ const EditInfoBannerForm = ({
               <FormItem>
                 <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <LexicalEditor
+                    editable
+                    onChanged={field.onChange}
+                    initialValue={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
