@@ -61,14 +61,19 @@ export const RapBattleParticipantSignUp = ({
         ...data.custom_payload,
         special_requests: optionalText,
       },
-    }).then((result) => {
-      if (result === "success") {
-        setIsSignedUp(true);
-      } else {
-        setIsSignedUp(false);
+    })
+      .then((result) => {
+        if (result === "success") {
+          setIsSignedUp(true);
+        } else {
+          setIsSignedUp(false);
+          setIsErrorSignup(true);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
         setIsErrorSignup(true);
-      }
-    });
+      });
   };
 
   const handleOptionSelect = (option: string) => {

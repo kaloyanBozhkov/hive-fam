@@ -59,7 +59,7 @@ export default function TextEditor({
       Highlight,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content,
+    content: content.replaceAll("<p><br/></p>", "<p></p>"),
     onUpdate: ({ editor }) => {
       onChanged(editor.getHTML().replaceAll("<p></p>", "<p><br/></p>"));
     },
