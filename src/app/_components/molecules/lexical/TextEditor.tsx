@@ -15,7 +15,7 @@ import { isValidURL } from "@/utils/common";
 import { Link2 } from "lucide-react";
 
 const onLinkClick = (editor: Editor | null) => {
-  const currentLink = editor?.getAttributes("link").href || "";
+  const currentLink = (editor?.getAttributes("link")?.href as string) || "";
   const url = prompt("Enter the link URL:", currentLink);
   if (url) {
     if (isValidURL(url)) {
