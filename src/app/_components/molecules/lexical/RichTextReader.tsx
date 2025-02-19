@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 export default function RichTextReader({
   content,
   className,
@@ -6,6 +8,12 @@ export default function RichTextReader({
   className?: string;
 }) {
   return (
-    <div className={className} dangerouslySetInnerHTML={{ __html: content }} />
+    <div
+      className={twMerge(
+        "[&_a:hover]:text-blue-600 [&_a]:text-blue-500",
+        className,
+      )}
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
   );
 }
