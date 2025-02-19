@@ -34,6 +34,9 @@ const organization = z.object({
   bg_image: z.string().optional().nullable(),
   bg_color: z.string().optional().nullable(),
   large_banners_desktop: z.boolean().optional(),
+  qr_brand_text: z.string().nullable(),
+  qr_dark_color: z.string().nullable(),
+  qr_bright_color: z.string().nullable(),
 });
 
 const EditOrganizationForm = ({
@@ -185,12 +188,80 @@ const EditOrganizationForm = ({
           />
           <FormField
             control={form.control}
+            name="qr_brand_text"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>QR Brand Text (optional)</FormLabel>
+                <FormDescription>
+                  This will appear on each Ticket's QR code, under the brand
+                  logo. Leave empty to not show this at all.
+                </FormDescription>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="qr_dark_color"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    QR Code: Choose dark color
+                  </FormLabel>
+                  <FormDescription>
+                    Usually black for maximum contrast
+                  </FormDescription>
+                </div>
+                <Stack className="gap-2">
+                  <FormControl>
+                    <ColorPicker
+                      onChange={(bg) => {
+                        field.onChange(bg);
+                      }}
+                      value={form.getValues("qr_dark_color") ?? ""}
+                    />
+                  </FormControl>
+                </Stack>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="qr_bright_color"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    QR Code: Choose bright color
+                  </FormLabel>
+                  <FormDescription>
+                    Usually white for maximum contrast
+                  </FormDescription>
+                </div>
+                <Stack className="gap-2">
+                  <FormControl>
+                    <ColorPicker
+                      onChange={(bg) => {
+                        field.onChange(bg);
+                      }}
+                      value={form.getValues("qr_bright_color") ?? ""}
+                    />
+                  </FormControl>
+                </Stack>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="bg_color"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">
-                    With Custom Background Color
+                    Website Custom Background Color
                   </FormLabel>
                   <FormDescription>
                     This will set a custom background color to the whole

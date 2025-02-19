@@ -1,3 +1,5 @@
+import { getOrg } from "@/server/actions/org";
+import { db } from "@/server/db";
 import { brandQRCodes } from "@/server/qr/brandQRCodes";
 import { generateQRDataURLs } from "@/server/qr/generateQRCodes";
 import { type NextApiRequest, type NextApiResponse } from "next";
@@ -19,8 +21,9 @@ export default async function handler(
 ) {
   try {
     const { qrs, orgId } = getQRCodesSchema.parse(req.body);
-    const qrCodes = await generateQRDataURLs(qrs);
-    const brandedQRCodes = await brandQRCodes(qrCodes, orgId);
+    const org = await getOrg(orgId);
+    const qrCodes = await generateQRDataURLs(qrs, undefined, org);
+    const brandedQRCodes = await brandQRCodes(qrCodes, org);
     res.status(200).json(brandedQRCodes);
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -2,20 +2,15 @@ import { BRIGHT_COLOR } from "@/server/qr/constants";
 import { scaleSize, QR_CANVAS_CONFIG } from "@/server/qr/constants";
 import { createCanvas, loadImage, type SKRSContext2D } from "@napi-rs/canvas";
 import { db } from "../db";
+import { organization } from "@prisma/client";
 
 /**
  * Generates an unbranded QRCode
  */ export const brandQRCodes = async (
   QRs: { dataURL: string }[],
-  orgId: string,
+  org: organization,
   { qrSize }: { qrSize: number } = { qrSize: QR_CANVAS_CONFIG.qrSize },
 ): Promise<{ dataURL: string }[]> => {
-  const org = await db.organization.findUniqueOrThrow({
-    where: {
-      id: orgId,
-    },
-  });
-
   return await Promise.all(
     QRs.map(async ({ dataURL }) => {
       const isBright = false;
@@ -23,7 +18,7 @@ import { db } from "../db";
         dataURL: await brandQRCode({
           dataURL,
           brandLogoDataURL: org.brand_logo_data_url,
-          brandName: org.display_name,
+          brandName: org.qr_brand_text,
           canvasSize: qrSize,
           fontBg: isBright ? BRIGHT_COLOR : undefined,
           withInvertQRColors: false,

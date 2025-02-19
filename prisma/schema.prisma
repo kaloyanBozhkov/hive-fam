@@ -78,8 +78,9 @@ model organization {
   brand_logo_data_url   String? // used for ticket branding
   // TODO add favicon
   favicon_data_url      String?
-  // TODO add qr brand text
   qr_brand_text         String? // used for ticket branding
+  qr_dark_color         String?  @default("#000000") // used for ticket branding
+  qr_bright_color       String?  @default("#FFFFFF") // used for ticket branding
   default_currency      Currency @default(EUR)
   bg_image              String?
   bg_color              String?

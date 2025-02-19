@@ -1,3 +1,4 @@
+import { getOrg } from "@/server/actions/org";
 import { brandQRCodes } from "@/server/qr/brandQRCodes";
 import { generateQRDataURLs } from "@/server/qr/generateQRCodes";
 import { type NextApiRequest, type NextApiResponse } from "next";
@@ -15,8 +16,13 @@ export default async function handler(
 ) {
   try {
     const { content, orgId } = getQRCodesSchema.parse(req.query);
-    const qrCodes = await generateQRDataURLs([{ urlContent: content }]);
-    const brandedQRCodes = orgId ? await brandQRCodes(qrCodes, orgId) : qrCodes;
+    const org = await getOrg(orgId);
+    const qrCodes = await generateQRDataURLs(
+      [{ urlContent: content }],
+      undefined,
+      org,
+    );
+    const brandedQRCodes = orgId ? await brandQRCodes(qrCodes, org) : qrCodes;
 
     // Create an HTML page with the content
     const htmlContent = `
