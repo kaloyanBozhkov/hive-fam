@@ -77,49 +77,47 @@ const EventCard = ({
       {event.poster_media.length > 0 && (
         <CardContent className="clear-both pt-2">
           <Stack className="gap-3">
-            <Link href={event.external_event_url ?? "#"} target="_blank">
-              <Carousel
-                onSlideChanged={setActive}
-                currentSlide={active}
-                opts={{ duration: 50, loop: true }}
-                className="w-full overflow-hidden rounded-md"
-              >
-                <CarouselContent className="h-full w-full">
-                  {event.poster_media.map((media, index) => {
-                    const url = S3Service.getFileUrlFromFullPath(
-                      media.bucket_path,
-                    );
-                    return (
-                      <CarouselItem key={index} className="h-full">
-                        {media.type === MediaType.IMAGE ? (
-                          <img
-                            src={url}
-                            className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
-                          />
-                        ) : media.type === MediaType.VIDEO ? (
-                          <video
-                            className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
-                            autoPlay
-                            loop
-                            muted
-                            controls
-                          >
-                            <source src={url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        ) : null}
-                      </CarouselItem>
-                    );
-                  })}
-                </CarouselContent>
-                {event.poster_media.length > 1 && (
-                  <Fragment key="carousel-controls">
-                    <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
-                    <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
-                  </Fragment>
-                )}
-              </Carousel>
-            </Link>
+            <Carousel
+              onSlideChanged={setActive}
+              currentSlide={active}
+              opts={{ duration: 50, loop: true }}
+              className="w-full overflow-hidden rounded-md"
+            >
+              <CarouselContent className="h-full w-full">
+                {event.poster_media.map((media, index) => {
+                  const url = S3Service.getFileUrlFromFullPath(
+                    media.bucket_path,
+                  );
+                  return (
+                    <CarouselItem key={index} className="h-full">
+                      {media.type === MediaType.IMAGE ? (
+                        <img
+                          src={url}
+                          className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                        />
+                      ) : media.type === MediaType.VIDEO ? (
+                        <video
+                          className="h-auto min-h-[150px] w-full bg-loading-img transition-all"
+                          autoPlay
+                          loop
+                          muted
+                          controls
+                        >
+                          <source src={url} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : null}
+                    </CarouselItem>
+                  );
+                })}
+              </CarouselContent>
+              {event.poster_media.length > 1 && (
+                <Fragment key="carousel-controls">
+                  <CarouselPrevious className="absolute left-[20px] z-10 -xs:hidden" />
+                  <CarouselNext className="absolute right-[20px] z-10 -xs:hidden" />
+                </Fragment>
+              )}
+            </Carousel>
             {event.poster_media.length > 1 && (
               <SlideDots
                 count={event.poster_media.length}

@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import Stack from "../layouts/Stack.layout";
 import { Button } from "../shadcn/Button.shadcn";
 import RichTextReader from "../molecules/lexical/RichTextReader";
+import Link from "next/link";
 
 const Banner = ({
   title,
@@ -39,8 +40,14 @@ const Banner = ({
             />
           )}
           {actionParticipantsForEventId && (
-            <Button variant="secondary" className="px-10 font-bold sm:w-fit">
-              Sign Up
+            <Button
+              variant="secondary"
+              className="px-10 font-bold sm:w-fit"
+              asChild
+            >
+              <Link href={`/event/signup/${actionParticipantsForEventId}`}>
+                Sign Up
+              </Link>
             </Button>
           )}
         </Stack>
