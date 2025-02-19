@@ -68,7 +68,7 @@ export const RapBattleParticipantSignUp = ({
       </Stack>
       <Stack className="gap-y-1">
         <span className="font-semibold">Topic for Round 2:</span>
-        <p>{`"Street Legends" – Pay homage to the greats.`}</p>
+        <p>{`"Government & Corruption" – The reality of the Bulgarian government and its corruption.`}</p>
         <p>Duration: 1 minute</p>
       </Stack>
       <Stack className="gap-y-1">
@@ -133,7 +133,7 @@ export const RapBattleParticipantSignUp = ({
   const RapType = (
     <Stack className="gap-y-4">
       <FormLabel>Select The Battle You Want To Participate In:</FormLabel>
-      <div className="flex space-x-4">
+      <div className="flex gap-4 -sm:flex-col -sm:justify-stretch">
         <Card
           onClick={() => handleOptionSelect("Free Style")}
           className={`cursor-pointer transition-transform duration-300 ${selectedOption === "Free Style" ? "border-2 border-primary" : "hover:bg-gray-100"}`}
