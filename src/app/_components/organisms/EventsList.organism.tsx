@@ -28,7 +28,7 @@ const Events = ({ events }: { events: Event[] }) => {
       </h2>
       <Tabs
         defaultValue={upcoming.length === 0 ? "past" : "upcoming"}
-        className="flex w-[420px] max-w-full flex-col gap-4 md:w-[500px]"
+        className="flex w-[420px] max-w-full flex-col gap-4  md:w-[600px]"
       >
         <TabsList className="bg-transparent">
           <TabsTrigger value="upcoming" asChild>

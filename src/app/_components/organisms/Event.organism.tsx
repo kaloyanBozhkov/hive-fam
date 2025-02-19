@@ -68,7 +68,7 @@ const EventCard = ({
         <CardDescription asChild>
           <div>
             <RichTextReader
-              className="text-[16px]"
+              className="text-[14px] sm:text-[16px]"
               content={event.description ?? ""}
             />
           </div>
