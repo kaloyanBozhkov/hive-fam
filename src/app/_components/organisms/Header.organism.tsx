@@ -26,7 +26,7 @@ const Header = async ({ brandName }: { brandName: string }) => {
   return (
     <Group className="w-full items-center justify-between px-[10px] py-4">
       <Link href="/">
-        <h1 className="pointer font-rex-bold text-[30px] leading-[110%] text-white">
+        <h1 className="pointer notranslate font-rex-bold text-[30px] leading-[110%] text-white">
           {brandName}
         </h1>
       </Link>
