@@ -28,6 +28,17 @@ const RapRules = () => {
               How does the crowd vote? Noise, noise, noise!
             </p>
             <p>The winner takes 500 BGN.</p>
+            <p className="mt-4">
+              In case you are still wondering, yes this rap battle is separate
+              from the freestyle battle. Both will have a 500 BGN reward and
+              both will be in the same night.
+              <br />
+              You can only sign up for one of the battles, unless you are super
+              good.
+              <br />
+              Bulgarian and English are the only languages allowed.. unless you
+              bring a huge crowd with you.
+            </p>
           </Stack>
         </CardContent>
         <CardFooter>
