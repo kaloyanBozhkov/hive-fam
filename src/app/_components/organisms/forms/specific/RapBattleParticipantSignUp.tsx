@@ -170,7 +170,9 @@ export const RapBattleParticipantSignUp = ({
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <h2>Here's the rules again, just in case you need them.</h2>
+                    <h2>
+                      Here are the rules again, just in case you need them.
+                    </h2>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">{RapBattleNotes}</CardContent>
