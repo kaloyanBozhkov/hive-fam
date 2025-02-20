@@ -107,46 +107,7 @@ export const RapBattleParticipantSignUp = ({
           <hr />
         </Stack>
       )}
-      <h1>You must prepare verses on these topics:</h1>
-      <Stack className="gap-y-1">
-        <span className="font-semibold">Topic for Round 1:</span>
-        <p>{`"Rise & Grind" – A story of ambition, struggle, and success.`}</p>
-        <p>Duration: 1 minute</p>
-      </Stack>
-      <Stack className="gap-y-1">
-        <span className="font-semibold">Topic for Round 2:</span>
-        <p>{`"Government & Corruption" – The reality of the Bulgarian government and its corruption.`}</p>
-        <p>Duration: 1 minute</p>
-      </Stack>
-      <Stack className="gap-y-1">
-        <span className="font-semibold">Topic for Round 3:</span>
-        <p>
-          {`"Bulgaria's Pulse" – Represent your city, culture, and the hustle of
-          the streets.`}
-        </p>
-        <p>Duration: 1:30 minutes</p>
-      </Stack>
-      <Stack className="gap-y-1">
-        <span className="font-semibold">Topic for Round 4:</span>
-        <p>
-          {`"Betrayal & Loyalty" – A deep dive into trust, friendships, and
-          backstabbing.`}
-        </p>
-        <p>Duration: 2 minutes</p>
-      </Stack>
-      <Stack className="gap-y-1">
-        <span className="font-semibold">Topic for Round 5:</span>
-        <p>
-          {`"Dreams vs. Reality" – The contrast between aspirations and the
-          struggles to achieve them.`}
-        </p>
-        <p>Duration: 1 minutes</p>
-      </Stack>
-      <p>
-        You will compete against 10 participants in total.
-        <br />
-        Winner takes 500 BGN.
-      </p>
+      <RapBattleRulesList />
     </Stack>
   );
 
@@ -318,5 +279,52 @@ export const RapBattleParticipantSignUp = ({
         </Stack>
       </div>
     </Card>
+  );
+};
+
+export const RapBattleRulesList = () => {
+  return (
+    <>
+      <h1>You must prepare verses on these topics:</h1>
+      <Stack className="gap-y-1">
+        <span className="font-semibold">Topic for Round 1:</span>
+        <p>{`"Rise & Grind" – A story of ambition, struggle, and success.`}</p>
+        <p>Duration: 1 minute</p>
+      </Stack>
+      <Stack className="gap-y-1">
+        <span className="font-semibold">Topic for Round 2:</span>
+        <p>{`"Government & Corruption" – The reality of the Bulgarian government and its corruption.`}</p>
+        <p>Duration: 1 minute</p>
+      </Stack>
+      <Stack className="gap-y-1">
+        <span className="font-semibold">Topic for Round 3:</span>
+        <p>
+          {`"Bulgaria's Pulse" – Represent your city, culture, and the hustle of
+          the streets.`}
+        </p>
+        <p>Duration: 1:30 minutes</p>
+      </Stack>
+      <Stack className="gap-y-1">
+        <span className="font-semibold">Topic for Round 4:</span>
+        <p>
+          {`"Betrayal & Loyalty" – A deep dive into trust, friendships, and
+          backstabbing.`}
+        </p>
+        <p>Duration: 2 minutes</p>
+      </Stack>
+      <Stack className="gap-y-1">
+        <span className="font-semibold">Topic for Round 5:</span>
+        <p>
+          {`"Dreams vs. Reality" – The contrast between aspirations and the
+          struggles to achieve them.`}
+        </p>
+        <p>Duration: 1 minutes</p>
+      </Stack>
+      <p>
+        You will compete against 10 participants in total.
+        <br />
+        Winner takes 500 BGN.
+      </p>
+    </>
   );
 };
