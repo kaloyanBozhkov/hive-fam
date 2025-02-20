@@ -58,7 +58,7 @@ export const RapBattleParticipantSignUp = ({
     onSignUp({
       ...data,
       custom_payload: {
-        ...data.custom_payload,
+        ...(data.custom_payload as Record<string, string>),
         special_requests: optionalText,
       },
     })
