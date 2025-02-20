@@ -193,8 +193,8 @@ const EditOrganizationForm = ({
               <FormItem>
                 <FormLabel>QR Brand Text (optional)</FormLabel>
                 <FormDescription>
-                  This will appear on each Ticket's QR code, under the brand
-                  logo. Leave empty to not show this at all.
+                  This will appear on each Ticket&apos;s QR code, under the
+                  brand logo. Leave empty to not show this at all.
                 </FormDescription>
                 <FormControl>
                   <Input {...field} value={field.value ?? ""} />
