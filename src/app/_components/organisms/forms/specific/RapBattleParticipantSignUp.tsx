@@ -41,7 +41,9 @@ export const RapBattleParticipantSignUp = ({
   event: Event;
   onSignUp: (data: ParticipantData) => Promise<"success" | "failed">;
 }) => {
-  const [selectedOption, setSelectedOption] = useState<string>("Free Style");
+  const [selectedOption, setSelectedOption] = useState<string>(
+    window.location.href.includes("RapBattle") ? "Rap Battle" : "Free Style",
+  );
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false);
   const [isErrorSignup, setIsErrorSignup] = useState<boolean>(false);
   const [active, setActive] = useState(0);
@@ -90,6 +92,12 @@ export const RapBattleParticipantSignUp = ({
       setIsErrorSignup(false);
     }
   }, [isErrorSignup, toast]);
+
+  useEffect(() => {
+    if (window.location.href.includes("RapBattle")) {
+      setSelectedOption("Rap Battle");
+    }
+  }, []);
 
   const RapBattleNotes = (
     <Stack className="gap-y-4">

@@ -43,9 +43,14 @@ const RapRules = () => {
         </CardContent>
         <CardFooter>
           <Stack className="w-full justify-end gap-2">
-            <Button variant="default">
-              <Link href="/">Sign Up!</Link>
-            </Button>
+            <Link
+              href="/event/signup/b1a58041-d4cf-4751-b9ab-2d388b272008?for=RapBattle"
+              className="w-full"
+            >
+              <Button className="w-full" variant="default">
+                Sign Up!
+              </Button>
+            </Link>
             <Button variant="outline">
               <Link href="/">Back To Home</Link>
             </Button>
