@@ -4,7 +4,6 @@ import Stack from "../layouts/Stack.layout";
 import { Button } from "../shadcn/Button.shadcn";
 import RichTextReader from "../molecules/lexical/RichTextReader";
 import Link from "next/link";
-import { RetranslateChildren } from "../organisms/translations/RetranslateChildren";
 
 const Banner = ({
   title,
@@ -35,12 +34,10 @@ const Banner = ({
           <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>
           {body && <p className="p-text font-light text-white">{body}</p>}
           {content && (
-            <RetranslateChildren>
-              <RichTextReader
-                content={content}
-                className="p-text font-light text-white"
-              />
-            </RetranslateChildren>
+            <RichTextReader
+              content={content}
+              className="p-text font-light text-white"
+            />
           )}
           {actionParticipantsForEventId && (
             <Button

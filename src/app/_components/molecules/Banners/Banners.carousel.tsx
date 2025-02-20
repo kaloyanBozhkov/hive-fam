@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/app/_components/shadcn/Carousel.shadcn";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SlideDots from "../../atoms/SlideDots.atom";
 import InfoBanner from "./Info.banner";
 import { AlbumBanner } from "./Album.banner";
@@ -42,6 +42,44 @@ const Banners = ({
   const [active, setActive] = useState(0);
   const [startAnim, setStartAnim] = useState(false);
 
+  const slideContent = useMemo(
+    () =>
+      slides.map((slide, idx) => {
+        switch (slide.type) {
+          case "ALBUM":
+            return (
+              <AlbumBanner
+                {...slide}
+                name={slide.albumName}
+                subtitle={slide.albumSubtitle}
+                idx={idx}
+                startAnim={startAnim}
+                active={active}
+                // actionParticipantsForEventId={
+                //   slide.actionParticipantsForEventId
+                // }
+              />
+            );
+          case "INFO":
+            return (
+              <InfoBanner
+                title={slide.title}
+                subtitle={slide.subtitle}
+                content={slide.content}
+                backgroundSrc={slide.bgSrc}
+                bgVideoSrc={slide.bgVideoSrc}
+                actionParticipantsForEventId={
+                  slide.actionParticipantsForEventId
+                }
+              />
+            );
+          default:
+            return `-`;
+        }
+      }),
+    [slides],
+  );
+
   useEffect(() => {
     const id = setTimeout(() => {
       setStartAnim(true);
@@ -60,41 +98,9 @@ const Banners = ({
           opts={{ duration: 50, loop: true }}
         >
           <CarouselContent className="h-full w-full">
-            {slides.map((slide, idx) => (
+            {slideContent.map((slide, idx) => (
               <CarouselItem key={idx} className="h-full">
-                {(() => {
-                  switch (slide.type) {
-                    case "ALBUM":
-                      return (
-                        <AlbumBanner
-                          {...slide}
-                          name={slide.albumName}
-                          subtitle={slide.albumSubtitle}
-                          idx={idx}
-                          startAnim={startAnim}
-                          active={active}
-                          // actionParticipantsForEventId={
-                          //   slide.actionParticipantsForEventId
-                          // }
-                        />
-                      );
-                    case "INFO":
-                      return (
-                        <InfoBanner
-                          title={slide.title}
-                          subtitle={slide.subtitle}
-                          content={slide.content}
-                          backgroundSrc={slide.bgSrc}
-                          bgVideoSrc={slide.bgVideoSrc}
-                          actionParticipantsForEventId={
-                            slide.actionParticipantsForEventId
-                          }
-                        />
-                      );
-                    default:
-                      return `-`;
-                  }
-                })()}
+                {slide}
               </CarouselItem>
             ))}
           </CarouselContent>
