@@ -85,7 +85,7 @@ export default async function OrderPage({
         }
       >
         <div id="tickets">
-          <QRTicketsServer tickets={tickets} eventId={eventId} />
+          <QRTicketsServer tickets={tickets} eventId={eventId!} />
         </div>
       </Suspense>
     </Stack>
