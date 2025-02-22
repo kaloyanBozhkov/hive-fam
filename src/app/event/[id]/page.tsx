@@ -14,7 +14,11 @@ const getEvent = async (id: string) => {
       },
       include: {
         venue: true,
-        ticket_types: true,
+        ticket_types: {
+          orderBy: {
+            created_at: "asc",
+          },
+        },
         sold_tickets: {
           select: {
             ticket_type_id: true,
