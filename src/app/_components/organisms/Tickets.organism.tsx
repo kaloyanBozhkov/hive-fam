@@ -129,7 +129,7 @@ const Tickets = ({
           <Stack
             className={twMerge(
               "gap-[20px] pb-[20px]",
-              isModalMode ? "max-h-[50vh]  overflow-auto " : "",
+              isModalMode ? "max-h-[50vh] overflow-auto " : "",
             )}
           >
             {ticketTypes
@@ -144,7 +144,9 @@ const Tickets = ({
                     )}
                   >
                     {eventCurrency}{" "}
-                    {(ticketTypeCount * ticketType.price).toFixed(2)}
+                    <span className="notranslate">
+                      {(ticketTypeCount * ticketType.price).toFixed(2)}
+                    </span>
                   </p>
                 );
 
@@ -196,7 +198,7 @@ const Tickets = ({
                     </FormControl>
                     <Stack className={"hidden select-none md:block "}>
                       {ticketTypeCount > 0 && (
-                        <p className="text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
+                        <p className="notranslate text-nowrap text-right text-[14px] font-light leading-[120%] text-gray-500">
                           {ticketTypeCount} x {ticketType.price.toFixed(2)}
                         </p>
                       )}
@@ -226,7 +228,9 @@ const Tickets = ({
                                   )}
                                   <p className="text-[14px] font-light leading-[120%] text-gray-500">
                                     {eventCurrency}{" "}
-                                    {ticketType.price.toFixed(2)}
+                                    <span className="notranslate">
+                                      {ticketType.price.toFixed(2)}
+                                    </span>
                                   </p>
                                 </Stack>
                               </FormLabel>
@@ -254,7 +258,8 @@ const Tickets = ({
           <div className="grid w-full select-none grid-cols-2 gap-[20px]">
             <p className="mr-auto font-rex-bold text-[20px]">Total</p>
             <p className="ml-auto font-rex-bold text-[20px]">
-              {eventCurrency} {total.toFixed(2)}
+              {eventCurrency}{" "}
+              <span className="notranslate">{total.toFixed(2)}</span>
             </p>
           </div>
           <Button disabled={total <= 0} type="submit">
