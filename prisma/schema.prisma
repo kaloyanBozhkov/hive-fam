@@ -327,7 +327,7 @@ model event_contestant {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  email          String  @unique
+  email          String
   phone          String
   name           String
   surname        String
