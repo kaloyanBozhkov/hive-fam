@@ -191,14 +191,16 @@ export const RapBattleParticipantSignUp = ({
 
   const FreeStyleNotes = (
     <Stack className="gap-y-4">
-      <h1>What you can expect from the Freestyle Battle</h1>
+      <h1>What you can expect from the Freestyle Battle:</h1>
       <p>
         You will compete against 12 other participants.
         <br />
+        <br />
         The winner takes 500 BGN.
         <br />
-        The crowd decides the winner.
+        <br />
       </p>
+      {Judges}
     </Stack>
   );
 
@@ -290,6 +292,53 @@ export const RapBattleParticipantSignUp = ({
   );
 };
 
+export const Judges = (
+  <>
+    <p>Our judges will be:</p>
+    <ul className="list-disc pl-5">
+      <li>
+        <p className="notranslate">
+          Homelesz (
+          <a
+            href="https://www.instagram.com/homelesz/"
+            className="text-blue-500"
+          >
+            @homelesz
+          </a>
+          )
+        </p>
+      </li>
+      <li>
+        <p className="notranslate">
+          L!R! (
+          <a
+            href="https://www.instagram.com/lirina4biri/"
+            className="text-blue-500"
+          >
+            @lirina4biri
+          </a>
+          )
+        </p>
+      </li>
+      <li>
+        <p className="notranslate">
+          Иван Алексиев (
+          <a
+            href="https://www.instagram.com/vantka.vantka/"
+            className="text-blue-500"
+          >
+            @homelesz
+          </a>
+          )
+        </p>
+      </li>
+      <li>
+        <p>The crowd</p>
+      </li>
+    </ul>
+  </>
+);
+
 export const RapBattleRulesList = () => {
   return (
     <>
@@ -333,6 +382,7 @@ export const RapBattleRulesList = () => {
         <br />
         Winner takes 500 BGN.
       </p>
+      {Judges}
     </>
   );
 };
