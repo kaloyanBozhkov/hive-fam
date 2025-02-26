@@ -327,7 +327,7 @@ export const Judges = (
             href="https://www.instagram.com/vantka.vantka/"
             className="text-blue-500"
           >
-            @homelesz
+            @vantka.vantka
           </a>
           )
         </p>
