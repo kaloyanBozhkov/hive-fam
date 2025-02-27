@@ -49,3 +49,7 @@ export const getAllOrgs = async () => {
   });
   return organizations;
 };
+
+export const isMothershipOrg = async (orgId: string) => {
+  return orgId === DOMAIN_CONFIG["www.eventrave.com"];
+};
