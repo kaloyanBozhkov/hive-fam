@@ -3,8 +3,9 @@ import Stack from "@/app/_components/layouts/Stack.layout";
 import EventsList from "@/app/_components/organisms/EventsList.organism";
 import LandingBanner from "@/app/_components/molecules/LandingBanner.molecule";
 import { db } from "@/server/db";
-import { getOrgId } from "@/server/actions/org";
+import { getOrgId, isMothershipOrg } from "@/server/actions/org";
 import { BannerWrapper } from "./_components/templates/BannerWrapper.template";
+import LandingPage from "./_components/organisms/eventrave/landing/page";
 
 const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
@@ -66,8 +67,7 @@ const getEvents = async (orgId: string) => {
   );
 };
 
-export default async function Home() {
-  const orgId = await getOrgId();
+async function CarrierHomePage({ orgId }: { orgId: string }) {
   const events = await getEvents(orgId);
 
   return (
@@ -80,4 +80,19 @@ export default async function Home() {
       </Stack>
     </>
   );
+}
+
+async function MothershipHomePage({ orgId }: { orgId: string }) {
+  return <LandingPage orgId={orgId} />;
+}
+
+export default async function Home() {
+  const orgId = await getOrgId();
+  const isMothership = await isMothershipOrg(orgId);
+
+  if (isMothership) {
+    return <MothershipHomePage orgId={orgId} />;
+  }
+
+  return <CarrierHomePage orgId={orgId} />;
 }
