@@ -7,5 +7,5 @@ const EVENT_CLOSED_AFTER_H = 12;
 export const isPastEvent = (event: Partial<Event>) => {
   if (!event.date) return false;
   const tomorrow = addHours(event.date, EVENT_CLOSED_AFTER_H).getTime();
-  return event.date.getTime() < tomorrow;
+  return event.date.getTime() > tomorrow;
 };
