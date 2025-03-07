@@ -5,6 +5,7 @@ import { addHours } from "date-fns";
 const EVENT_CLOSED_AFTER_H = 12;
 
 export const isPastEvent = (event: Partial<Event>) => {
-  const tomorrow = addHours(new Date(), EVENT_CLOSED_AFTER_H).getTime();
-  return !!event.date && event.date.getTime() < tomorrow;
+  if (!event.date) return false;
+  const tomorrow = addHours(event.date, EVENT_CLOSED_AFTER_H).getTime();
+  return event.date.getTime() < tomorrow;
 };
