@@ -12,11 +12,16 @@ import Link from "next/link";
 import Group from "../_components/layouts/Group.layout";
 import { FontAwesomeIconMap } from "@/server/other/linkIcons";
 import { CopyUrlButton } from "../_components/client/CopyButtons.client";
+import { redirect } from "next/navigation";
 
 export default async function LinksPage() {
   const org = await getOrg();
   const orgLogoDataUrl = org.brand_logo_data_url;
   const linkTrees = await getLinkTrees(org.id);
+
+  if (linkTrees.length === 0) {
+    redirect("/");
+  }
 
   return (
     <Stack className="m-auto min-h-[400px] w-full max-w-[500px] gap-4">
