@@ -17,6 +17,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import AnimatedText from "./AnimatedText";
 import Stack from "../../../layouts/Stack.layout";
+import EventRaveLogo from "@/app/_components/molecules/EventRaveLogo.molecule";
 
 export default function LandingPage({ orgId }: { orgId: string }) {
   return (
@@ -46,8 +47,12 @@ export default function LandingPage({ orgId }: { orgId: string }) {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Button variant="ghost">Log in</Button>
-            <Button variant="default">Sign up</Button>
+            <Link href="/eventrave/login" target="_blank">
+              <Button variant="ghost">Log in</Button>
+            </Link>
+            <Link href="/eventrave/signup" target="_blank">
+              <Button variant="default">Sign up</Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -358,10 +363,12 @@ export default function LandingPage({ orgId }: { orgId: string }) {
               Join the gorwing number of event organizers who trust EventRave to
               power their events.
             </p>
-            <Button size="lg" variant="secondary" className="text-lg">
-              Get started for free
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Link href="/eventrave/signup" target="_blank">
+              <Button size="lg" variant="secondary" className="text-lg">
+                Get started for free
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
             <p className="mt-4 text-sm opacity-80">
               No credit card required. Cancel anytime.
             </p>
@@ -571,6 +578,7 @@ function PricingCard({
   description,
   features,
   buttonText,
+  buttonLink,
   popular,
 }: {
   title: string;
@@ -579,6 +587,7 @@ function PricingCard({
   description: string;
   features: string[];
   buttonText: string;
+  buttonLink: string;
   popular: boolean;
 }) {
   return (
@@ -592,9 +601,11 @@ function PricingCard({
           <span className="text-gray-400">{period}</span>
         </div>
         <p className="mb-6 text-gray-400">{description}</p>
-        <Button className="mb-6 w-full" variant="action">
-          {buttonText}
-        </Button>
+        <Link href={buttonLink} target="_blank">
+          <Button className="mb-6 w-full" variant="action">
+            {buttonText}
+          </Button>
+        </Link>
         <ul className="space-y-3">
           {features.map((feature, i) => (
             <li key={i} className="flex items-start">
@@ -608,15 +619,4 @@ function PricingCard({
   );
 }
 
-const BrandLogo = (
-  <Link href="/">
-    <div className="flex items-center gap-2">
-      <img
-        src="/assets/eventrave/logo.jpg"
-        alt="EventRave logo"
-        className="h-6 w-auto"
-      />
-      <span className="text-xl font-bold">EventRave</span>
-    </div>
-  </Link>
-);
+const BrandLogo = <EventRaveLogo />;

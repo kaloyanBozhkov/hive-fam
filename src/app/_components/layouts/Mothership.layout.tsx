@@ -34,7 +34,7 @@ export default function MothershipLayout({
       </head>
       <body className="relative">
         <LanguageSwitcher />
-        {children}
+        <div className="size-full bg-black text-white">{children}</div>
       </body>
     </html>
   );
