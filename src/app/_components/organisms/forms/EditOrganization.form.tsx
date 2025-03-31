@@ -368,8 +368,12 @@ const EditOrganizationForm = ({
                           step={0.05}
                           value={[form.getValues("bg_opacity") ?? 1]}
                           onValueChange={(value) => {
-                            setPreviewBGOpacity((value as number[])[0] ?? 1);
-                            field.onChange((value as number[])[0] ?? 1);
+                            setPreviewBGOpacity(
+                              (value as unknown as number[])[0] ?? 1,
+                            );
+                            field.onChange(
+                              (value as unknown as number[])[0] ?? 1,
+                            );
                           }}
                         />
                       </FormControl>
