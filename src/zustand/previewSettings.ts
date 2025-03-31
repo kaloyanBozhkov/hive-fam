@@ -4,8 +4,8 @@ import { create } from "zustand";
 interface PreviewSettingsState {
   previewBG: string | null;
   previewBGColor: string | null;
-  previewBGOpacity: number;
-  previewBGSize: string;
+  previewBGOpacity: number | null;
+  previewBGSize: string | null;
   largeBannersDesktop: boolean;
   initialized: boolean;
   setPreviewBG: (bg: string | null) => void;
@@ -18,8 +18,8 @@ interface PreviewSettingsState {
 const usePreviewSettingsStore = create<PreviewSettingsState>((set) => ({
   previewBG: null,
   previewBGColor: null,
-  previewBGOpacity: 1,
-  previewBGSize: "cover",
+  previewBGOpacity: null,
+  previewBGSize: null,
   largeBannersDesktop: false,
   initialized: false,
   setPreviewBG: (bg) => set({ previewBG: bg }),

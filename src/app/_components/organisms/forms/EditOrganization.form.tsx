@@ -32,6 +32,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../../shadcn/Select.shadcn";
+import Group from "../../layouts/Group.layout";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -431,23 +432,45 @@ const EditOrganizationForm = ({
                               </SelectContent>
                             </Select>
                             {bgSizeCustom && (
-                              <Stack className="gap-2">
+                              <Stack className="mt-2 gap-4">
                                 <Label>
                                   Custom Background Size:{" "}
                                   {bgSize.replace(" ", " x ")}
                                 </Label>
-                                <Input
-                                  type="text"
-                                  value={
-                                    form.getValues("bg_size")?.split("px")[0] ??
-                                    ""
-                                  }
-                                  onChange={(e) => {
-                                    const val = `${e.target.value}px ${e.target.value}px`;
-                                    setPreviewBgSize(val);
-                                    field.onChange(val);
-                                  }}
-                                />
+                                <Group className="gap-2">
+                                  <Stack className="gap-2">
+                                    <Label>Width</Label>
+                                    <Input
+                                      type="number"
+                                      value={parseInt(
+                                        form
+                                          .getValues("bg_size")
+                                          ?.split("px")[0] ?? "",
+                                      )}
+                                      onChange={(e) => {
+                                        const val = `${e.target.value}px ${form.getValues("bg_size")?.split("px")[1]}px`;
+                                        setPreviewBgSize(val);
+                                        field.onChange(val);
+                                      }}
+                                    />
+                                  </Stack>
+                                  <Stack className="gap-2">
+                                    <Label>Height</Label>
+                                    <Input
+                                      type="number"
+                                      value={parseInt(
+                                        form
+                                          .getValues("bg_size")
+                                          ?.split("px")[1] ?? "",
+                                      )}
+                                      onChange={(e) => {
+                                        const val = `${form.getValues("bg_size")?.split("px")[0]}px ${e.target.value}px`;
+                                        setPreviewBgSize(val);
+                                        field.onChange(val);
+                                      }}
+                                    />
+                                  </Stack>
+                                </Group>
                               </Stack>
                             )}
                           </Stack>

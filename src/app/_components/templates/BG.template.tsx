@@ -12,7 +12,7 @@ export const BGTemplate = ({ org }: { org: organization }) => {
     previewBGSize,
     setInitialSettings,
   } = usePreviewSettingsStore();
-  console.log(org);
+
   const currentBG = previewBG ?? org.bg_image;
   const currentBGColor = previewBGColor ?? org.bg_color;
   const currentBGOpacity = previewBGOpacity ?? org.bg_opacity;
