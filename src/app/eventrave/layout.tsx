@@ -71,7 +71,7 @@ export default function EventRaveLayout({
                   alt="Testimonial avatar"
                   width={120}
                   height={120}
-                  className="size-[120px] rounded-full"
+                  className="size-[120px] rounded-full object-cover"
                 />
               </div>
               <div>
