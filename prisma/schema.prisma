@@ -84,6 +84,8 @@ model organization {
   default_currency      Currency @default(EUR)
   bg_image              String?
   bg_color              String?
+  bg_opacity            Float    @default(1)
+  bg_size               String   @default("contain")
   large_banners_desktop Boolean  @default(false)
 
   // TODO add theme

@@ -23,6 +23,15 @@ import { BGChooser } from "../../molecules/BGChooser.molecule";
 import { Switch } from "../../shadcn/Switch.shadcn";
 import usePreviewSettingsStore from "@/zustand/previewSettings";
 import { ColorPicker } from "../../shadcn/ColorPicker.molecule";
+import { Slider } from "../../shadcn/Slider.shadcn";
+import { Label } from "../../shadcn/Label.shadcn";
+import {
+  Select,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "../../shadcn/Select.shadcn";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -33,6 +42,8 @@ const organization = z.object({
   favicon_data_url: z.string().optional().nullable(),
   bg_image: z.string().optional().nullable(),
   bg_color: z.string().optional().nullable(),
+  bg_opacity: z.number().min(0).max(1).optional().nullable(),
+  bg_size: z.string().optional().nullable(),
   large_banners_desktop: z.boolean().optional(),
   qr_brand_text: z.string().nullable(),
   qr_dark_color: z.string().nullable(),
@@ -55,11 +66,20 @@ const EditOrganizationForm = ({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [withBG, setWithBG] = useState(!!initialData.bg_image);
+  const [bgSizeCustom, setBgSizeCustom] = useState(
+    initialData.bg_size !== "contain" && initialData.bg_size !== "cover",
+  );
   const setPreviewBG = usePreviewSettingsStore(
     ({ setPreviewBG }) => setPreviewBG,
   );
   const setPreviewBGColor = usePreviewSettingsStore(
     ({ setPreviewBGColor }) => setPreviewBGColor,
+  );
+  const setPreviewBGOpacity = usePreviewSettingsStore(
+    ({ setPreviewBGOpacity }) => setPreviewBGOpacity,
+  );
+  const setPreviewBgSize = usePreviewSettingsStore(
+    ({ setPreviewBGSize }) => setPreviewBGSize,
   );
 
   const form = useForm<z.infer<typeof organization>>({
@@ -325,6 +345,116 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
+          {withBG && (
+            <FormField
+              control={form.control}
+              name="bg_opacity"
+              render={({ field }) => (
+                <FormItem className="flex flex-col flex-wrap items-stretch justify-between gap-4 rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Background Opacity
+                    </FormLabel>
+                    <FormDescription>
+                      This will set the opacity of the background image.
+                    </FormDescription>
+                  </div>
+                  <div className="basis-full flex-wrap">
+                    <Stack className="gap-2">
+                      <FormControl>
+                        <Slider
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          value={[form.getValues("bg_opacity") ?? 1]}
+                          onValueChange={(value) => {
+                            setPreviewBGOpacity((value as number[])[0] ?? 1);
+                            field.onChange((value as number[])[0] ?? 1);
+                          }}
+                        />
+                      </FormControl>
+                    </Stack>
+                  </div>
+                </FormItem>
+              )}
+            />
+          )}
+          {withBG && (
+            <FormField
+              control={form.control}
+              name="bg_size"
+              render={({ field }) => {
+                const bgSize = form.getValues("bg_size") ?? "";
+                return (
+                  <FormItem className="flex flex-col flex-wrap items-stretch justify-between gap-4 rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        Background Opacity
+                      </FormLabel>
+                      <FormDescription>
+                        This will set the opacity of the background image.
+                      </FormDescription>
+                    </div>
+                    <div className="basis-full flex-wrap">
+                      <Stack className="gap-2">
+                        <FormControl>
+                          <Stack className="gap-2">
+                            <Select
+                              value={bgSize.includes("px") ? "custom" : bgSize}
+                              onChange={(value) => {
+                                if (value === "custom") {
+                                  field.onChange(`100px 100px`);
+                                  setBgSizeCustom(true);
+                                  setPreviewBgSize(`100px 100px`);
+                                } else {
+                                  field.onChange(value);
+                                  setBgSizeCustom(false);
+                                  setPreviewBgSize(value);
+                                }
+                              }}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a size" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="contain">Contain</SelectItem>
+                                <SelectItem value="cover">Cover</SelectItem>
+                                <SelectItem value="custom">
+                                  Custom size (in pixels)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {bgSizeCustom && (
+                              <Stack className="gap-2">
+                                <Label>
+                                  Custom Background Size:{" "}
+                                  {bgSize.replace(" ", " x ")}
+                                </Label>
+                                <Input
+                                  type="text"
+                                  value={
+                                    form.getValues("bg_size")?.split("px")[0] ??
+                                    ""
+                                  }
+                                  onChange={(e) => {
+                                    const val = `${e.target.value}px ${e.target.value}px`;
+                                    setPreviewBgSize(val);
+                                    field.onChange(val);
+                                  }}
+                                />
+                              </Stack>
+                            )}
+                          </Stack>
+                        </FormControl>
+                      </Stack>
+                    </div>
+                  </FormItem>
+                );
+              }}
+            />
+          )}
           <FormField
             control={form.control}
             name="large_banners_desktop"
