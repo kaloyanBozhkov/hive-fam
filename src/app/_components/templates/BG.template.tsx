@@ -5,10 +5,17 @@ import type { organization } from "@prisma/client";
 
 // todo pass less data
 export const BGTemplate = ({ org }: { org: organization }) => {
-  const { previewBG, previewBGColor, setInitialSettings } =
-    usePreviewSettingsStore();
+  const {
+    previewBG,
+    previewBGColor,
+    previewBGOpacity,
+    previewBGSize,
+    setInitialSettings,
+  } = usePreviewSettingsStore();
   const currentBG = previewBG ?? org.bg_image;
   const currentBGColor = previewBGColor ?? org.bg_color;
+  const currentBGOpacity = previewBGOpacity ?? org.bg_opacity;
+  const currentBGSize = previewBGSize ?? org.bg_size;
 
   useLayoutEffect(() => {
     setInitialSettings(org);
@@ -28,7 +35,8 @@ export const BGTemplate = ({ org }: { org: organization }) => {
           ...(currentBG && {
             backgroundImage: `url('/assets/bgs/${currentBG}')`,
             backgroundRepeat: "repeat",
-            opacity: 0.3,
+            backgroundSize: currentBGSize,
+            opacity: currentBGOpacity,
           }),
         }}
       />
