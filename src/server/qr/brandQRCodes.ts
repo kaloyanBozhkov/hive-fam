@@ -1,8 +1,7 @@
 import { BRIGHT_COLOR } from "@/server/qr/constants";
 import { scaleSize, QR_CANVAS_CONFIG } from "@/server/qr/constants";
 import { createCanvas, loadImage, type SKRSContext2D } from "@napi-rs/canvas";
-import { db } from "../db";
-import { organization } from "@prisma/client";
+import type { organization } from "@prisma/client";
 
 /**
  * Generates an unbranded QRCode

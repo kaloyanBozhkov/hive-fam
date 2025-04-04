@@ -1,5 +1,4 @@
 import { getOrg } from "@/server/actions/org";
-import { db } from "@/server/db";
 import { brandQRCodes } from "@/server/qr/brandQRCodes";
 import { generateQRDataURLs } from "@/server/qr/generateQRCodes";
 import { type NextApiRequest, type NextApiResponse } from "next";

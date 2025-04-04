@@ -33,6 +33,8 @@ import {
   SelectItem,
 } from "../../shadcn/Select.shadcn";
 import Group from "../../layouts/Group.layout";
+import Link from "next/link";
+import { PreviewLastSavedQRCode } from "../../molecules/PreviewLastSavedQRCode";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -223,6 +225,7 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
+          <PreviewLastSavedQRCode orgId={orgId} />
           <FormField
             control={form.control}
             name="qr_dark_color"
@@ -303,6 +306,7 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="bg_image"
