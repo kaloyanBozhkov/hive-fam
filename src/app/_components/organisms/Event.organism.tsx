@@ -137,7 +137,7 @@ const EventCard = ({
       <CardFooter>
         <Stack className="w-full gap-4">
           <Group className="w-full items-center justify-between">
-            {event.event_photos_url && (
+            {event.event_photos_url && isPast && (
               <Link
                 href={event.event_photos_url}
                 target="_blank"
