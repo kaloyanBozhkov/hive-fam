@@ -147,7 +147,7 @@ const EditInfoBannerForm = ({
                 <FormControl>
                   <TextEditor
                     onChanged={field.onChange}
-                    content={field.value}
+                    content={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
