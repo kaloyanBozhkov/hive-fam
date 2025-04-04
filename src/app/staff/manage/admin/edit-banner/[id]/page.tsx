@@ -19,9 +19,9 @@ type InfoBannerData = {
   id: string;
   type: "INFO";
   order: number;
-  subtitle: string;
+  subtitle?: string | null;
   title: string;
-  content: string;
+  content?: string | null;
   background_data_url: string;
   background_video_url?: string | null;
   action_participants_for_event_id?: string | null;

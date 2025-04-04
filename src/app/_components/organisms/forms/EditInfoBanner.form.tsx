@@ -25,9 +25,9 @@ import TextEditor from "../../molecules/lexical/TextEditor";
 const infoBanner = z.object({
   id: z.string(),
   type: z.literal("INFO"),
-  subtitle: z.string().optional(),
+  subtitle: z.string().optional().nullable(),
   title: z.string().min(1, "Title is required"),
-  content: z.string().optional(),
+  content: z.string().optional().nullable(),
   background_data_url: z.string().min(1, "Background image is required"),
   background_video_url: z.string().url().optional().nullable(),
   order: z.number().int().min(0),
@@ -119,7 +119,7 @@ const EditInfoBannerForm = ({
               <FormItem>
                 <FormLabel>Subtitle</FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} />
+                  <Input type="text" {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
