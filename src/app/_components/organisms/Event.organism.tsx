@@ -30,6 +30,7 @@ import { S3Service } from "@/utils/s3/service";
 import SlideDots from "../atoms/SlideDots.atom";
 import type { EventTicketType } from "@/utils/types.common";
 import RichTextReader from "../molecules/lexical/RichTextReader";
+import { handleVideoVisibility } from "@/utils/fe";
 
 type Event = event & {
   venue: venue;
@@ -102,6 +103,10 @@ const EventCard = ({
                           loop
                           muted
                           controls
+                          ref={(videoElement) => {
+                            if (videoElement)
+                              handleVideoVisibility(videoElement);
+                          }}
                         >
                           <source src={url} type="video/mp4" />
                           Your browser does not support the video tag.
