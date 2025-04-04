@@ -25,9 +25,9 @@ import TextEditor from "../../molecules/lexical/TextEditor";
 const infoBanner = z.object({
   id: z.string(),
   type: z.literal("INFO"),
-  subtitle: z.string().min(1, "Subtitle is required"),
+  subtitle: z.string().optional(),
   title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
+  content: z.string().optional(),
   background_data_url: z.string().min(1, "Background image is required"),
   background_video_url: z.string().url().optional().nullable(),
   order: z.number().int().min(0),

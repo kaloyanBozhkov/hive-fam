@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import Stack from "../layouts/Stack.layout";
-import { Button } from "../shadcn/Button.shadcn";
+// import { Button } from "../shadcn/Button.shadcn";
 import RichTextReader from "../molecules/lexical/RichTextReader";
-import Link from "next/link";
+// import Link from "next/link";
 
 const Banner = ({
   title,
@@ -11,7 +11,7 @@ const Banner = ({
   subtitle,
   content,
   className = "",
-  actionParticipantsForEventId,
+  // actionParticipantsForEventId,
 }: {
   title: ReactNode;
   body?: ReactNode;
@@ -29,7 +29,9 @@ const Banner = ({
     >
       <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
       <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3 -sm:m-auto">
-        <p className="font-regular p-text text-white">{subtitle}</p>
+        {subtitle && (
+          <p className="font-regular p-text text-white">{subtitle}</p>
+        )}
         <Stack className="col-span-2 gap-[24px]">
           <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>
           {body && <p className="p-text font-light text-white">{body}</p>}
@@ -39,7 +41,7 @@ const Banner = ({
               className="p-text font-light text-white"
             />
           )}
-          {actionParticipantsForEventId && (
+          {/* {actionParticipantsForEventId && (
             <Button
               variant="secondary"
               className="px-10 font-bold sm:w-fit"
@@ -49,7 +51,7 @@ const Banner = ({
                 Sign Up
               </Link>
             </Button>
-          )}
+          )} */}
         </Stack>
       </div>
     </div>

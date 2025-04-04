@@ -32,9 +32,9 @@ model album_slide {
 
 model info_slide {
   id                   String  @id @default(uuid())
-  subtitle             String
+  subtitle             String?
   title                String
-  content              String
+  content              String?
   background_data_url  String
   background_video_url String?
 

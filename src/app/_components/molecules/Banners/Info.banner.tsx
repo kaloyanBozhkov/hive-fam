@@ -13,8 +13,8 @@ const InfoBanner = ({
   backgroundSrc: string;
   bgVideoSrc?: string;
   title: string;
-  subtitle: string;
-  content: string;
+  subtitle?: string;
+  content?: string;
   actionParticipantsForEventId?: string;
 }) => {
   return (
