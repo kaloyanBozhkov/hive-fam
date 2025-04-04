@@ -60,7 +60,7 @@ const event = z
     external_event_url: z.string().url("Invalid URL").optional(),
     venue_id: z.string().uuid("Invalid venue ID"),
     is_published: z.boolean(),
-    event_photos_url: z.string().url().optional().nullable(),
+    event_photos_url: z.string().optional().nullable(),
     is_free: z.boolean(),
     price_currency: z.nativeEnum(Currency),
     ticket_types: z.array(
