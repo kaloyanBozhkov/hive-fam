@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
   Form,
-  FormDescription,
+  // FormDescription,
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
@@ -19,7 +19,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
-import { SelectEvent } from "../staff/admin/SelectEvent.organism";
+// import { SelectEvent } from "../staff/admin/SelectEvent.organism";
 import TextEditor from "../../molecules/lexical/TextEditor";
 
 const infoBanner = z.object({
@@ -188,7 +188,7 @@ const EditInfoBannerForm = ({
             organizationId={organizationId}
             accept="video/mp4"
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="action_participants_for_event_id"
             render={({ field }) => (
@@ -210,7 +210,7 @@ const EditInfoBannerForm = ({
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> */}
           <input type="hidden" {...form.register("id")} />
           <input type="hidden" {...form.register("type")} />
           <Button
