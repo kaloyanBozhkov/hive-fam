@@ -84,7 +84,7 @@ export default async function EditEventPage({
       <div className="h-[400px] w-full">
         <DateVisualizer
           timestamps={scannedTickets.map((t) =>
-            formatDateToTimezone(t.scanned_at!, event.time_zone)!.toISOString(),
+            formatDateToTimezone(t.scanned_at!, event.time_zone).toISOString(),
           )} // Use batched tickets here
         />
       </div>

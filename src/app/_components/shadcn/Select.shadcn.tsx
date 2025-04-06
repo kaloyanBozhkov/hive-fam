@@ -2,15 +2,23 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useDebouncedState } from "@/app/hooks/useDebouncedState";
 
-type SelectProps = Parameters<typeof SelectPrimitive.Root>[0];
+type SelectProps = Parameters<typeof SelectPrimitive.Root>[0] & {
+  isSearchable?: boolean;
+};
 
 const Select = (
   props: SelectProps & { onChange?: SelectProps["onValueChange"] },
-) => SelectPrimitive.Root({ ...props, onValueChange: props.onChange });
+) =>
+  SelectPrimitive.Root({
+    ...props,
+    onValueChange: props.onChange,
+    isSearchable: undefined,
+  });
 
 const SelectGroup = SelectPrimitive.Group;
 
@@ -73,34 +81,96 @@ SelectScrollDownButton.displayName =
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        className,
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
-        className={cn(
-          "p-1",
-          position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
-        )}
-      >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
+    isSearchable?: boolean;
+    searchPlaceholder?: string;
+    noResultsText?: string;
+  }
+>(
+  (
+    {
+      className,
+      children,
+      position = "popper",
+      isSearchable,
+      searchPlaceholder = "Search...",
+      noResultsText = "Nothing found",
+      ...props
+    },
+    ref,
+  ) => {
+    // use debounced search
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const debouncedSearchTerm = useDebouncedState(searchTerm, 600);
+
+    const filteredChildren = React.useMemo(() => {
+      if (!isSearchable || !debouncedSearchTerm)
+        return React.Children.toArray(children);
+
+      return React.Children.toArray(children).filter((child) => {
+        if (!React.isValidElement(child)) return false;
+
+        const childText = child.props.children?.toString().toLowerCase() || "";
+        const searchTermLower = debouncedSearchTerm.toLowerCase();
+
+        return childText.includes(searchTermLower);
+      });
+    }, [children, isSearchable, debouncedSearchTerm]);
+
+    const hasResults = filteredChildren.length > 0;
+
+    return (
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          ref={ref}
+          className={cn(
+            "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+            position === "popper" &&
+              "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+            className,
+          )}
+          position={position}
+          {...props}
+        >
+          {isSearchable && (
+            <div className="sticky top-0 z-10 border-b bg-popover p-2">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder={searchPlaceholder}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background py-1.5 pl-8 pr-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          )}
+          <SelectScrollUpButton />
+          <SelectPrimitive.Viewport
+            className={cn(
+              "p-1",
+              position === "popper" &&
+                "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
+            )}
+          >
+            {hasResults ? (
+              filteredChildren
+            ) : (
+              <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
+                {noResultsText}
+              </div>
+            )}
+          </SelectPrimitive.Viewport>
+          <SelectScrollDownButton />
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    );
+  },
+);
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<

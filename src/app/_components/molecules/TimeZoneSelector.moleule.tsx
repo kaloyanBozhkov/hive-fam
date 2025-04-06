@@ -32,7 +32,7 @@ const TimeZoneSelector = ({
       <SelectTrigger>
         <SelectValue>{value}</SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent isSearchable>
         {timezones.map((timezone) => (
           <SelectItem key={timezone} value={timezone}>
             {timezone}
