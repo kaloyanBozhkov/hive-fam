@@ -42,6 +42,7 @@ const FullScreenEvent = ({
             eventDate={event.date}
             eventEndDate={event.end_date}
             eventLocation={event.venue.street_addr}
+            eventTimeZone={event.time_zone}
           />
         </div>
       </CardHeader>

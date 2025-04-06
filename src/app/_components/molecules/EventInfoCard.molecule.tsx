@@ -4,6 +4,7 @@ import DateCard from "./DateCard.molecule";
 import { twMerge } from "tailwind-merge";
 import Group from "../layouts/Group.layout";
 import { Card, CardContent } from "../shadcn/Card.shadcn";
+import { getDisplayDateFormatter } from "@/utils/fe";
 
 export const EventInfoCard = ({
   className,
@@ -11,18 +12,23 @@ export const EventInfoCard = ({
   eventDate,
   eventEndDate,
   eventLocation,
+  eventTimeZone,
   withCardWrapper = false,
 }: {
   eventName: string;
   eventDate: Date;
   eventEndDate?: Date | null;
   eventLocation?: string;
+  eventTimeZone?: string | null;
   className?: string;
   withCardWrapper?: boolean;
 }) => {
   // Function to format the date range
   const formatEventDate = (startDate: Date, endDate: Date) => {
-    return `${format(startDate, "dd/MM/yyyy, HH:mm")} - ${format(endDate, "dd/MM/yyyy, HH:mm")}`;
+    const format = getDisplayDateFormatter(eventTimeZone);
+    const startDateFormatted = format.format(startDate);
+    const endDateFormatted = format.format(endDate);
+    return `${startDateFormatted} - ${endDateFormatted}`;
   };
 
   const content = (

@@ -14,6 +14,7 @@ import {
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
 import { deleteEvent } from "@/server/actions/deleteEvent";
+import { formatDateToTimezone } from "@/utils/fe";
 import type { Currency } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -26,6 +27,7 @@ export type Event = {
   title: string;
   description: string;
   date: Date;
+  time_zone?: string | null;
   external_event_url: string | null;
   event_photos_url: string | null;
   venue: {
@@ -63,8 +65,11 @@ export const EventList = ({ data }: { data: Event[] }) => {
       accessorKey: "date",
       header: "Event Date",
       cell: ({ row }) => {
-        const date = new Date(row.original.date);
-        return <p>{format(date, "PPpp")}</p>;
+        const date = formatDateToTimezone(
+          row.original.date,
+          row.original.time_zone,
+        );
+        return <p>{format(date, "PPp")}</p>;
       },
     },
     {
@@ -105,7 +110,7 @@ export const EventList = ({ data }: { data: Event[] }) => {
       header: "Created At",
       cell: ({ row }) => {
         const date = new Date(row.original.created_at);
-        return <p>{format(date, "PPpp")}</p>;
+        return <p>{format(date, "PPp")}</p>;
       },
     },
     {

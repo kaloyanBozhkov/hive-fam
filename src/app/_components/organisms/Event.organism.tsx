@@ -49,14 +49,13 @@ const EventCard = ({
   isPast?: boolean;
 }) => {
   const [active, setActive] = useState(0);
-
   return (
     <Card className="bg-white">
       <CardHeader className="block">
         <div className="float-left mr-3">
           <Stack className="gap-2">
-            <DateCard date={new Date(event.date)} />
-            <TimeCard date={new Date(event.date)} />
+            <DateCard date={event.date} timeZone={event.time_zone} />
+            <TimeCard date={event.date} timeZone={event.time_zone} />
           </Stack>
         </div>
         <div className="!mt-0">

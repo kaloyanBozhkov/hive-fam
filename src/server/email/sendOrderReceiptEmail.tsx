@@ -5,6 +5,7 @@ import { getDomainFromOrgId } from "../config";
 import { format } from "date-fns";
 import OrderCompletedEmail from "@/app/_components/emails/OrderComplete.email";
 import { sendEmail } from "./send";
+import { formatDateToTimezone } from "@/utils/fe";
 
 export async function sendOrderReceiptEmail({
   customerDetails,
@@ -28,6 +29,7 @@ export async function sendOrderReceiptEmail({
     select: {
       title: true,
       date: true,
+      time_zone: true,
       is_free: true,
       organization_id: true,
       organization: {
@@ -63,7 +65,10 @@ export async function sendOrderReceiptEmail({
       orderPageUrl={orderPageUrl}
       ticketCount={sold_tickets.length}
       eventName={event.title}
-      eventDate={format(event.date, "PPpp")}
+      eventDate={format(
+        formatDateToTimezone(event.date, event.time_zone),
+        "PPpp",
+      )}
       eventUrl={`${orgUrl}/event/${eventId}?as=view`}
       platformUrl={orgUrl}
       brandLogoUrl={organization.brand_logo_data_url}

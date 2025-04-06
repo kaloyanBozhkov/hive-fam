@@ -7,6 +7,7 @@ import {
   getScannedTicketsForEvent,
   TotalScannedTickets,
 } from "@/app/_components/molecules/TotalScannedTickets.molecule";
+import { formatDateToTimezone } from "@/utils/fe";
 
 const getInitialData = async (id: string) => {
   const user = await isManagerOrAbove();
@@ -71,14 +72,20 @@ export default async function EditEventPage({
         </div>
         <TotalScannedTickets
           tickets={sold_tickets}
-          eventDate={event.date}
-          eventEndDate={event.end_date}
+          eventDate={formatDateToTimezone(event.date, event.time_zone)}
+          eventEndDate={
+            event.end_date
+              ? formatDateToTimezone(event.end_date, event.time_zone)
+              : null
+          }
         />
       </Group>
 
       <div className="h-[400px] w-full">
         <DateVisualizer
-          timestamps={scannedTickets.map((t) => t.scanned_at!.toISOString())} // Use batched tickets here
+          timestamps={scannedTickets.map((t) =>
+            formatDateToTimezone(t.scanned_at!, event.time_zone)!.toISOString(),
+          )} // Use batched tickets here
         />
       </div>
     </Stack>

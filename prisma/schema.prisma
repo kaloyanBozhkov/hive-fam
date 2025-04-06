@@ -304,6 +304,7 @@ model event {
   description        String
   date               DateTime
   end_date           DateTime?
+  time_zone          String?
   external_event_url String?
   event_photos_url   String? // when event is completed
   is_published       Boolean   @default(false)

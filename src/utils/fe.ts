@@ -15,3 +15,21 @@ export const handleVideoVisibility = (video: HTMLVideoElement) => {
   observer.observe(video);
   return () => observer.disconnect();
 };
+
+export const getDisplayDateFormatter = (timeZone?: string | null) => {
+  const format = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
+  return format;
+};
+
+export const UTCToLocalDate = (date: Date) => {
+  return new Date(new Date(date).getTime() - date.getTimezoneOffset() * 60000);
+};
+
+export const formatDateToTimezone = (date: Date, timeZone?: string | null) => {
+  const formatter = getDisplayDateFormatter(timeZone);
+  return new Date(formatter.format(date));
+};

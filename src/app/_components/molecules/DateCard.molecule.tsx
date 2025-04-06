@@ -1,17 +1,25 @@
 import { twMerge } from "tailwind-merge";
 import Stack from "../layouts/Stack.layout";
+import { formatDateToTimezone } from "@/utils/fe";
+import { useMemo } from "react";
 
 const DateCard = ({
   className = "",
   date,
   dateClassName = "",
   monthClassName = "",
+  timeZone,
 }: {
   date: Date;
   className?: string;
   dateClassName?: string;
   monthClassName?: string;
+  timeZone?: string | null;
 }) => {
+  const formattedDate = useMemo(
+    () => formatDateToTimezone(date, timeZone),
+    [timeZone],
+  );
   return (
     <Stack
       className={twMerge(
@@ -25,7 +33,7 @@ const DateCard = ({
           monthClassName,
         )}
       >
-        {getMonthAbr(date)}
+        {getMonthAbr(formattedDate)}
       </p>
       <p
         className={twMerge(
@@ -33,7 +41,7 @@ const DateCard = ({
           dateClassName,
         )}
       >
-        {date.getDate()}
+        {formattedDate.getDate()}
       </p>
     </Stack>
   );

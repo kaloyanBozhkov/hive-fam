@@ -25,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../shadcn/Select.shadcn";
-import { Textarea } from "../../shadcn/Textarea.shadcn";
 import Group from "../../layouts/Group.layout";
 import Link from "next/link";
 import { Switch } from "../../shadcn/Switch.shadcn";
@@ -41,6 +40,8 @@ import {
   CardHeader,
 } from "../../shadcn/Card.shadcn";
 import TextEditor from "../../molecules/lexical/TextEditor";
+import TimeZoneSelector from "../../molecules/TimeZoneSelector.moleule";
+import { UTCToLocalDate } from "@/utils/fe";
 
 export const DEFAULT_TICKET_PRICE = 10;
 export const MIN_TICKET_PRICE = 1;
@@ -51,6 +52,10 @@ const event = z
     description: z.string().min(1, "Description is required"),
     date: z.date(),
     end_date: z.date().nullable().default(null),
+    time_zone: z
+      .string()
+      .min(1, "Time zone is required")
+      .default(Intl.DateTimeFormat().resolvedOptions().timeZone),
     // array of bucketPaths for media, in order of appearance
     poster_media: z
       .array(
@@ -256,41 +261,59 @@ const AddEventForm = ({
           />
           <FormField
             control={form.control}
+            name="time_zone"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Time Zone</FormLabel>
+                  <FormControl>
+                    <TimeZoneSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
             name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Event Date</FormLabel>
-                <FormControl>
-                  <Input
-                    type="datetime-local"
-                    {...field}
-                    max={
-                      form.watch("end_date")?.toISOString().slice(0, 16) ??
-                      undefined
-                    }
-                    value={
-                      field.value instanceof Date &&
-                      !isNaN(field.value.getTime())
-                        ? field.value.toISOString().slice(0, 16)
-                        : ""
-                    }
-                    onChange={(e) => {
-                      if (!e.target.value) {
-                        field.onChange(null);
-                        return "";
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Event Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="datetime-local"
+                      {...field}
+                      max={
+                        form.watch("end_date")?.toISOString().slice(0, 16) ??
+                        undefined
                       }
-                      const localDate = new Date(e.target.value);
-                      const utcDate = new Date(
-                        localDate.getTime() -
-                          localDate.getTimezoneOffset() * 60000,
-                      );
-                      field.onChange(utcDate);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+                      value={
+                        field.value instanceof Date &&
+                        !isNaN(field.value.getTime())
+                          ? UTCToLocalDate(field.value)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          field.onChange(null);
+                          return "";
+                        }
+                        const localDate = new Date(e.target.value);
+                        field.onChange(localDate);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
           <FormField
             control={form.control}
@@ -309,7 +332,7 @@ const AddEventForm = ({
                     value={
                       field.value instanceof Date &&
                       !isNaN(field.value.getTime())
-                        ? field.value.toISOString().slice(0, 16)
+                        ? UTCToLocalDate(field.value).toISOString().slice(0, 16)
                         : ""
                     }
                     onChange={(e) => {
@@ -318,11 +341,7 @@ const AddEventForm = ({
                         return "";
                       }
                       const localDate = new Date(e.target.value);
-                      const utcDate = new Date(
-                        localDate.getTime() -
-                          localDate.getTimezoneOffset() * 60000,
-                      );
-                      field.onChange(utcDate);
+                      field.onChange(localDate);
                     }}
                   />
                 </FormControl>

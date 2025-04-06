@@ -38,12 +38,18 @@ import {
 } from "../../shadcn/Card.shadcn";
 import { createUUID } from "@/utils/common";
 import TextEditor from "../../molecules/lexical/TextEditor";
+import TimeZoneSelector from "../../molecules/TimeZoneSelector.moleule";
+import { UTCToLocalDate } from "@/utils/fe";
 
 const event = z
   .object({
     id: z.string().uuid(),
     title: z.string().min(1, "Title is required"),
     description: z.string().min(1, "Description is required"),
+    time_zone: z
+      .string()
+      .min(1, "Time zone is required")
+      .default(Intl.DateTimeFormat().resolvedOptions().timeZone),
     date: z.date(),
     end_date: z.date().nullable().default(null),
     // array of bucketPaths for media, in order of appearance
@@ -234,6 +240,24 @@ const EditEventForm = ({
           />
           <FormField
             control={form.control}
+            name="time_zone"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Time Zone</FormLabel>
+                  <FormControl>
+                    <TimeZoneSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
             name="date"
             render={({ field }) => {
               return (
@@ -250,7 +274,9 @@ const EditEventForm = ({
                       value={
                         field.value instanceof Date &&
                         !isNaN(field.value.getTime())
-                          ? field.value.toISOString().slice(0, 16)
+                          ? UTCToLocalDate(field.value)
+                              .toISOString()
+                              .slice(0, 16)
                           : ""
                       }
                       onChange={(e) => {
@@ -259,11 +285,7 @@ const EditEventForm = ({
                           return "";
                         }
                         const localDate = new Date(e.target.value);
-                        const utcDate = new Date(
-                          localDate.getTime() -
-                            localDate.getTimezoneOffset() * 60000,
-                        );
-                        field.onChange(utcDate);
+                        field.onChange(localDate);
                       }}
                     />
                   </FormControl>
@@ -289,7 +311,7 @@ const EditEventForm = ({
                     value={
                       field.value instanceof Date &&
                       !isNaN(field.value.getTime())
-                        ? field.value.toISOString().slice(0, 16)
+                        ? UTCToLocalDate(field.value).toISOString().slice(0, 16)
                         : ""
                     }
                     onChange={(e) => {
@@ -298,11 +320,7 @@ const EditEventForm = ({
                         return "";
                       }
                       const localDate = new Date(e.target.value);
-                      const utcDate = new Date(
-                        localDate.getTime() -
-                          localDate.getTimezoneOffset() * 60000,
-                      );
-                      field.onChange(utcDate);
+                      field.onChange(localDate);
                     }}
                   />
                 </FormControl>

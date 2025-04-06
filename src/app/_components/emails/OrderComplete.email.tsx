@@ -64,9 +64,12 @@ export default function OrderCompletedEmail({
                 alt="Brand Logo"
                 height={100}
                 style={{
-                  width: "100px",
-                  height: "100px",
+                  maxWidth: "100px",
+                  maxHeight: "100px",
+                  width: "auto",
+                  height: "auto",
                   marginBottom: "10px",
+                  objectFit: "contain",
                 }}
               />
             </Link>
@@ -83,7 +86,8 @@ export default function OrderCompletedEmail({
           </Text>
           <Text style={{ fontSize: "16px", color: "#555" }}>
             You {isEventFree ? "have claimed" : "have purchased"}{" "}
-            <strong>{ticketCount}</strong> tickets for{" "}
+            <strong>{ticketCount}</strong> ticket
+            {ticketCount === 1 ? "" : "s"} for{" "}
             <Link
               href={eventUrl}
               style={{
