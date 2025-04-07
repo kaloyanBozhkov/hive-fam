@@ -49,6 +49,8 @@ const event = z
     time_zone: z
       .string()
       .min(1, "Time zone is required")
+      .optional()
+      .nullable()
       .default(Intl.DateTimeFormat().resolvedOptions().timeZone),
     date: z.date(),
     end_date: z.date().nullable().default(null),
@@ -247,7 +249,7 @@ const EditEventForm = ({
                   <FormLabel>Time Zone</FormLabel>
                   <FormControl>
                     <TimeZoneSelector
-                      value={field.value}
+                      value={field.value!}
                       onChange={field.onChange}
                     />
                   </FormControl>
