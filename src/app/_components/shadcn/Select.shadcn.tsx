@@ -109,7 +109,14 @@ const SelectContent = React.forwardRef<
       return React.Children.toArray(children).filter((child) => {
         if (!React.isValidElement(child)) return false;
 
-        const childText = child.props.children?.toString().toLowerCase() || "";
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const childText: string = (
+          (child?.props as { children: string })?.children ?? ""
+        )
+          .toString()
+          .toLowerCase();
         const searchTermLower = debouncedSearchTerm.toLowerCase();
 
         return childText.includes(searchTermLower);
