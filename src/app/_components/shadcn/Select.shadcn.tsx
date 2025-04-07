@@ -17,7 +17,6 @@ const Select = (
   SelectPrimitive.Root({
     ...props,
     onValueChange: props.onChange,
-    isSearchable: undefined,
   });
 
 const SelectGroup = SelectPrimitive.Group;
