@@ -31,5 +31,6 @@ export const UTCToLocalDate = (date: Date) => {
 
 export const formatDateToTimezone = (date: Date, timeZone?: string | null) => {
   const formatter = getDisplayDateFormatter(timeZone);
-  return new Date(formatter.format(date));
+  const parsed = new Date(formatter.format(date));
+  return isNaN(parsed.getTime()) ? date : parsed;
 };
