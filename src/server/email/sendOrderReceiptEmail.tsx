@@ -67,7 +67,7 @@ export async function sendOrderReceiptEmail({
       eventName={event.title}
       eventDate={format(
         formatDateToTimezone(event.date, event.time_zone),
-        "PPpp",
+        "PPp",
       )}
       eventUrl={`${orgUrl}/event/${eventId}?as=view`}
       platformUrl={orgUrl}

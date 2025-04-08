@@ -15,7 +15,7 @@ const TimeCard = ({
 }) => {
   const formattedDate = useMemo(
     () => formatDateToTimezone(date, timeZone),
-    [timeZone],
+    [timeZone, date],
   );
 
   return (
