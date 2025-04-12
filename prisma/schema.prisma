@@ -70,8 +70,14 @@ enum ThemeColors {
   DARK_BLUE
 }
 
+enum TaxCalculationType {
+  TAX_INCLUDED_IN_PRICE
+  TAX_ADDED_TO_PRICE_ON_CHECKOUT
+  TAX_IS_PART_OF_PRICE
+}
+
 model organization {
-  id                    String   @id @default(uuid())
+  id                    String             @id @default(uuid())
   name                  String
   description           String?
   display_name          String? // used for tab title, page title etc..
@@ -79,14 +85,17 @@ model organization {
   // TODO add favicon
   favicon_data_url      String?
   qr_brand_text         String? // used for ticket branding
-  qr_dark_color         String?  @default("#000000") // used for ticket branding
-  qr_bright_color       String?  @default("#FFFFFF") // used for ticket branding
-  default_currency      Currency @default(EUR)
+  qr_dark_color         String?            @default("#000000") // used for ticket branding
+  qr_bright_color       String?            @default("#FFFFFF") // used for ticket branding
+  default_currency      Currency           @default(EUR)
   bg_image              String?
   bg_color              String?
-  bg_opacity            Float    @default(1)
-  bg_size               String   @default("contain")
-  large_banners_desktop Boolean  @default(false)
+  bg_opacity            Float              @default(1)
+  bg_size               String             @default("contain")
+  large_banners_desktop Boolean            @default(false)
+  tax_percentage        Float              @default(0)
+  tax_calculation_type  TaxCalculationType @default(TAX_ADDED_TO_PRICE_ON_CHECKOUT)
+  default_language      String             @default("en")
 
   // TODO add theme
   theme_colors ThemeColors @default(DARK_GREEN)

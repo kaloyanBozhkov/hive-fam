@@ -33,7 +33,6 @@ import {
   SelectItem,
 } from "../../shadcn/Select.shadcn";
 import Group from "../../layouts/Group.layout";
-import Link from "next/link";
 import { PreviewLastSavedQRCode } from "../../molecules/PreviewLastSavedQRCode";
 
 const organization = z.object({
@@ -51,6 +50,9 @@ const organization = z.object({
   qr_brand_text: z.string().nullable(),
   qr_dark_color: z.string().nullable(),
   qr_bright_color: z.string().nullable(),
+  tax_percentage: z.number().min(0).max(100),
+  tax_calculation_type: z.string(),
+  default_language: z.string().default("en"),
 });
 
 const EditOrganizationForm = ({
@@ -90,6 +92,8 @@ const EditOrganizationForm = ({
     defaultValues: initialData,
   });
 
+  console.log(JSON.stringify(form.formState.errors, null, 2));
+
   const handleSubmit = (data: z.infer<typeof organization>) => {
     startTransition(async () => {
       const result = await onEdit(data);
@@ -115,6 +119,8 @@ const EditOrganizationForm = ({
       reader.readAsDataURL(file);
     }
   };
+
+  console.log(form);
 
   return (
     <Form {...form}>
@@ -222,6 +228,7 @@ const EditOrganizationForm = ({
                 <FormControl>
                   <Input {...field} value={field.value ?? ""} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -249,6 +256,7 @@ const EditOrganizationForm = ({
                     />
                   </FormControl>
                 </Stack>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -275,6 +283,7 @@ const EditOrganizationForm = ({
                     />
                   </FormControl>
                 </Stack>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -303,6 +312,7 @@ const EditOrganizationForm = ({
                     />
                   </FormControl>
                 </Stack>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -347,6 +357,7 @@ const EditOrganizationForm = ({
                     />
                   </div>
                 )}
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -384,6 +395,7 @@ const EditOrganizationForm = ({
                       </FormControl>
                     </Stack>
                   </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -481,6 +493,7 @@ const EditOrganizationForm = ({
                         </FormControl>
                       </Stack>
                     </div>
+                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -505,6 +518,164 @@ const EditOrganizationForm = ({
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tax_percentage"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Tax percentage</FormLabel>
+                  <FormDescription>
+                    How much tax should be added to the tickets sold?
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Input
+                    className="max-w-[200px]"
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? ""
+                          : parseInt(e.target.value, 10),
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tax_calculation_type"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">
+                    Tax Calculation Type
+                  </FormLabel>
+                  <FormDescription>
+                    How should tax be handled in regards to the overall price?
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  >
+                    <SelectTrigger className="max-w-[400px]">
+                      <SelectValue
+                        placeholder="Select a tax calculation type"
+                        className={field.value ? "h-max" : ""}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        value="TAX_INCLUDED_IN_PRICE"
+                        displayLabel="Tax hidden in price"
+                        className="bg-red-50"
+                      >
+                        <Stack>
+                          <p>Tax hidden in price</p>
+                          <p className="max-w-[400px] text-[12px] text-gray-500">
+                            Tax is silently included within the price, so the
+                            final price on checkout will be 100€. Customers will
+                            not see tax mentioned during checkout.
+                            <b>
+                              You will have to account for this when setting up
+                              the individual ticket prices, and when managing
+                              taxes.
+                            </b>
+                          </p>
+                        </Stack>
+                      </SelectItem>
+                      <SelectItem
+                        value="TAX_ADDED_TO_PRICE_ON_CHECKOUT"
+                        displayLabel="Tax added to price on checkout"
+                      >
+                        <Stack>
+                          <p>Tax added to price on checkout</p>
+                          <p className="max-w-[400px] text-[12px] text-gray-500">
+                            A price of 100€ and a tax percentage of 10% means
+                            10€ tax will be added to the price on checkout, so
+                            the final price on checkout will be 110€. Customers
+                            will see 100€ on your website and when they reach
+                            the final checkout step they will see 110€ for the
+                            items + 10€ added tax.
+                          </p>
+                        </Stack>
+                      </SelectItem>
+                      <SelectItem
+                        value="TAX_IS_PART_OF_PRICE"
+                        displayLabel="Tax is a portion of price"
+                      >
+                        <Stack>
+                          <p>Tax is a portion of price</p>
+                          <p className="max-w-[400px] text-[12px] text-gray-500">
+                            A price of 100€ and a tax percentage of 10% means
+                            10€ tax will be added to the price on checkout, so
+                            customers will see 100€ on your website and when
+                            they reach the final checkout step they will see 90€
+                            for the items + 10€ added tax.
+                          </p>
+                        </Stack>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* default_language */}
+          <FormField
+            control={form.control}
+            name="default_language"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Default Language</FormLabel>
+                <FormDescription>
+                  This will be the default language for the website.
+                </FormDescription>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="es">Spanish</SelectItem>
+                      <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="de">German</SelectItem>
+                      <SelectItem value="it">Italian</SelectItem>
+                      <SelectItem value="ja">Japanese</SelectItem>
+                      <SelectItem value="tr">Turkish</SelectItem>
+                      <SelectItem value="bg">Bulgarian</SelectItem>
+                      <SelectItem value="cs">Czech</SelectItem>
+                      <SelectItem value="da">Danish</SelectItem>
+                      <SelectItem value="nl">Dutch</SelectItem>
+                      <SelectItem value="et">Estonian</SelectItem>
+                      <SelectItem value="fi">Finnish</SelectItem>
+                      <SelectItem value="el">Greek</SelectItem>
+                      <SelectItem value="hr">Croatian</SelectItem>
+                      <SelectItem value="hu">Hungarian</SelectItem>
+                      <SelectItem value="id">Indonesian</SelectItem>
+                      <SelectItem value="is">Icelandic</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
