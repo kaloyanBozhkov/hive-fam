@@ -26,6 +26,8 @@ export type EventParticipant = {
   country: string;
   approved: boolean;
   created_at: Date;
+
+  // TODO show in modal or smth, table - readable
   custom_payload: JsonValue | null;
 };
 
