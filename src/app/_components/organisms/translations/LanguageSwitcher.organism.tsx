@@ -28,7 +28,7 @@ declare global {
   }
 }
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({ defaultLanguage }: { defaultLanguage: string }) => {
   const [currentLanguage, setCurrentLanguage] = useState<string>();
   const [languageConfig, setLanguageConfig] = useState<any>();
 
@@ -43,8 +43,10 @@ const LanguageSwitcher = () => {
         languageValue = sp[2];
       }
     }
-    if (global.__GOOGLE_TRANSLATION_CONFIG__ && !languageValue) {
-      languageValue = global.__GOOGLE_TRANSLATION_CONFIG__.defaultLanguage;
+    if (!languageValue) {
+      // Set the cookie to translate from English to defaultLanguage
+      setCookie(null, COOKIE_NAME, "/en/" + defaultLanguage);
+      languageValue = defaultLanguage;
     }
     if (languageValue) {
       setCurrentLanguage(languageValue);
@@ -52,7 +54,7 @@ const LanguageSwitcher = () => {
     if (global.__GOOGLE_TRANSLATION_CONFIG__) {
       setLanguageConfig(global.__GOOGLE_TRANSLATION_CONFIG__);
     }
-  }, []);
+  }, [defaultLanguage]);
 
   if (!currentLanguage || !languageConfig) {
     return null;
