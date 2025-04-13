@@ -39,7 +39,7 @@ type EventContestantSignUpProps = {
 export const EventContestantSignUp = ({
   event,
   onSignUp,
-  successMessage = "You've successfully signed up! We'll get in touch if there's anything.",
+  successMessage = "You've successfully signed up!",
 }: EventContestantSignUpProps) => {
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false);
   const [isErrorSignup, setIsErrorSignup] = useState<boolean>(false);

@@ -72,9 +72,9 @@ const addParticipant = async (data: {
 export default async function SignupEventPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   let event: Event;
 
