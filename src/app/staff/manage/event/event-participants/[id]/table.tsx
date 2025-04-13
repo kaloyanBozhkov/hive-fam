@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
-import { db } from "@/server/db";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
@@ -26,7 +25,7 @@ export type EventParticipant = {
   country: string;
   approved: boolean;
   created_at: Date;
-  custom_payload: any;
+  custom_payload: string;
 };
 
 export const EventParticipantsTable = ({
@@ -40,9 +39,8 @@ export const EventParticipantsTable = ({
   approveParticipant: (id: string, approved: boolean) => Promise<void>;
   onRefresh: () => Promise<void>;
 }) => {
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [pendingIds, setPendingIds] = useState<string[]>([]);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
   const handleApprove = useCallback((id: string, approved: boolean) => {
@@ -91,9 +89,9 @@ export const EventParticipantsTable = ({
           <Switch
             checked={row.original.approved}
             onCheckedChange={(checked) => {
-              handleApprove(row.original.id, checked);
+              void handleApprove(row.original.id, checked);
             }}
-            disabled={isPending && pendingIds.includes(row.original.id)}
+            disabled={pendingIds.includes(row.original.id)}
           />
         );
       },
@@ -128,10 +126,10 @@ export const EventParticipantsTable = ({
                     `Are you sure you want to delete this participant? "${participant.name} ${participant.surname}"`,
                   );
                   if (!confirm) return;
-                  handleDelete(participant.id);
+                  void handleDelete(participant.id);
                 }}
               >
-                {isDeleting && deletingIds.includes(participant.id) ? (
+                {deletingIds.includes(participant.id) ? (
                   <DotsLoader
                     modifier="secondary"
                     size="sm"

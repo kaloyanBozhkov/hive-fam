@@ -28,7 +28,7 @@ const approveParticipant = async (id: string, approved: boolean) => {
 export default async function EventParticipantsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const event = await db.event.findUnique({
