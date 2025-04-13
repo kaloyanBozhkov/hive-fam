@@ -5,11 +5,18 @@ import LandingBanner from "@/app/_components/molecules/LandingBanner.molecule";
 import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";
 import { BannerWrapper } from "./_components/templates/BannerWrapper.template";
+import { calcualteTicketPrice } from "@/utils/pricing";
 
 const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
     include: {
       venue: true,
+      organization: {
+        select: {
+          tax_percentage: true,
+          tax_calculation_type: true,
+        },
+      },
       ticket_types: {
         orderBy: {
           created_at: "asc",
@@ -50,7 +57,7 @@ const getEvents = async (orgId: string) => {
   };
 
   return events.map(
-    ({ poster_media, ticket_types, sold_tickets, ...event }) => ({
+    ({ poster_media, ticket_types, sold_tickets, organization, ...event }) => ({
       ...event,
       poster_media: poster_media.map((pm) => ({
         bucket_path: pm.media.bucket_path,
@@ -58,6 +65,11 @@ const getEvents = async (orgId: string) => {
       })),
       ticket_types: ticket_types.map((tt) => ({
         ...tt,
+        price: calcualteTicketPrice(
+          tt.price,
+          organization!.tax_percentage,
+          organization!.tax_calculation_type,
+        ),
         is_sold_out:
           tt.available_tickets_of_type <=
           getSoldTicketsOfType(sold_tickets, tt.id),

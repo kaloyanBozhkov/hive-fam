@@ -9,6 +9,7 @@ export const createOrderTicketsAndSendEmail = async ({
   customerDetails,
   checkoutSessionId,
   tickets,
+  invocieId,
 }: {
   eventId: string;
   currency: Currency;
@@ -17,12 +18,14 @@ export const createOrderTicketsAndSendEmail = async ({
   checkoutSessionId: string;
   // ticketTypeId is optional for free tickets
   tickets: { ticketTypeId?: string | null; quantity: number }[];
+  invocieId?: string;
 }) => {
   await createTickets({
     customerDetails,
     eventId,
     currency,
     tickets,
+    invocieId,
     orderSessionId: checkoutSessionId,
   });
 

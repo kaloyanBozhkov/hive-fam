@@ -10,10 +10,11 @@ import { z } from "zod";
 import { Currency } from "@prisma/client";
 import { S3Service } from "@/utils/s3/service";
 import { getTransferDataForPaymentIntentCheckoutSession } from "@/server/actions/stripe/getOrganisationOwnerStripeAccountId";
+import { calcualteTicketPrice } from "@/utils/pricing";
+import assert from "assert";
 
 const MIN_AMOUNT = 0.5,
-  MAX_AMOUNT = 100000,
-  TAX_RATE = 0.05;
+  MAX_AMOUNT = 100000;
 
 const cartItemSchema = z.object({
   eventName: z.string(),
@@ -65,7 +66,8 @@ export default async function handler(
           },
           organization: {
             select: {
-              brand_logo_data_url: true,
+              tax_calculation_type: true,
+              tax_percentage: true,
             },
           },
         },
@@ -74,11 +76,38 @@ export default async function handler(
       if (event.price_currency !== currency)
         throw new Error("Currency doesn't match");
 
+      assert(event.organization, "Event Organization not found");
+
+      const taxCalculationType = event.organization.tax_calculation_type;
+      const taxPercentage = event.organization.tax_percentage;
+      const taxRate = taxPercentage / 100;
+      const taxItem = {
+        price_data: {
+          unit_amount: formatAmountForStripe(
+            Number((total * taxRate).toFixed(2)),
+            currency,
+          ),
+          currency,
+          product_data: {
+            name: LINE_ITEM_PRODUCT_NAME_FOR_TAX,
+            description: `Static tax of ${taxPercentage}%`,
+            metadata: {
+              is_tax_item: "true",
+            } as OrderLineItemMetadata,
+          },
+        },
+        quantity: 1,
+      };
+
       if (
         items.some(
           (p) =>
-            event.ticket_types.find((t) => t.id === p.ticketTypeId)?.price !==
-            p.ticketPrice,
+            // validates price of ticket type with price passed from FE
+            calcualteTicketPrice(
+              event.ticket_types.find((t) => t.id === p.ticketTypeId)!.price,
+              taxPercentage,
+              taxCalculationType,
+            ) !== p.ticketPrice,
         )
       )
         throw new Error("Prices not matching for all items");
@@ -126,20 +155,9 @@ export default async function handler(
               quantity: items.filter((t) => t.ticketTypeId === p.ticketTypeId)
                 .length,
             })),
-            {
-              price_data: {
-                unit_amount: formatAmountForStripe(
-                  Number((total * TAX_RATE).toFixed(2)),
-                  currency,
-                ),
-                currency,
-                product_data: {
-                  name: LINE_ITEM_PRODUCT_NAME_FOR_TAX,
-                  description: `Static tax of ${TAX_RATE * 100}%`,
-                },
-              },
-              quantity: 1,
-            },
+            ...(taxCalculationType === "TAX_ADDED_TO_PRICE_ON_CHECKOUT"
+              ? [taxItem]
+              : []),
           ],
           billing_address_collection: "auto",
           cancel_url: `${req.headers.origin!}/${onCancelRedirectTo}`,
@@ -190,7 +208,8 @@ export const orderMetadataSchema = z.object({
 });
 
 export const orderLineItemMetadataSchema = z.object({
-  ticketTypeId: z.string(),
+  ticketTypeId: z.string().optional(),
+  is_tax_item: z.string().optional(),
 });
 
 export const LINE_ITEM_PRODUCT_NAME_FOR_TAX = "Tax";

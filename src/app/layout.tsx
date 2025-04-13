@@ -45,7 +45,7 @@ export default async function RootLayout({
         <ScriptsForTranslation />
       </head>
       <body className="relative">
-        <LanguageSwitcher />
+        {org.with_google_translations && <LanguageSwitcher />}
         <MainPageLoader>
           <TRPCReactProvider>
             <AOS>

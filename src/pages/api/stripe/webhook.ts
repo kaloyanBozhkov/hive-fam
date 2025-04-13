@@ -8,6 +8,11 @@ import type { Currency } from "@prisma/client";
 import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
 import type { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
 import { confirmPayoutsAccountLink } from "@/server/actions/stripe/getPayoutsAccountLink";
+import { createInvoice } from "@/server/queries/invoice/createInvoice";
+import {
+  formatAmountForStripe,
+  formatAmountFromStripe,
+} from "@/server/stripe/stripe.helpers";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -58,8 +63,8 @@ const cors = Cors({
           const checkoutSessionId = session.id;
           const customerDetails = session.customer_details as CustomerDetails;
           const currency = session.currency!.toUpperCase() as Currency;
-          // const amountDiscount = session.total_details?.amount_discount;
-          // const total = session.amount_total!;
+          const amountDiscount = session.total_details?.amount_discount;
+          const total = session.amount_total!;
 
           if (!session.metadata) throw Error("No metadata found");
 
@@ -68,29 +73,52 @@ const cors = Cors({
             // to include the product metadata
             { expand: ["data.price.product"] },
           );
-          const lineItemsData = lineItems.data
-            .map((item) => ({
-              quantity: item.quantity ?? 1,
-              metadata: (
-                item.price!.product as unknown as {
-                  metadata: OrderLineItemMetadata;
-                }
-              ).metadata,
-            }))
-            // skip tax line item or any line item without a ticket type id
-            .filter((item) => item.metadata?.ticketTypeId);
+          const lineItemsData = lineItems.data.map((item) => ({
+            quantity: item.quantity ?? 1,
+            metadata: (
+              item.price!.product as unknown as {
+                metadata: OrderLineItemMetadata;
+              }
+            ).metadata,
+            price: item.price!.unit_amount,
+          }));
+
+          // skip tax line item or any line item without a ticket type id
+          const ticketsLineItems = lineItemsData.filter(
+            (item) => item.metadata?.ticketTypeId,
+          );
+          const taxLineItem = lineItemsData.find(
+            (item) => item.metadata.is_tax_item === "true",
+          );
 
           const { eventId } = session.metadata as unknown as OrderMetadata;
-          if (!eventId || lineItemsData.length === 0)
+          if (!eventId || ticketsLineItems.length === 0)
             throw Error("Invalid metadata");
+
+          // TODO: can be mered w createOrderTicketsAndSendEmail
+          const invocieId = await createInvoice({
+            eventId,
+            currency,
+            orderSessionId: checkoutSessionId,
+            amountDiscount: formatAmountFromStripe(
+              amountDiscount ?? 0,
+              currency,
+            ),
+            totalAmount: formatAmountFromStripe(total, currency),
+            totalTaxAmount:
+              typeof taxLineItem?.price === "number"
+                ? formatAmountFromStripe(taxLineItem.price, currency)
+                : null,
+          });
 
           // also sends email
           await createOrderTicketsAndSendEmail({
             eventId,
             customerDetails,
+            invocieId,
             currency,
             checkoutSessionId,
-            tickets: lineItemsData.map((t) => ({
+            tickets: ticketsLineItems.map((t) => ({
               ticketTypeId: t.metadata.ticketTypeId,
               quantity: t.quantity,
             })),

@@ -18,6 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { getOrderTickets } from "@/server/actions/getOrderTickets";
 import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
+import { calcualteTicketPrice } from "@/utils/pricing";
+import assert from "assert";
 
 const getTicket = async (ticketId: string) => {
   try {
@@ -54,6 +56,14 @@ const getTicket = async (ticketId: string) => {
                 },
               },
             },
+            include: {
+              organization: {
+                select: {
+                  tax_calculation_type: true,
+                  tax_percentage: true,
+                },
+              },
+            },
           },
         },
       });
@@ -63,10 +73,18 @@ const getTicket = async (ticketId: string) => {
     const ticketNumber = tickets.find((t) => t.id === ticket.id)?.ticketNumber;
     if (!ticketNumber) throw new Error("Ticket number not found");
 
+    assert(event.organization, "Event organization not found");
+    const ticketPrice = calcualteTicketPrice(
+      ticket.price,
+      event.organization.tax_percentage,
+      event.organization.tax_calculation_type,
+    );
+
     return {
       ticket: {
         ...ticket,
         ticketNumber,
+        price: ticketPrice,
       },
       owner,
       event,

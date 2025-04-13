@@ -5,14 +5,22 @@ import FullScreenEvent from "@/app/_components/organisms/FullScreenEvent.organis
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
 import { isPastEvent } from "@/utils/specific";
+import { calcualteTicketPrice } from "@/utils/pricing";
+import assert from "assert";
 
 const getEvent = async (id: string) => {
-  const { poster_media, ticket_types, sold_tickets, ...event } =
+  const { poster_media, ticket_types, sold_tickets, organization, ...event } =
     await db.event.findFirstOrThrow({
       where: {
         id,
       },
       include: {
+        organization: {
+          select: {
+            tax_percentage: true,
+            tax_calculation_type: true,
+          },
+        },
         venue: true,
         ticket_types: {
           orderBy: {
@@ -49,6 +57,9 @@ const getEvent = async (id: string) => {
       .length;
   };
 
+  assert(event, "Event not found");
+  assert(organization, "Event organization not found");
+
   return {
     poster_media: poster_media.map((pm) => ({
       bucket_path: pm.media.bucket_path,
@@ -56,6 +67,11 @@ const getEvent = async (id: string) => {
     })),
     ticket_types: ticket_types.map((tt) => ({
       ...tt,
+      price: calcualteTicketPrice(
+        tt.price,
+        organization.tax_percentage,
+        organization.tax_calculation_type,
+      ),
       is_sold_out:
         tt.available_tickets_of_type <=
         getSoldTicketsOfType(sold_tickets, tt.id),

@@ -11,6 +11,7 @@ import {
 import { getPayoutsSignInLink } from "@/server/actions/stripe/getPayoutsSignInLink";
 import { redirect } from "next/navigation";
 import { Separator } from "@/app/_components/shadcn/Separator.shadcn";
+import getInvoices from "@/server/queries/invoice/getInvoices";
 
 const getEvents = async () => {
   const user = await isAdminOrAbove();

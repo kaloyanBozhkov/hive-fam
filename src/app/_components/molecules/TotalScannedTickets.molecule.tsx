@@ -1,19 +1,15 @@
-import { ticket } from "@prisma/client";
+import type { ticket } from "@prisma/client";
 import { type FC } from "react";
 
 export const TotalScannedTickets: FC<{
-  tickets: ticket[];
-  eventDate: Date;
-  eventEndDate: Date | null;
-}> = ({ tickets, eventDate, eventEndDate }) => {
+  totalScannedTickets: number;
+}> = ({ totalScannedTickets }) => {
   return (
     <div className="rounded-lg border p-4">
       <h3 className="text-sm font-medium text-muted-foreground">
         Tickets scanned starting 4h before event date and ending 4h after
       </h3>
-      <p className="mt-2 text-2xl font-bold">
-        {getScannedTicketsForEvent({ tickets, eventDate, eventEndDate }).length}
-      </p>
+      <p className="mt-2 text-2xl font-bold">{totalScannedTickets}</p>
     </div>
   );
 };

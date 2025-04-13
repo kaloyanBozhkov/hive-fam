@@ -1,6 +1,8 @@
 "use client";
 
+import DotsLoader from "@/app/_components/atoms/DotsLoader.atom";
 import Stack from "@/app/_components/layouts/Stack.layout";
+import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import {
   Select,
   SelectContent,
@@ -8,7 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/shadcn/Select.shadcn";
-import { useState } from "react";
+import { getEventEarnings } from "@/server/queries/invoice/getEventEarnings";
+import Link from "next/link";
+import { Suspense, useLayoutEffect, useState, useTransition } from "react";
 
 type Event = {
   id: string;
@@ -25,7 +29,18 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
   const [selectedEventId, setSelectedEventId] = useState<string>(
     events[0]?.id ?? "",
   );
+  const [isPending, startTransition] = useTransition();
+  const [earnings, setEarnings] = useState<
+    { currency: string; total: number }[]
+  >([]);
   const selectedEvent = events.find((event) => event.id === selectedEventId);
+
+  useLayoutEffect(() => {
+    startTransition(async () => {
+      const newEarnings = await getEventEarnings(selectedEventId);
+      setEarnings(newEarnings);
+    });
+  }, [selectedEventId]);
 
   if (events.length === 0) {
     return (
@@ -44,14 +59,6 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
     freeTickets?.filter((ticket) => ticket.scanned).length ?? 0;
   const scannedSoldTickets =
     paidTickets?.filter((ticket) => ticket.scanned).length ?? 0;
-
-  // TODO totalRevenue
-  const totalRevenue =
-    paidTickets?.reduce((acc, ticket) => {
-      return acc + ticket.price;
-    }, 0) ?? 0;
-
-  const currency = paidTickets?.[0]?.currency ?? "USD";
 
   return (
     <Stack className="gap-6">
@@ -74,51 +81,65 @@ export const ProfitsList = ({ events }: { events: Event[] }) => {
       </Stack>
 
       {selectedEvent && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Total Revenue
-            </h3>
-            <p className="mt-2 text-2xl font-bold">
-              {totalRevenue.toLocaleString(undefined, {
-                style: "currency",
-                currency,
-              })}
-            </p>
+        <Stack className="gap-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Revenue
+              </h3>
+              <div className="mt-2">
+                {isPending ? (
+                  <DotsLoader modifier="secondary" />
+                ) : (
+                  <Stack className="gap-2">
+                    {earnings.map(({ currency, total }) => (
+                      <p className="text-2xl font-bold" key={currency}>
+                        {currency}: {total}
+                      </p>
+                    ))}
+                  </Stack>
+                )}
+              </div>
+            </div>
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Total Tickets Sold
+              </h3>
+              <p className="mt-2 text-2xl font-bold">{totalPaidTickets}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Total Free Tickets
+              </h3>
+              <p className="mt-2 text-2xl font-bold">{totalFreeTickets}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Scanned Tickets
+              </h3>
+              <p className="mt-2 text-2xl font-bold">
+                {scannedSoldTickets + scannedFreeTickets}
+              </p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Scanned Paid Tickets
+              </h3>
+              <p className="mt-2 text-2xl font-bold">{scannedSoldTickets}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Scanned Free Tickets
+              </h3>
+              <p className="mt-2 text-2xl font-bold">{scannedFreeTickets}</p>
+            </div>
           </div>
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Total Tickets Sold
-            </h3>
-            <p className="mt-2 text-2xl font-bold">{totalPaidTickets}</p>
-          </div>
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Total Free Tickets
-            </h3>
-            <p className="mt-2 text-2xl font-bold">{totalFreeTickets}</p>
-          </div>
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Scanned Tickets
-            </h3>
-            <p className="mt-2 text-2xl font-bold">
-              {scannedSoldTickets + scannedFreeTickets}
-            </p>
-          </div>
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Scanned Paid Tickets
-            </h3>
-            <p className="mt-2 text-2xl font-bold">{scannedSoldTickets}</p>
-          </div>
-          <div className="rounded-lg border p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Scanned Free Tickets
-            </h3>
-            <p className="mt-2 text-2xl font-bold">{scannedFreeTickets}</p>
-          </div>
-        </div>
+          <Link href={`/staff/manage/event/event-metrics/${selectedEvent.id}`}>
+            <Button variant="default" className="mt-2">
+              View Details
+            </Button>
+          </Link>
+        </Stack>
       )}
     </Stack>
   );

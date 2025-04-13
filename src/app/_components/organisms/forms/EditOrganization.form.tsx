@@ -34,6 +34,8 @@ import {
 } from "../../shadcn/Select.shadcn";
 import Group from "../../layouts/Group.layout";
 import { PreviewLastSavedQRCode } from "../../molecules/PreviewLastSavedQRCode";
+import { TaxCalculationType } from "@prisma/client";
+import { TaxCalculationTypeToLabel } from "@/utils/pricing";
 
 const organization = z.object({
   id: z.string().uuid(),
@@ -51,8 +53,11 @@ const organization = z.object({
   qr_dark_color: z.string().nullable(),
   qr_bright_color: z.string().nullable(),
   tax_percentage: z.number().min(0).max(100),
-  tax_calculation_type: z.string(),
+  tax_calculation_type: z
+    .nativeEnum(TaxCalculationType)
+    .default(TaxCalculationType.TAX_ADDED_TO_PRICE_ON_CHECKOUT),
   default_language: z.string().default("en"),
+  with_google_translations: z.boolean().default(true),
 });
 
 const EditOrganizationForm = ({
@@ -92,8 +97,6 @@ const EditOrganizationForm = ({
     defaultValues: initialData,
   });
 
-  console.log(JSON.stringify(form.formState.errors, null, 2));
-
   const handleSubmit = (data: z.infer<typeof organization>) => {
     startTransition(async () => {
       const result = await onEdit(data);
@@ -119,8 +122,6 @@ const EditOrganizationForm = ({
       reader.readAsDataURL(file);
     }
   };
-
-  console.log(form);
 
   return (
     <Form {...form}>
@@ -579,31 +580,39 @@ const EditOrganizationForm = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem
-                        value="TAX_INCLUDED_IN_PRICE"
-                        displayLabel="Tax hidden in price"
+                        value="TAX_HIDDEN_IN_PRICE"
                         className="bg-red-50"
                       >
                         <Stack>
-                          <p>Tax hidden in price</p>
-                          <p className="max-w-[400px] text-[12px] text-gray-500">
-                            Tax is silently included within the price, so the
-                            final price on checkout will be 100€. Customers will
-                            not see tax mentioned during checkout.
+                          <p>
+                            {TaxCalculationTypeToLabel(
+                              TaxCalculationType.TAX_HIDDEN_IN_PRICE,
+                            )}
+                          </p>
+                          <p
+                            className="max-w-[400px] text-[12px] text-gray-500"
+                            data-hide-when-selected-and-open="true"
+                          >
+                            Customers will not see tax mentioned during
+                            checkout.
                             <b>
-                              You will have to account for this when setting up
-                              the individual ticket prices, and when managing
-                              taxes.
+                              You should account for the tax amount when setting
+                              up individual ticket prices.
                             </b>
                           </p>
                         </Stack>
                       </SelectItem>
-                      <SelectItem
-                        value="TAX_ADDED_TO_PRICE_ON_CHECKOUT"
-                        displayLabel="Tax added to price on checkout"
-                      >
+                      <SelectItem value="TAX_ADDED_TO_PRICE_ON_CHECKOUT">
                         <Stack>
-                          <p>Tax added to price on checkout</p>
-                          <p className="max-w-[400px] text-[12px] text-gray-500">
+                          <p>
+                            {TaxCalculationTypeToLabel(
+                              TaxCalculationType.TAX_ADDED_TO_PRICE_ON_CHECKOUT,
+                            )}
+                          </p>
+                          <p
+                            className="max-w-[400px] text-[12px] text-gray-500"
+                            data-hide-when-selected-and-open="true"
+                          >
                             A price of 100€ and a tax percentage of 10% means
                             10€ tax will be added to the price on checkout, so
                             the final price on checkout will be 110€. Customers
@@ -613,18 +622,20 @@ const EditOrganizationForm = ({
                           </p>
                         </Stack>
                       </SelectItem>
-                      <SelectItem
-                        value="TAX_IS_PART_OF_PRICE"
-                        displayLabel="Tax is a portion of price"
-                      >
+                      <SelectItem value="TAX_IS_PART_OF_PRICE">
                         <Stack>
-                          <p>Tax is a portion of price</p>
-                          <p className="max-w-[400px] text-[12px] text-gray-500">
-                            A price of 100€ and a tax percentage of 10% means
-                            10€ tax will be added to the price on checkout, so
-                            customers will see 100€ on your website and when
-                            they reach the final checkout step they will see 90€
-                            for the items + 10€ added tax.
+                          <p>
+                            {TaxCalculationTypeToLabel(
+                              TaxCalculationType.TAX_IS_PART_OF_PRICE,
+                            )}
+                          </p>
+                          <p
+                            className="max-w-[400px] text-[12px] text-gray-500"
+                            data-hide-when-selected-and-open="true"
+                          >
+                            Adding a ticket with price of 10€ and having a tax
+                            of 10% will automatically result in tickets costing
+                            11€. Customers will not see any tax mentioned.
                           </p>
                         </Stack>
                       </SelectItem>
@@ -675,6 +686,28 @@ const EditOrganizationForm = ({
                     </SelectContent>
                   </Select>
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="with_google_translations"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>With Google Translations</FormLabel>
+                <Group className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormDescription>
+                    If enabled, Google will automatically translate the website
+                    content into the selected language.
+                  </FormDescription>
+                  <FormControl>
+                    <Switch
+                      checked={field.value ?? false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </Group>
                 <FormMessage />
               </FormItem>
             )}

@@ -8,6 +8,7 @@ export const createTickets = async ({
   orderSessionId,
   tickets,
   currency,
+  invocieId,
 }: {
   eventId: string;
   customerDetails: Partial<CustomerDetails> &
@@ -16,6 +17,7 @@ export const createTickets = async ({
   // ticketTypeId is optional for free tickets
   tickets: { ticketTypeId?: string | null; quantity: number }[];
   currency: Currency;
+  invocieId?: string; // unset if free ticket
 }) => {
   const participantEmail = customerDetails.email;
   const [name, ...surname] = customerDetails.name.split(" ").filter((w) => w);
@@ -57,6 +59,7 @@ export const createTickets = async ({
         order_session_id: orderSessionId,
         is_free: event.is_free,
         ticket_type_id: ticket.ticketTypeId,
+        invoice_id: invocieId, // should exist at this point
         price:
           ticketTypes.find((t) => t.id === ticket.ticketTypeId)?.price ?? 0,
       }))

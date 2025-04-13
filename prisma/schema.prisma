@@ -71,31 +71,32 @@ enum ThemeColors {
 }
 
 enum TaxCalculationType {
-  TAX_INCLUDED_IN_PRICE
+  TAX_HIDDEN_IN_PRICE
   TAX_ADDED_TO_PRICE_ON_CHECKOUT
   TAX_IS_PART_OF_PRICE
 }
 
 model organization {
-  id                    String             @id @default(uuid())
-  name                  String
-  description           String?
-  display_name          String? // used for tab title, page title etc..
-  brand_logo_data_url   String? // used for ticket branding
+  id                       String             @id @default(uuid())
+  name                     String
+  description              String?
+  display_name             String? // used for tab title, page title etc..
+  brand_logo_data_url      String? // used for ticket branding
   // TODO add favicon
-  favicon_data_url      String?
-  qr_brand_text         String? // used for ticket branding
-  qr_dark_color         String?            @default("#000000") // used for ticket branding
-  qr_bright_color       String?            @default("#FFFFFF") // used for ticket branding
-  default_currency      Currency           @default(EUR)
-  bg_image              String?
-  bg_color              String?
-  bg_opacity            Float              @default(1)
-  bg_size               String             @default("contain")
-  large_banners_desktop Boolean            @default(false)
-  tax_percentage        Float              @default(0)
-  tax_calculation_type  TaxCalculationType @default(TAX_ADDED_TO_PRICE_ON_CHECKOUT)
-  default_language      String             @default("en")
+  favicon_data_url         String?
+  qr_brand_text            String? // used for ticket branding
+  qr_dark_color            String?            @default("#000000") // used for ticket branding
+  qr_bright_color          String?            @default("#FFFFFF") // used for ticket branding
+  default_currency         Currency           @default(EUR)
+  bg_image                 String?
+  bg_color                 String?
+  bg_opacity               Float              @default(1)
+  bg_size                  String             @default("contain")
+  large_banners_desktop    Boolean            @default(false)
+  tax_percentage           Float              @default(0)
+  tax_calculation_type     TaxCalculationType @default(TAX_ADDED_TO_PRICE_ON_CHECKOUT)
+  default_language         String             @default("en")
+  with_google_translations Boolean            @default(true)
 
   // TODO add theme
   theme_colors ThemeColors @default(DARK_GREEN)
@@ -108,6 +109,7 @@ model organization {
   links        link[]
   banner_slide banner_slide[]
   link_tree    link_tree[]
+  invoices     invoice[]
 }
 
 enum Currency {
@@ -332,6 +334,7 @@ model event {
   ticket_types event_ticket_type[]
   contestants  event_contestant[]
   info_slide   info_slide[]
+  invoices     invoice[]
 }
 
 model event_contestant {
@@ -398,6 +401,9 @@ model ticket {
   ticket_type_id String?
 
   order_session_id String
+
+  invoice    invoice? @relation(fields: [invoice_id], references: [id])
+  invoice_id String?
 }
 
 // someone who ordered one or more tickets for self and maybe others
@@ -505,4 +511,25 @@ model link_tree_visit {
   ip_address String?
   user_agent String?
   referrer   String?
+}
+
+model invoice {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  order_session_id     String
+  total_amount         Float
+  amount_discount      Float
+  currency             Currency
+  tax_percentage       Float
+  tax_calculation_type TaxCalculationType
+  total_tax_amount     Float? // if tax is added at checkout this will be set
+
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
+  event           event        @relation(fields: [event_id], references: [id])
+  event_id        String
+
+  tickets ticket[]
 }
