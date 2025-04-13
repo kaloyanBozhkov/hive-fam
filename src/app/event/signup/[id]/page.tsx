@@ -3,9 +3,18 @@ import { db } from "@/server/db";
 import { redirect } from "next/navigation";
 import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import Link from "next/link";
-import { RapBattleParticipantSignUp } from "@/app/_components/organisms/forms/specific/RapBattleParticipantSignUp";
+import { EventContestantSignUp } from "@/app/_components/organisms/forms/specific/EventContestantSignUp";
+import { event as Eventt, MediaType, venue as Venuee } from "@prisma/client";
 
-const getEvent = async (id: string) => {
+type Event = Eventt & {
+  venue: Venuee;
+  poster_media: {
+    bucket_path: string;
+    type: MediaType;
+  }[];
+};
+
+const getEvent = async (id: string): Promise<Event> => {
   const { poster_media, ...event } = await db.event.findFirstOrThrow({
     where: {
       id,
@@ -35,7 +44,7 @@ const getEvent = async (id: string) => {
       type: pm.media.media_type,
     })),
     ...event,
-  };
+  } as Event;
 };
 
 const addParticipant = async (data: {
@@ -63,11 +72,11 @@ const addParticipant = async (data: {
 export default async function SignupEventPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = params;
 
-  let event: Awaited<ReturnType<typeof getEvent>>;
+  let event: Event;
 
   try {
     event = await getEvent(id);
@@ -82,7 +91,7 @@ export default async function SignupEventPage({
   return (
     <>
       <Stack className="mx-auto min-h-[400px] w-full gap-4">
-        <RapBattleParticipantSignUp
+        <EventContestantSignUp
           event={event}
           onSignUp={async (data) => {
             "use server";
