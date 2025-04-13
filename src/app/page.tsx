@@ -45,6 +45,7 @@ const getEvents = async (orgId: string) => {
     where: {
       is_published: true,
       organization_id: orgId,
+      deleted_at: null,
     },
   });
 

@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { FileUploadField } from "./fields/FileUploadField";
@@ -37,28 +37,38 @@ import { PreviewLastSavedQRCode } from "../../molecules/PreviewLastSavedQRCode";
 import { TaxCalculationType } from "@prisma/client";
 import { TaxCalculationTypeToLabel } from "@/utils/pricing";
 
-const organization = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, "Name is required"),
-  display_name: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
-  brand_logo_data_url: z.string().optional().nullable(),
-  favicon_data_url: z.string().optional().nullable(),
-  bg_image: z.string().optional().nullable(),
-  bg_color: z.string().optional().nullable(),
-  bg_opacity: z.number().min(0).max(1).optional(),
-  bg_size: z.string().optional(),
-  large_banners_desktop: z.boolean().optional(),
-  qr_brand_text: z.string().nullable(),
-  qr_dark_color: z.string().nullable(),
-  qr_bright_color: z.string().nullable(),
-  tax_percentage: z.number().min(0).max(100),
-  tax_calculation_type: z
-    .nativeEnum(TaxCalculationType)
-    .default(TaxCalculationType.TAX_ADDED_TO_PRICE_ON_CHECKOUT),
-  default_language: z.string().default("en"),
-  with_google_translations: z.boolean().default(true),
-});
+const organization = z
+  .object({
+    id: z.string().uuid(),
+    name: z.string().min(1, "Name is required"),
+    display_name: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    brand_logo_data_url: z.string().optional().nullable(),
+    favicon_data_url: z.string().optional().nullable(),
+    bg_image: z.string().optional().nullable(),
+    bg_color: z.string().optional().nullable(),
+    bg_opacity: z.number().min(0).max(1).optional(),
+    bg_size: z.string().optional(),
+    large_banners_desktop: z.boolean().optional(),
+    qr_brand_text: z.string().nullable(),
+    qr_dark_color: z.string().nullable(),
+    qr_bright_color: z.string().nullable(),
+    tax_percentage: z.number().min(0).max(100),
+    tax_calculation_type: z
+      .nativeEnum(TaxCalculationType)
+      .default(TaxCalculationType.TAX_ADDED_TO_PRICE_ON_CHECKOUT),
+    default_language: z.string().default("en"),
+    with_google_translations: z.boolean().default(true),
+  })
+  .transform((data) => {
+    if (data.tax_calculation_type === TaxCalculationType.TAX_HIDDEN_IN_PRICE) {
+      return {
+        ...data,
+        tax_percentage: 0,
+      };
+    }
+    return data;
+  });
 
 const EditOrganizationForm = ({
   className,
@@ -122,6 +132,8 @@ const EditOrganizationForm = ({
       reader.readAsDataURL(file);
     }
   };
+
+  const formTaxCalcType = form.getValues("tax_calculation_type");
 
   return (
     <Form {...form}>
@@ -525,35 +537,6 @@ const EditOrganizationForm = ({
           />
           <FormField
             control={form.control}
-            name="tax_percentage"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Tax percentage</FormLabel>
-                  <FormDescription>
-                    How much tax should be added to the tickets sold?
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Input
-                    className="max-w-[200px]"
-                    type="number"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ""
-                          ? ""
-                          : parseInt(e.target.value, 10),
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="tax_calculation_type"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -646,6 +629,37 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
+          {formTaxCalcType !== TaxCalculationType.TAX_HIDDEN_IN_PRICE && (
+            <FormField
+              control={form.control}
+              name="tax_percentage"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Tax percentage</FormLabel>
+                    <FormDescription>
+                      How much tax should be added to the tickets sold?
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Input
+                      className="max-w-[200px]"
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? ""
+                            : parseInt(e.target.value, 10),
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           {/* default_language */}
           <FormField
             control={form.control}

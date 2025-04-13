@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
   Form,
-  // FormDescription,
+  FormDescription,
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
@@ -19,20 +19,30 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FileUploadField } from "./fields/FileUploadField";
-// import { SelectEvent } from "../staff/admin/SelectEvent.organism";
+import { SelectEvent } from "../staff/admin/SelectEvent.organism";
 import TextEditor from "../../molecules/lexical/TextEditor";
 
-const infoBanner = z.object({
-  id: z.string(),
-  type: z.literal("INFO"),
-  subtitle: z.string().optional().nullable(),
-  title: z.string().min(1, "Title is required"),
-  content: z.string().optional().nullable(),
-  background_data_url: z.string().min(1, "Background image is required"),
-  background_video_url: z.string().url().optional().nullable(),
-  order: z.number().int().min(0),
-  action_participants_for_event_id: z.string().optional(),
-});
+const infoBanner = z
+  .object({
+    id: z.string(),
+    type: z.literal("INFO"),
+    subtitle: z.string().optional().nullable(),
+    title: z.string().min(1, "Title is required"),
+    content: z.string().optional().nullable(),
+    background_data_url: z.string().min(1, "Background image is required"),
+    background_video_url: z.string().url().optional().nullable(),
+    order: z.number().int().min(0),
+    action_participants_for_event_id: z.string().optional().nullable(),
+  })
+  .transform((data) => {
+    if (data.action_participants_for_event_id === "disabled") {
+      return {
+        ...data,
+        action_participants_for_event_id: null,
+      };
+    }
+    return data;
+  });
 
 const EditInfoBannerForm = ({
   className,
@@ -188,7 +198,7 @@ const EditInfoBannerForm = ({
             organizationId={organizationId}
             accept="video/mp4"
           />
-          {/* <FormField
+          <FormField
             control={form.control}
             name="action_participants_for_event_id"
             render={({ field }) => (
@@ -205,12 +215,18 @@ const EditInfoBannerForm = ({
                 <FormControl>
                   <SelectEvent
                     onChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value ?? "disabled"}
+                    extraItemsPrepend={[
+                      {
+                        label: "Disable this feature",
+                        value: "disabled",
+                      },
+                    ]}
                   />
                 </FormControl>
               </FormItem>
             )}
-          /> */}
+          />
           <input type="hidden" {...form.register("id")} />
           <input type="hidden" {...form.register("type")} />
           <Button

@@ -44,7 +44,15 @@ export type Event = {
   }[];
 };
 
-export const EventList = ({ data }: { data: Event[] }) => {
+export const EventList = ({
+  data,
+  toggleEventPublished,
+  refresh,
+}: {
+  data: Event[];
+  toggleEventPublished: (id: string, published: boolean) => Promise<void>;
+  refresh: () => Promise<void>;
+}) => {
   const [isPending, startTransition] = useTransition();
   const [pendingId, setPendingId] = useState<string | null>(null);
 
@@ -53,6 +61,7 @@ export const EventList = ({ data }: { data: Event[] }) => {
     startTransition(async () => {
       await deleteEvent({ id });
       setPendingId(null);
+      refresh();
     });
   }, []);
 
@@ -102,7 +111,14 @@ export const EventList = ({ data }: { data: Event[] }) => {
       header: "Published",
       cell: ({ row }) => {
         const isPiblished = row.original.is_published;
-        return <Switch checked={isPiblished} />;
+        return (
+          <Switch
+            checked={isPiblished}
+            onCheckedChange={(checked) => {
+              toggleEventPublished(row.original.id, checked).then(refresh);
+            }}
+          />
+        );
       },
     },
     {
@@ -138,6 +154,14 @@ export const EventList = ({ data }: { data: Event[] }) => {
               <DropdownMenuItem asChild>
                 <Link href={`/staff/manage/event/edit-event/${event.id}`}>
                   Edit Event
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/staff/manage/event/event-participants/${event.id}`}
+                >
+                  View Participants
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

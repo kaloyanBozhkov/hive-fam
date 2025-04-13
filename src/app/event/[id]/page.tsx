@@ -13,6 +13,7 @@ const getEvent = async (id: string) => {
     await db.event.findFirstOrThrow({
       where: {
         id,
+        deleted_at: null,
       },
       include: {
         organization: {

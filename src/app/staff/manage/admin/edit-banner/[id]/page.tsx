@@ -73,7 +73,7 @@ async function editBanner(bannerData: BannerData) {
             background_data_url: bannerData.background_data_url,
             background_video_url: bannerData.background_video_url,
             action_participants_for_event_id:
-              bannerData.action_participants_for_event_id,
+              bannerData.action_participants_for_event_id ?? null,
           },
         });
       } else if (isAlbumBanner(bannerData) && banner.album_slide) {
@@ -139,6 +139,8 @@ const getInitialData = async (id: string) => {
       content: banner.info_slide.content,
       background_data_url: banner.info_slide.background_data_url,
       background_video_url: banner.info_slide.background_video_url,
+      action_participants_for_event_id:
+        banner.info_slide.action_participants_for_event_id,
     };
   }
 

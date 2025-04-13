@@ -1,5 +1,4 @@
 "use server";
-import { revalidatePath } from "next/cache";
 import { db } from "@/server/db";
 import { isManagerOrAbove } from "../auth/roleGates";
 
@@ -7,14 +6,16 @@ export async function deleteEvent(data: { id: string }) {
   try {
     const user = await isManagerOrAbove();
 
-    await db.event.delete({
+    await db.event.update({
       where: {
         organization_id: user.organization_id,
         id: data.id,
       },
+      data: {
+        deleted_at: new Date(),
+        is_published: false,
+      },
     });
-
-    revalidatePath("/staff/manage");
 
     return { success: true };
   } catch (error) {

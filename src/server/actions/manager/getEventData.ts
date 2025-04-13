@@ -9,6 +9,7 @@ export const getEventData = async () => {
   const d = await db.event.findMany({
     where: {
       organization_id: user.organization_id,
+      deleted_at: null,
     },
     include: {
       venue: true,
