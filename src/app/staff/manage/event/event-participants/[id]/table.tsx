@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
+import { JsonValue } from "@prisma/client/runtime/library";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
@@ -25,7 +26,7 @@ export type EventParticipant = {
   country: string;
   approved: boolean;
   created_at: Date;
-  custom_payload: string;
+  custom_payload: JsonValue | null;
 };
 
 export const EventParticipantsTable = ({
