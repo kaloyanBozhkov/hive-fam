@@ -42,7 +42,7 @@ export default function CarrierLayout({
         <ScriptsForTranslation />
       </head>
       <body className="relative">
-        <LanguageSwitcher />
+        <LanguageSwitcher defaultLanguage={org.default_language} />
         <MainPageLoader>
           <TRPCReactProvider>
             <AOS>
