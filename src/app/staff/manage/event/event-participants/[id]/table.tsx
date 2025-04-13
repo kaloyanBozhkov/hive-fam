@@ -46,18 +46,18 @@ export const EventParticipantsTable = ({
   const handleApprove = useCallback((id: string, approved: boolean) => {
     setPendingIds([...pendingIds, id]);
     startTransition(async () => {
-      await approveParticipant(id, approved);
+      void (await approveParticipant(id, approved));
       setPendingIds(pendingIds.filter((id) => id !== id));
-      onRefresh();
+      void (await onRefresh());
     });
   }, []);
 
   const handleDelete = useCallback((id: string) => {
     setDeletingIds([...deletingIds, id]);
     startTransition(async () => {
-      await deleteParticipant(id);
+      void (await deleteParticipant(id));
       setDeletingIds(deletingIds.filter((id) => id !== id));
-      onRefresh();
+      void (await onRefresh());
     });
   }, []);
 

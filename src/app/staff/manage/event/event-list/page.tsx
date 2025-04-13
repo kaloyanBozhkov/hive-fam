@@ -35,7 +35,7 @@ export default async function EventListPage() {
 
 const toggleEventPublished = async (id: string, published: boolean) => {
   "use server";
-  isManagerOrAbove();
+  await isManagerOrAbove();
 
   await db.event.update({
     where: { id },

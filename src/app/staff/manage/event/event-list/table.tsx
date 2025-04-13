@@ -59,9 +59,9 @@ export const EventList = ({
   const handleDelete = useCallback((id: string) => {
     setPendingId(id);
     startTransition(async () => {
-      await deleteEvent({ id });
+      void (await deleteEvent({ id }));
       setPendingId(null);
-      refresh();
+      void (await refresh());
     });
   }, []);
 
@@ -115,7 +115,7 @@ export const EventList = ({
           <Switch
             checked={isPiblished}
             onCheckedChange={(checked) => {
-              toggleEventPublished(row.original.id, checked).then(refresh);
+              void toggleEventPublished(row.original.id, checked).then(refresh);
             }}
           />
         );
