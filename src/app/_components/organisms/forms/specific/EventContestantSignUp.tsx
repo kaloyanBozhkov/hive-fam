@@ -39,7 +39,7 @@ type EventContestantSignUpProps = {
 export const EventContestantSignUp = ({
   event,
   onSignUp,
-  successMessage = "You've successfully signed up!",
+  successMessage = "",
 }: EventContestantSignUpProps) => {
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false);
   const [isErrorSignup, setIsErrorSignup] = useState<boolean>(false);
@@ -83,7 +83,9 @@ export const EventContestantSignUp = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="pt-0">Well done!</CardTitle>
+          <CardTitle className="pt-0">
+            You submitted your details sucessfully!
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Stack className="gap-y-4">
@@ -100,6 +102,7 @@ export const EventContestantSignUp = ({
       <div className="flex flex-row justify-start gap-4 py-6 align-top md:p-8 -sm:px-2">
         <Stack className="w-[500px] gap-y-4 -md:hidden">
           <EventInfoCard
+            className="flex-col items-start"
             eventName={event.title}
             eventDate={event.date}
             eventEndDate={event.end_date}
