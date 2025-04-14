@@ -44,6 +44,7 @@ const LanguageSwitcher = ({ defaultLanguage }: { defaultLanguage: string }) => {
       }
     }
     if (!languageValue) {
+      destroyCookie(null, COOKIE_NAME);
       // Set the cookie to translate from English to defaultLanguage
       setCookie(null, COOKIE_NAME, "/en/" + defaultLanguage);
       languageValue = defaultLanguage;
