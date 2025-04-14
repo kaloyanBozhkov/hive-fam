@@ -25,6 +25,8 @@ type InfoBannerData = {
   background_data_url: string;
   background_video_url?: string | null;
   action_participants_for_event_id?: string | null;
+  secondary_action_button_text?: string | null;
+  action_participants_for_event_button_text: string;
 };
 
 type AlbumBannerData = {
@@ -74,6 +76,10 @@ async function editBanner(bannerData: BannerData) {
             background_video_url: bannerData.background_video_url,
             action_participants_for_event_id:
               bannerData.action_participants_for_event_id ?? null,
+            secondary_action_button_text:
+              bannerData.secondary_action_button_text ?? null,
+            action_participants_for_event_button_text:
+              bannerData.action_participants_for_event_button_text,
           },
         });
       } else if (isAlbumBanner(bannerData) && banner.album_slide) {
@@ -141,6 +147,10 @@ const getInitialData = async (id: string) => {
       background_video_url: banner.info_slide.background_video_url,
       action_participants_for_event_id:
         banner.info_slide.action_participants_for_event_id,
+      action_participants_for_event_button_text:
+        banner.info_slide.action_participants_for_event_button_text,
+      secondary_action_button_text:
+        banner.info_slide.secondary_action_button_text,
     };
   }
 

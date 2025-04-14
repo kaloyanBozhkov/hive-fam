@@ -40,7 +40,7 @@ export const SelectEvent = ({
   }, []);
 
   if (isPending) return <p>Loading..</p>;
-  if (!events.length) return <p>No events found</p>;
+  if (!events?.length) return <p>No events found</p>;
 
   // TODO clear state & initial state
   return (

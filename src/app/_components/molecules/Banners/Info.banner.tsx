@@ -9,6 +9,8 @@ const InfoBanner = ({
   backgroundSrc,
   bgVideoSrc,
   actionParticipantsForEventId,
+  actionParticipantsForEventButtonText,
+  secondaryActionButtonText,
 }: {
   backgroundSrc: string;
   bgVideoSrc?: string;
@@ -16,6 +18,8 @@ const InfoBanner = ({
   subtitle?: string;
   content?: string;
   actionParticipantsForEventId?: string;
+  actionParticipantsForEventButtonText?: string;
+  secondaryActionButtonText?: string;
 }) => {
   return (
     <div className="relative z-0 h-full w-full">
@@ -25,6 +29,10 @@ const InfoBanner = ({
         title={title}
         content={content}
         actionParticipantsForEventId={actionParticipantsForEventId}
+        actionParticipantsForEventButtonText={
+          actionParticipantsForEventButtonText
+        }
+        secondaryActionButtonText={secondaryActionButtonText}
       />
       {/* bg */}
       <div className="absolute inset-0 -z-10">

@@ -21,6 +21,8 @@ export type BannerSlide =
       bgSrc: string;
       bgVideoSrc?: string;
       actionParticipantsForEventId?: string;
+      actionParticipantsForEventButtonText?: string;
+      secondaryActionButtonText?: string;
     }
   | {
       type: "ALBUM";
@@ -30,6 +32,8 @@ export type BannerSlide =
       albumSubtitle: string;
       isSingle: boolean;
       actionParticipantsForEventId?: string;
+      actionParticipantsForEventButtonText?: string;
+      secondaryActionButtonText?: string;
     };
 
 const Banners = ({
@@ -55,9 +59,6 @@ const Banners = ({
                 idx={idx}
                 startAnim={startAnim}
                 active={active}
-                // actionParticipantsForEventId={
-                //   slide.actionParticipantsForEventId
-                // }
               />
             );
           case "INFO":
@@ -71,6 +72,10 @@ const Banners = ({
                 actionParticipantsForEventId={
                   slide.actionParticipantsForEventId
                 }
+                actionParticipantsForEventButtonText={
+                  slide.actionParticipantsForEventButtonText
+                }
+                secondaryActionButtonText={slide.secondaryActionButtonText}
               />
             );
           default:

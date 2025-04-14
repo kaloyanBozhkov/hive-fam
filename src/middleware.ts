@@ -17,8 +17,6 @@ const routeToRole: Record<string, Role[]> = {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const headers = new Headers(request.headers);
-  headers.set("x-pathname", request.nextUrl.pathname);
 
   // Check if the request is for a path under /staff/manage
   if (pathname.startsWith("/staff/manage")) {
@@ -65,7 +63,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // If authenticated and authorized, or not a protected route, continue to the next middleware or to the page
-  return NextResponse.next({ headers });
+  const response = NextResponse.next();
+  response.headers.set("x-pathname", request.nextUrl.pathname);
+  return response;
 }
 
 // Specify the paths to apply the middleware

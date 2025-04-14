@@ -33,12 +33,19 @@ const infoBanner = z
     background_video_url: z.string().url().optional().nullable(),
     order: z.number().int().min(0),
     action_participants_for_event_id: z.string().optional().nullable(),
+    action_participants_for_event_button_text: z
+      .string()
+      .min(1, "Button text is required")
+      .default("Sign Up"),
+    secondary_action_button_text: z.string().optional().nullable(),
   })
   .transform((data) => {
     if (data.action_participants_for_event_id === "disabled") {
       return {
         ...data,
         action_participants_for_event_id: null,
+        action_participants_for_event_button_text: "Sign Up",
+        secondary_action_button_text: null,
       };
     }
     return data;
@@ -62,6 +69,8 @@ const EditInfoBannerForm = ({
   const [backgroundPreview, setBackgroundPreview] = useState<string | null>(
     initialData.background_data_url,
   );
+  const [secondaryActionButtonToggled, setSecondaryActionButtonToggled] =
+    useState(initialData.secondary_action_button_text !== null);
 
   const form = useForm<z.infer<typeof infoBanner>>({
     resolver: zodResolver(infoBanner),
@@ -214,7 +223,10 @@ const EditInfoBannerForm = ({
                 </div>
                 <FormControl>
                   <SelectEvent
-                    onChange={field.onChange}
+                    onChange={(value) => {
+                      setSecondaryActionButtonToggled(value !== "disabled");
+                      field.onChange(value);
+                    }}
                     defaultValue={field.value ?? "disabled"}
                     extraItemsPrepend={[
                       {
@@ -227,6 +239,41 @@ const EditInfoBannerForm = ({
               </FormItem>
             )}
           />
+          {secondaryActionButtonToggled && (
+            <FormField
+              control={form.control}
+              name="action_participants_for_event_button_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Participants Action Button Text</FormLabel>
+                  <FormDescription>
+                    The text to use for the main sign up button
+                  </FormDescription>
+                  <FormControl>
+                    <Input type="text" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
+          {secondaryActionButtonToggled && (
+            <FormField
+              control={form.control}
+              name="secondary_action_button_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Secondary Action Button Text</FormLabel>
+                  <FormDescription>
+                    This will add a secondary action button to the banner that
+                    will link to buying tickets for the selected event.
+                  </FormDescription>
+                  <FormControl>
+                    <Input type="text" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
           <input type="hidden" {...form.register("id")} />
           <input type="hidden" {...form.register("type")} />
           <Button

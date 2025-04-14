@@ -4,6 +4,7 @@ import Stack from "../layouts/Stack.layout";
 import { Button } from "../shadcn/Button.shadcn";
 import RichTextReader from "../molecules/lexical/RichTextReader";
 import Link from "next/link";
+import Group from "../layouts/Group.layout";
 
 const Banner = ({
   title,
@@ -12,6 +13,8 @@ const Banner = ({
   content,
   className = "",
   actionParticipantsForEventId,
+  actionParticipantsForEventButtonText,
+  secondaryActionButtonText,
 }: {
   title: ReactNode;
   body?: ReactNode;
@@ -19,6 +22,8 @@ const Banner = ({
   subtitle: ReactNode;
   className?: string;
   actionParticipantsForEventId?: string;
+  actionParticipantsForEventButtonText?: string;
+  secondaryActionButtonText?: string;
 }) => {
   return (
     <div
@@ -48,15 +53,30 @@ const Banner = ({
             />
           )}
           {actionParticipantsForEventId && (
-            <Button
-              variant="secondary"
-              className="px-10 font-bold sm:w-fit"
-              asChild
-            >
-              <Link href={`/event/signup/${actionParticipantsForEventId}`}>
-                I want to participate
-              </Link>
-            </Button>
+            <Group className="gap-4 -sm:flex-col">
+              {actionParticipantsForEventId && (
+                <Button
+                  variant="secondary"
+                  className="px-10 font-bold sm:w-fit"
+                  asChild
+                >
+                  <Link href={`/event/signup/${actionParticipantsForEventId}`}>
+                    {actionParticipantsForEventButtonText}
+                  </Link>
+                </Button>
+              )}
+              {secondaryActionButtonText && (
+                <Button
+                  variant="secondary"
+                  className="px-10 font-bold sm:w-fit"
+                  asChild
+                >
+                  <Link href={`/event/${actionParticipantsForEventId}`}>
+                    {secondaryActionButtonText}
+                  </Link>
+                </Button>
+              )}
+            </Group>
           )}
         </Stack>
       </div>

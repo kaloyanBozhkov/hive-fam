@@ -38,9 +38,12 @@ model info_slide {
   background_data_url  String
   background_video_url String?
 
-  action_participants_for_event    event?         @relation(fields: [action_participants_for_event_id], references: [id])
-  action_participants_for_event_id String?
-  banner_slide                     banner_slide[]
+  action_participants_for_event             event?  @relation(fields: [action_participants_for_event_id], references: [id])
+  action_participants_for_event_id          String?
+  action_participants_for_event_button_text String  @default("Sign Up")
+  secondary_action_button_text              String? // points to event tickets
+
+  banner_slide banner_slide[]
 }
 
 model banner_slide {

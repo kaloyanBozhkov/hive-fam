@@ -19,6 +19,8 @@ const getSlies = async () => {
           background_data_url: true,
           background_video_url: true,
           action_participants_for_event_id: true,
+          action_participants_for_event_button_text: true,
+          secondary_action_button_text: true,
         },
       },
       album_slide: {
@@ -50,6 +52,9 @@ const getSlies = async () => {
       coverSrc: album_slide?.cover_data_url,
       actionParticipantsForEventId:
         info_slide?.action_participants_for_event_id,
+      actionParticipantsForEventButtonText:
+        info_slide?.action_participants_for_event_button_text,
+      secondaryActionButtonText: info_slide?.secondary_action_button_text,
     })) as BannerSlide[];
 };
 
