@@ -161,7 +161,10 @@ export const EventContestantSignUp = ({
         </Stack>
         <Stack>
           <CardHeader>
-            <CardTitle>Let&apos;s get you signed up!</CardTitle>
+            <CardTitle>
+              Fill in these fields and we&apos;ll get in touch with you for next
+              steps
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Stack className="gap-y-4">
