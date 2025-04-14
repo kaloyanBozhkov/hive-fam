@@ -22,7 +22,6 @@ async function getLinkTree(id: string) {
 
 async function editLinkTree(linkTreeData: z.infer<typeof linkTreeSchema>) {
   "use server";
-  console.log("linkTreeData", linkTreeData);
   try {
     const user = await isAdminOrAbove();
     const linkTree = await db.link_tree.update({

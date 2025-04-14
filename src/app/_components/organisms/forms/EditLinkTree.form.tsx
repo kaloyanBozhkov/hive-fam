@@ -34,6 +34,7 @@ export const linkTreeSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Name is required"),
   url: z.string().url("Invalid URL"),
+  order: z.number().min(0, "Order is required"),
   button_color: z.nativeEnum(ButtonColor).default(ButtonColor.SECONDARY),
   button_icon: z
     .nativeEnum(FontAwesomeIconEnum)
@@ -60,12 +61,10 @@ const EditLinkTreeForm = ({
 
   const handleSubmit = (data: z.infer<typeof linkTreeSchema>) => {
     startTransition(async () => {
-      const result = await onEdit(data);
-      if (result.success) {
-        router.push("/staff/manage/admin/link-tree-list");
-      } else {
-        form.setError("name", { message: result.error });
-      }
+      const result = await onEdit(data).catch((error) =>
+        form.setError("name", { message: error }),
+      );
+      router.push("/staff/manage/admin/link-tree-list");
     });
   };
 
@@ -144,6 +143,29 @@ const EditLinkTreeForm = ({
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="order"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Order</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? ""
+                          : parseInt(e.target.value, 10),
+                      )
+                    }
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

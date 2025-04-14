@@ -33,12 +33,16 @@ const Banner = ({
           <p className="font-regular p-text text-white">{subtitle}</p>
         )}
         <Stack className="col-span-2 gap-[24px]">
-          <h1 className="h1-0 font-bold capitalize text-white">{title}</h1>
-          {body && <p className="p-text font-light text-white">{body}</p>}
+          <h1 className="h1-0 notranslate font-bold capitalize text-white">
+            {title}
+          </h1>
+          {body && (
+            <p className="p-text notranslate font-light text-white">{body}</p>
+          )}
           {content && (
             <RichTextReader
               content={content}
-              className="p-text font-light text-white"
+              className="p-text notranslate font-light text-white"
             />
           )}
           {actionParticipantsForEventId && (
@@ -48,7 +52,7 @@ const Banner = ({
               asChild
             >
               <Link href={`/event/signup/${actionParticipantsForEventId}`}>
-                Sign Up
+                I want to participate
               </Link>
             </Button>
           )}

@@ -15,6 +15,7 @@ import { deleteLinkTree } from "@/server/actions/deleteLinkTree";
 import type { ButtonColor, FontAwesomeIcon } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { useTransition, useState, useCallback } from "react";
 
@@ -24,6 +25,7 @@ export type LinkTreeData = {
   url: string;
   button_color: ButtonColor;
   button_icon: FontAwesomeIcon;
+  order: number;
   visitsCount: number; // Total visits count
   visitsLast24h: number; // Visits in the last 24 hours
   visitsLast72h: number; // Visits in the last 72 hours
@@ -40,6 +42,7 @@ export const LinkTreeList = ({ data }: { data: LinkTreeData[] }) => {
     startTransition(async () => {
       await deleteLinkTree({ id });
       setPendingId(null);
+      revalidatePath("/staff/manage/admin/link-tree-list");
     });
   }, []);
 
@@ -58,6 +61,11 @@ export const LinkTreeList = ({ data }: { data: LinkTreeData[] }) => {
           </p>
         </Link>
       ),
+    },
+    {
+      accessorKey: "order",
+      header: "Order",
+      cell: ({ row }) => <p>{row.original.order}</p>,
     },
     {
       accessorKey: "visitsCount",

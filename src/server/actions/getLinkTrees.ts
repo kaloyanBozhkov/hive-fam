@@ -16,6 +16,9 @@ export const getLinkTrees = async (
         },
       },
     },
+    orderBy: {
+      order: "asc",
+    },
   });
 
   // Process the link trees to calculate visit counts

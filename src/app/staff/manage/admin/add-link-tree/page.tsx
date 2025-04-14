@@ -11,7 +11,11 @@ const errorMessages: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
-async function addLinkTree(linkTreeData: { name: string; url: string }) {
+async function addLinkTree(linkTreeData: {
+  name: string;
+  url: string;
+  order: number;
+}) {
   "use server";
 
   try {

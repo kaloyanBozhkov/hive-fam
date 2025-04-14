@@ -31,6 +31,7 @@ import { FontAwesomeIconMap } from "@/server/other/linkIcons";
 const linkTreeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   url: z.string().url("Invalid URL"),
+  order: z.number().min(0, "Order is required"),
   button_color: z.nativeEnum(ButtonColor).default(ButtonColor.SECONDARY),
   button_icon: z
     .nativeEnum(FontAwesomeIconEnum)
@@ -50,6 +51,7 @@ const AddLinkTreeForm = ({
     defaultValues: {
       name: "",
       url: "",
+      order: 0,
     },
   });
   const [isPending, startTransition] = useTransition();
@@ -141,6 +143,29 @@ const AddLinkTreeForm = ({
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="order"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Order</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? ""
+                          : parseInt(e.target.value, 10),
+                      )
+                    }
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

@@ -44,7 +44,6 @@ export const signIn = async ({
     path: "/",
   });
 
-  console.log("set!");
   redirect("/staff/manage");
 };
 

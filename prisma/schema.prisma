@@ -489,8 +489,9 @@ model link_tree {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  url  String
-  name String @unique
+  url   String
+  name  String @unique
+  order Int    @default(0)
 
   button_color ButtonColor     @default(SECONDARY)
   button_icon  FontAwesomeIcon @default(LINK)
