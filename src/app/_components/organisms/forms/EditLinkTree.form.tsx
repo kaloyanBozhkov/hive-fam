@@ -61,7 +61,7 @@ const EditLinkTreeForm = ({
 
   const handleSubmit = (data: z.infer<typeof linkTreeSchema>) => {
     startTransition(async () => {
-      const result = await onEdit(data).catch((error) =>
+      await onEdit(data).catch((error) =>
         form.setError("name", { message: error }),
       );
       router.push("/staff/manage/admin/link-tree-list");
