@@ -188,23 +188,23 @@ export default async function handler(
           event.organization_id!,
         )),
 
-        ...(orgStripeAccount
-          ? {
-              payment_intent_data: {
-                on_behalf_of: orgStripeAccount,
-              },
-            }
-          : {}),
+        // ...(orgStripeAccount
+        //   ? {
+        //       payment_intent_data: {
+        //         on_behalf_of: orgStripeAccount,
+        //       },
+        //     }
+        //   : {}),
       };
 
       const checkoutSession: Stripe.Checkout.Session =
         await stripeCli.checkout.sessions.create(
           params,
-          orgStripeAccount
-            ? {
-                stripeAccount: orgStripeAccount,
-              }
-            : undefined,
+          // orgStripeAccount
+          //   ? {
+          //       stripeAccount: orgStripeAccount,
+          //     }
+          //   : undefined,
         );
 
       console.log("checkoutSession", checkoutSession);
