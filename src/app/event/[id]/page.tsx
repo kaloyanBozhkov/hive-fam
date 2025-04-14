@@ -25,7 +25,7 @@ const getEvent = async (id: string) => {
         venue: true,
         ticket_types: {
           orderBy: {
-            created_at: "asc",
+            price: "asc",
           },
         },
         sold_tickets: {

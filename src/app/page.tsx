@@ -19,7 +19,7 @@ const getEvents = async (orgId: string) => {
       },
       ticket_types: {
         orderBy: {
-          created_at: "asc",
+          price: "asc",
         },
       },
       sold_tickets: {
