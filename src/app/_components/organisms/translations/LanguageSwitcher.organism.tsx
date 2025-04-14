@@ -2,7 +2,7 @@
 // @ts-nocheck
 "use client";
 import { useEffect, useState } from "react";
-import { parseCookies, setCookie } from "nookies";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -61,6 +61,7 @@ const LanguageSwitcher = ({ defaultLanguage }: { defaultLanguage: string }) => {
   }
 
   const switchLanguage = (lang: string) => () => {
+    destroyCookie(null, COOKIE_NAME);
     setCookie(null, COOKIE_NAME, "/auto/" + lang);
     window.location.reload();
   };
