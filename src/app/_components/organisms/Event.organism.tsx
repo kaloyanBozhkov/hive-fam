@@ -60,7 +60,7 @@ const EventCard = ({
         </div>
         <div className="!mt-0">
           <Link href={`/event/${event.id}`}>
-            <CardTitle className="break-words hover:opacity-75">
+            <CardTitle className="notranslate break-words hover:opacity-75">
               {event.title}
             </CardTitle>
           </Link>
@@ -68,7 +68,7 @@ const EventCard = ({
         <CardDescription asChild>
           <div>
             <RichTextReader
-              className="text-[14px] sm:text-[16px]"
+              className="notranslate text-[14px] sm:text-[16px]"
               content={event.description ?? ""}
             />
           </div>

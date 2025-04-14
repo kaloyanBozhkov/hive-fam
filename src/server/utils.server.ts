@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs";
+import { headers } from "next/headers";
 
 export const saveFileFromUrl = async (url: string, path: string) => {
   try {
@@ -48,4 +49,11 @@ export const getFilesFromUrls = async (urls: Record<FileName, ImgUrl>) => {
   } catch (err) {
     console.error("Failed to fetch & convert files to base64s", err);
   }
+};
+
+export const getPathname = async () => {
+  "use server";
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "";
+  return pathname;
 };

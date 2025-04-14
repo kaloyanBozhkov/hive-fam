@@ -1,6 +1,10 @@
 import Script from "next/script";
+import { getPathname } from "@/server/utils.server";
 
-export const ScriptsForTranslation = () => {
+export const ScriptsForTranslation = async () => {
+  const pathname = await getPathname();
+  const disabled = pathname?.includes("/staff/manage/");
+  if (disabled) return null;
   return (
     <>
       <Script
