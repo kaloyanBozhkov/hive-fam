@@ -24,7 +24,7 @@ export default async function LinksPage() {
   }
 
   return (
-    <Stack className="m-auto min-h-[400px] w-full max-w-[500px] gap-4">
+    <Stack className="mx-auto min-h-[400px] w-full max-w-[500px] gap-4 md:m-auto">
       <Card className="bg-white">
         <CardHeader className="block">
           <Stack className="items-center gap-4">
