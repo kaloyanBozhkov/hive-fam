@@ -25,7 +25,7 @@ const TimeCard = ({
         className,
       )}
     >
-      <p className="font-rex-bold text-[16px] leading-[105%] text-white/90">
+      <p className="notranslate font-rex-bold text-[16px] leading-[105%] text-white/90">
         {format(formattedDate, "HH:mm")}
       </p>
     </Stack>
