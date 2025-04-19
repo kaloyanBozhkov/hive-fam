@@ -13,6 +13,7 @@ import Group from "../_components/layouts/Group.layout";
 import { FontAwesomeIconMap } from "@/server/other/linkIcons";
 import { CopyUrlButton } from "../_components/client/CopyButtons.client";
 import { redirect } from "next/navigation";
+import RichTextReader from "../_components/molecules/lexical/RichTextReader";
 
 export default async function LinksPage() {
   const org = await getOrg();
@@ -32,6 +33,11 @@ export default async function LinksPage() {
               <img src={orgLogoDataUrl} alt="Logo" className="w-[150px]" />
             )}
             <h1 className="text-2xl font-bold">{org.display_name}</h1>
+            {org.link_tree_description && (
+              <Card className="notranslate bg-gray-50 p-5">
+                <RichTextReader content={org.link_tree_description as string} />
+              </Card>
+            )}
           </Stack>
         </CardHeader>
         <CardFooter>

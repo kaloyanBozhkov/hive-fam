@@ -100,6 +100,7 @@ model organization {
   tax_calculation_type     TaxCalculationType @default(TAX_ADDED_TO_PRICE_ON_CHECKOUT)
   default_language         String             @default("en")
   with_google_translations Boolean            @default(true)
+  link_tree_description    String?
 
   // TODO add theme
   theme_colors ThemeColors @default(DARK_GREEN)
@@ -330,15 +331,17 @@ model event {
 
   organization    organization? @relation(fields: [organization_id], references: [id])
   organization_id String?
+  has_chat        Boolean       @default(false)
 
   price_currency Currency @default(EUR)
 
-  poster_media event_media[]
-  sold_tickets ticket[]
-  ticket_types event_ticket_type[]
-  contestants  event_contestant[]
-  info_slide   info_slide[]
-  invoices     invoice[]
+  poster_media  event_media[]
+  sold_tickets  ticket[]
+  ticket_types  event_ticket_type[]
+  contestants   event_contestant[]
+  info_slide    info_slide[]
+  invoices      invoice[]
+  chat_messages chat_messages[]
 }
 
 model event_contestant {
@@ -491,10 +494,9 @@ model link_tree {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  url   String
-  name  String @unique
-  order Int    @default(0)
+  url        String
+  name       String   @unique
+  order      Int      @default(0)
 
   button_color ButtonColor     @default(SECONDARY)
   button_icon  FontAwesomeIcon @default(LINK)
@@ -537,4 +539,17 @@ model invoice {
   event_id        String
 
   tickets ticket[]
+}
+
+model chat_messages {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  content     String
+  is_approved Boolean @default(false)
+  is_deleted  Boolean @default(false)
+
+  event    event  @relation(fields: [event_id], references: [id])
+  event_id String
 }
