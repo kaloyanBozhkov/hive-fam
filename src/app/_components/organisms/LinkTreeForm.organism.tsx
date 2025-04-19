@@ -21,7 +21,7 @@ const linkTreeSchema = z.object({
 });
 
 type LinkTreeFormProps = {
-  initialDescription: string;
+  initialDescription?: string | null;
   onSubmit: (formData: z.infer<typeof linkTreeSchema>) => Promise<{
     success: boolean;
     error?: string;
