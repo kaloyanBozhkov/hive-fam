@@ -75,7 +75,7 @@ const LinkTreePage = async () => {
         </Group>
       </Group>
       <LinkTreeForm
-        initialDescription={(org?.link_tree_description ?? "") as string}
+        initialDescription={org?.link_tree_description}
         onSubmit={updateLinkTreeDescription}
       />
       <LinkTreeList data={dataWithVisits} />

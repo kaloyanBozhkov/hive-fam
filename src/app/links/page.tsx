@@ -35,7 +35,7 @@ export default async function LinksPage() {
             <h1 className="text-2xl font-bold">{org.display_name}</h1>
             {org.link_tree_description && (
               <Card className="notranslate bg-gray-50 p-5">
-                <RichTextReader content={org.link_tree_description as string} />
+                <RichTextReader content={org.link_tree_description} />
               </Card>
             )}
           </Stack>
