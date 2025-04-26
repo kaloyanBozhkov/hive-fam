@@ -53,7 +53,7 @@ export default async function OrderPage({
               <br />
               We&apos;ve emailed the {ticketWord} to <b> {ownerEmail} </b>
             </p>
-            <Group className="max-w-[350px] flex-col gap-4 sm:flex-row">
+            <Group className="flex-col gap-4 sm:flex-row md:max-w-[350px]">
               <DownloadButton
                 selector="#tickets"
                 label={`Download ${ticketWord}`}

@@ -23,51 +23,49 @@ import assert from "assert";
 
 const getTicket = async (ticketId: string) => {
   try {
-    const { event, owner, ticket_type, ...ticket } =
-      await db.ticket.findUniqueOrThrow({
-        where: {
-          id: ticketId,
+    const response = await db.ticket.findUniqueOrThrow({
+      where: {
+        id: ticketId,
+      },
+      include: {
+        owner: {
+          select: {
+            email: true,
+            name: true,
+            surname: true,
+          },
         },
-        include: {
-          owner: {
-            select: {
-              email: true,
-              name: true,
-              surname: true,
-            },
+        ticket_type: {
+          select: {
+            label: true,
           },
-          ticket_type: {
-            select: {
-              label: true,
-            },
-          },
-          event: {
-            select: {
-              id: true,
-              title: true,
-              date: true,
-              venue: {
-                select: {
-                  name: true,
-                  street_addr: true,
-                  city: true,
-                  country: true,
-                  maps_url: true,
-                },
+        },
+        event: {
+          select: {
+            id: true,
+            title: true,
+            date: true,
+            venue: {
+              select: {
+                name: true,
+                street_addr: true,
+                city: true,
+                country: true,
+                maps_url: true,
               },
             },
-            include: {
-              organization: {
-                select: {
-                  tax_calculation_type: true,
-                  tax_percentage: true,
-                },
+            organization: {
+              select: {
+                tax_calculation_type: true,
+                tax_percentage: true,
               },
             },
           },
         },
-      });
+      },
+    });
 
+    const { event, owner, ticket_type, ...ticket } = response;
     const sessionId = ticket.order_session_id;
     const { tickets } = await getOrderTickets(sessionId);
     const ticketNumber = tickets.find((t) => t.id === ticket.id)?.ticketNumber;

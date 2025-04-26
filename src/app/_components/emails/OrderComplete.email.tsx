@@ -61,7 +61,8 @@ export default function OrderCompletedEmail({
             <Link href={platformUrl}>
               <Img
                 src={brandLogoUrl}
-                alt="Brand Logo"
+                // below shows as first word in notification if alt/img is first in html of email
+                alt={organisationName}
                 height={100}
                 style={{
                   maxWidth: "100px",
