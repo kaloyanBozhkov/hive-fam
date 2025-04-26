@@ -137,13 +137,13 @@ export default async function TicketOrderPage({
                 </Group>
               </Stack>
               <Stack className="gap-2">
-                <Button className="w-full sm:w-[150px]" asChild>
+                <Button className="w-full" asChild>
                   <Link href={`/event/${event.venue.maps_url}as=view`}>
                     View Location
                   </Link>
                 </Button>
                 <Button
-                  className="w-full shadow-md sm:w-[150px]"
+                  className="w-full shadow-md"
                   variant="secondary"
                   asChild
                 >
