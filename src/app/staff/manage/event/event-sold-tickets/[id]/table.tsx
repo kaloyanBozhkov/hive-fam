@@ -11,35 +11,48 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
-import { JsonValue } from "@prisma/client/runtime/library";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { Copy, MoreHorizontal } from "lucide-react";
 import { useTransition, useState, useCallback } from "react";
+import type { Currency } from "@prisma/client";
 
-export type EventParticipant = {
+export type EventTicket = {
   id: string;
-  name: string;
-  surname: string;
-  email: string;
-  phone: string;
-  country: string;
-  approved: boolean;
+  price: number;
+  currency: Currency;
+  scanned: boolean;
+  scanned_at: Date | null;
   created_at: Date;
+  is_free: boolean;
+  count: number;
+  order_session_id: string;
 
-  // TODO show in modal or smth, table - readable
-  custom_payload: JsonValue | null;
+  owner: {
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
+    phone: string | null;
+  };
+
+  ticket_type: {
+    id: string;
+    label: string;
+    description: string | null;
+    price: number;
+  } | null;
 };
 
-export const EventParticipantsTable = ({
+export const EventSoldTicketsTable = ({
   data,
-  deleteParticipant,
-  approveParticipant,
+  deleteTicket,
+  updateTicketScanStatus,
   onRefresh,
 }: {
-  data: EventParticipant[];
-  deleteParticipant: (id: string) => Promise<void>;
-  approveParticipant: (id: string, approved: boolean) => Promise<void>;
+  data: EventTicket[];
+  deleteTicket: (id: string) => Promise<void>;
+  updateTicketScanStatus: (id: string, scanned: boolean) => Promise<void>;
   onRefresh: () => Promise<void>;
 }) => {
   const [, startTransition] = useTransition();
@@ -47,33 +60,33 @@ export const EventParticipantsTable = ({
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
 
-  const handleApprove = useCallback(
-    (id: string, approved: boolean) => {
+  const handleScanStatus = useCallback(
+    (id: string, scanned: boolean) => {
       setPendingIds([...pendingIds, id]);
       startTransition(async () => {
-        void (await approveParticipant(id, approved));
+        await updateTicketScanStatus(id, scanned);
         setPendingIds(pendingIds.filter((pendingId) => pendingId !== id));
-        void (await onRefresh());
+        await onRefresh();
       });
     },
-    [pendingIds, approveParticipant, onRefresh],
+    [pendingIds, updateTicketScanStatus, onRefresh],
   );
 
   const handleDelete = useCallback(
     (id: string) => {
       setDeletingIds([...deletingIds, id]);
       startTransition(async () => {
-        void (await deleteParticipant(id));
+        await deleteTicket(id);
         setDeletingIds(deletingIds.filter((deletingId) => deletingId !== id));
-        void (await onRefresh());
+        await onRefresh();
       });
     },
-    [deletingIds, deleteParticipant, onRefresh],
+    [deletingIds, deleteTicket, onRefresh],
   );
 
   const copyEmailsToClipboard = useCallback(() => {
     // Extract all unique emails from data
-    const emails = [...new Set(data.map((participant) => participant.email))];
+    const emails = [...new Set(data.map((ticket) => ticket.owner.email))];
     const emailString = emails.join(", ");
 
     // Copy to clipboard
@@ -88,54 +101,82 @@ export const EventParticipantsTable = ({
       });
   }, [data]);
 
-  const columns: ColumnDef<EventParticipant>[] = [
+  const columns: ColumnDef<EventTicket>[] = [
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "owner.name",
+      header: "Purchaser",
       cell: ({ row }) => {
-        return <p>{`${row.original.name} ${row.original.surname}`}</p>;
+        return (
+          <p>{`${row.original.owner.name} ${row.original.owner.surname}`}</p>
+        );
       },
     },
     {
-      accessorKey: "email",
+      accessorKey: "owner.email",
       header: "Email",
+      cell: ({ row }) => row.original.owner.email,
     },
     {
-      accessorKey: "phone",
-      header: "Phone",
+      accessorKey: "ticket_type",
+      header: "Ticket Type",
+      cell: ({ row }) => {
+        return row.original.ticket_type ? (
+          <p>{row.original.ticket_type.label}</p>
+        ) : (
+          <p className="text-muted-foreground">
+            {row.original.is_free ? "Free Entry" : "Unknown Type"}
+          </p>
+        );
+      },
     },
     {
-      accessorKey: "country",
-      header: "Country",
-    },
-    {
-      accessorKey: "approved",
-      header: "Approved",
+      accessorKey: "price",
+      header: "Sale Price",
       cell: ({ row }) => {
         return (
-          <Switch
-            checked={row.original.approved}
-            onCheckedChange={(checked) => {
-              void handleApprove(row.original.id, checked);
-            }}
-            disabled={pendingIds.includes(row.original.id)}
-          />
+          <p>
+            {row.original.is_free
+              ? "Free"
+              : `${row.original.price} ${row.original.currency}`}
+          </p>
         );
       },
     },
     {
       accessorKey: "created_at",
-      header: "Registered At",
+      header: "Purchase Date",
       cell: ({ row }) => {
         const date = new Date(row.original.created_at);
         return <p>{format(date, "PPp")}</p>;
       },
     },
     {
+      accessorKey: "scanned",
+      header: "Scanned",
+      cell: ({ row }) => {
+        return (
+          <div className="flex flex-col gap-1">
+            <Switch
+              checked={row.original.scanned}
+              onCheckedChange={(checked) => {
+                handleScanStatus(row.original.id, checked);
+              }}
+              disabled={pendingIds.includes(row.original.id)}
+            />
+            {row.original.scanned_at && (
+              <span className="text-xs text-muted-foreground">
+                {format(new Date(row.original.scanned_at), "PPp")}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const participant = row.original;
+        const ticket = row.original;
 
         return (
           <DropdownMenu>
@@ -150,20 +191,20 @@ export const EventParticipantsTable = ({
               <DropdownMenuItem
                 onClick={() => {
                   const confirm = window.confirm(
-                    `Are you sure you want to delete this participant? "${participant.name} ${participant.surname}"`,
+                    `Are you sure you want to delete this ticket? Purchaser: "${ticket.owner.name} ${ticket.owner.surname}"`,
                   );
                   if (!confirm) return;
-                  void handleDelete(participant.id);
+                  handleDelete(ticket.id);
                 }}
               >
-                {deletingIds.includes(participant.id) ? (
+                {deletingIds.includes(ticket.id) ? (
                   <DotsLoader
                     modifier="secondary"
                     size="sm"
                     className="m-auto"
                   />
                 ) : (
-                  "Delete Participant"
+                  "Delete Ticket"
                 )}
               </DropdownMenuItem>
             </DropdownMenuContent>

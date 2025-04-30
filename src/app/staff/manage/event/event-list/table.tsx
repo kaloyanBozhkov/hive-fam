@@ -159,6 +159,14 @@ export const EventList = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link
+                  href={`/staff/manage/event/event-sold-tickets/${event.id}`}
+                >
+                  View Sold Tickets
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link
                   href={`/staff/manage/event/event-participants/${event.id}`}
                 >
                   View Participants

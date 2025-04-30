@@ -29,6 +29,7 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
+    ABLY_API_KEY: z.string(),
     // NEXT_PUBLIC_AWS_REGION: z.string(),
   },
 
@@ -49,6 +50,7 @@ export const env = createEnv({
     AWS_REGION: process.env.AWS_REGION,
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    ABLY_API_KEY: process.env.ABLY_API_KEY,
     // NEXT_PUBLIC_AWS_REGION: process.env.AWS_REGION,
   },
   /**

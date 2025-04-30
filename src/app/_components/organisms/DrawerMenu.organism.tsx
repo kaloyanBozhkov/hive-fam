@@ -15,13 +15,14 @@ import Stack from "../layouts/Stack.layout";
 import Link from "next/link";
 import { type ReactNode, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faClose, faLink } from "@fortawesome/free-solid-svg-icons";
 import {
   faInstagram,
   faFacebook,
   faTwitter,
   faYoutube,
   faSoundcloud,
+  faTiktok,
 } from "@fortawesome/free-brands-svg-icons";
 import Group from "../layouts/Group.layout";
 import { LinkType, type Role } from "@prisma/client";
@@ -112,4 +113,6 @@ const LINK_TYPE_ICON = {
   [LinkType.TWITTER]: faTwitter,
   [LinkType.YOUTUBE]: faYoutube,
   [LinkType.SOUNDCLOUD]: faSoundcloud,
+  [LinkType.TIKTOK]: faTiktok,
+  [LinkType.OTHER]: faLink,
 } as const;

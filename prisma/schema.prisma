@@ -13,6 +13,8 @@ enum LinkType {
   TWITTER
   YOUTUBE
   SOUNDCLOUD
+  TIKTOK
+  OTHER
 }
 
 enum BannerSlideType {
@@ -546,9 +548,11 @@ model chat_messages {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  content     String
-  is_approved Boolean @default(false)
-  is_deleted  Boolean @default(false)
+  content       String
+  is_approved   Boolean @default(false)
+  is_deleted    Boolean @default(false)
+  sent_by_staff Boolean @default(false)
+  likes         Int     @default(0)
 
   event    event  @relation(fields: [event_id], references: [id])
   event_id String

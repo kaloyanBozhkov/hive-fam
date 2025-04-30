@@ -1,5 +1,15 @@
 import { db } from "@/server/db";
 import { redirect } from "next/navigation";
+import ChatInterface from "@/app/_components/organisms/chat/ChatInterface";
+import { isRoleManagerOrAbove } from "@/server/auth/roleGates";
+import { getUserRole } from "@/server/auth/getJWTUser";
+import Stack from "@/app/_components/layouts/Stack.layout";
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+} from "@/app/_components/shadcn/Card.shadcn";
+import Group from "@/app/_components/layouts/Group.layout";
 
 const getEventWithChatRoom = async (eventId: string) => {
   const event = await db.event.findFirstOrThrow({
@@ -8,7 +18,14 @@ const getEventWithChatRoom = async (eventId: string) => {
       deleted_at: null,
     },
     include: {
-      chat_messages: true,
+      chat_messages: {
+        where: {
+          is_deleted: false,
+        },
+        orderBy: {
+          created_at: "asc",
+        },
+      },
     },
   });
 
@@ -38,11 +55,41 @@ export default async function EventChatPage({
   } catch (err) {
     console.warn(err);
     redirect("/");
-    return;
   }
 
-  if (!isEventActive(event)) {
-    redirect("/");
-    return;
-  }
+  const isActive = isEventActive(event);
+  const canApproveMessages = await new Promise<boolean>((res) => {
+    try {
+      void getUserRole().then((userRole) => {
+        if (userRole) {
+          isRoleManagerOrAbove(userRole);
+          res(true);
+        } else {
+          res(false);
+        }
+      });
+    } catch (err) {
+      res(false);
+    }
+  });
+
+  return (
+    <Stack className="w-full gap-4">
+      <Card className="w-full bg-white">
+        <CardHeader>
+          <Stack className="items-start">
+            {!isActive && (
+              <p className="text-sm text-amber-600">Event not active yet.</p>
+            )}
+            <h1 className="text-xl font-bold">{event.title}</h1>
+          </Stack>
+        </CardHeader>
+      </Card>
+      <ChatInterface
+        eventId={eventId}
+        initialMessages={event.chat_messages}
+        canApproveMessages={canApproveMessages}
+      />
+    </Stack>
+  );
 }

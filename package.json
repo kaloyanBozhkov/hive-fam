@@ -17,6 +17,7 @@
     "stripe:webhook": "stripe listen --forward-to http://localhost:3000/api/stripe/webhook"
   },
   "dependencies": {
+    "@ably/chat": "^0.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -62,6 +63,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/micro-cors": "^0.1.5",
     "@types/qrcode": "^1.5.5",
+    "ably": "^2.7.0",
     "aos": "^2.3.4",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.7.9",
