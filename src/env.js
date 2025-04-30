@@ -19,6 +19,7 @@ export const env = createEnv({
     AWS_REGION: z.string(),
     AWS_BUCKET_NAME: z.string(),
     RESEND_API_KEY: z.string(),
+    ABLY_API_KEY: z.string(),
   },
 
   /**
@@ -29,7 +30,6 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
-    ABLY_API_KEY: z.string(),
     // NEXT_PUBLIC_AWS_REGION: z.string(),
   },
 
