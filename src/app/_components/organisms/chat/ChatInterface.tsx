@@ -5,13 +5,14 @@ import {
   approveMessage,
   deleteMessage,
   sendMessage,
+  upvoteMessage,
   type SentMessage,
 } from "@/server/actions/chat/actions";
 import Ably from "ably";
 import type { chat_messages } from "@prisma/client";
 import { Button } from "../../shadcn/Button.shadcn";
 import Group from "../../layouts/Group.layout";
-import { Crown } from "lucide-react";
+import { Crown, ThumbsUpIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Switch } from "../../shadcn/Switch.shadcn";
 import { Card, CardContent, CardHeader } from "../../shadcn/Card.shadcn";
@@ -113,6 +114,36 @@ export default function ChatInterface({
                   {
                     ...msg,
                     is_deleted: true,
+                  },
+                ];
+              }, [] as chat_messages[]),
+            );
+          }
+        } catch (error) {
+          console.error("Error handling message:", error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error subscribing to messages:", error);
+      });
+
+    // Subscribe to liked tmp msgs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    channel
+      .subscribe("upvoteTmp", (message) => {
+        try {
+          const messageId = message.data as string;
+          if (messageId) {
+            setMessages((prev) =>
+              prev.reduce((acc, msg) => {
+                if (msg.id !== messageId) return [...acc, msg];
+                const newLikes =
+                  ((msg.likes as number | null | undefined) ?? 0) + 1;
+                return [
+                  ...acc,
+                  {
+                    ...msg,
+                    likes: newLikes,
                   },
                 ];
               }, [] as chat_messages[]),
@@ -234,6 +265,16 @@ export default function ChatInterface({
     }
   };
 
+  const handleUpvoteMessage = async (messageId: string) => {
+    setUpvotedMessageId(messageId);
+    await upvoteMessage(messageId);
+
+    if (channelRef.current) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      void channelRef.current.publish("upvoteTmp", messageId);
+    }
+  };
+
   return (
     <>
       <div className="flex h-[70vh] flex-col rounded-lg border border-gray-200 bg-white shadow-md">
@@ -243,7 +284,7 @@ export default function ChatInterface({
               No messages yet. Be the first to send one!
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {messages.map((message) => {
                 if (!isVisibleMessage(message)) return null;
                 const isApproved = message.is_approved;
@@ -262,11 +303,13 @@ export default function ChatInterface({
                   );
                 }
 
+                const hasUpvoted = getUpvotedMessageIds().includes(message.id);
+
                 return (
                   <div
                     key={message.id}
                     className={twMerge(
-                      "rounded-lg bg-gray-100 p-3",
+                      "relative rounded-lg bg-gray-100 p-3",
                       message.sent_by_staff ? "bg-pink-100" : "",
                       translatedMessages ? "" : "notranslate",
                     )}
@@ -282,6 +325,7 @@ export default function ChatInterface({
                       {canApproveMessages && !isApproved && (
                         <Group className="absolute right-0 top-0 gap-1">
                           <Button
+                            type="button"
                             size="sm"
                             variant="outline"
                             onClick={() => handleApproveMessage(message.id)}
@@ -290,6 +334,7 @@ export default function ChatInterface({
                             ✔️
                           </Button>
                           <Button
+                            type="button"
                             size="sm"
                             variant="outline"
                             onClick={() => {
@@ -319,6 +364,30 @@ export default function ChatInterface({
                         hour12: false,
                       })}
                     </div>
+
+                    <Group className="absolute bottom-0 right-0 translate-y-[50%] gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        type="button"
+                        onClick={
+                          hasUpvoted
+                            ? () => handleUpvoteMessage(message.id)
+                            : undefined
+                        }
+                        className="flex flex-col gap-1 rounded-full"
+                      >
+                        <ThumbsUpIcon
+                          className={twMerge(
+                            "h-3 w-3",
+                            hasUpvoted ? "hidden" : "",
+                          )}
+                        />{" "}
+                        {message.likes > 0 && (
+                          <span className="text-xs">{message.likes ?? 0}</span>
+                        )}
+                      </Button>
+                    </Group>
                   </div>
                 );
               })}
@@ -383,4 +452,17 @@ const toggleTranslation = (state: boolean) => {
 
 const getTranslatedMessagesFlag = () => {
   return localStorage.getItem("translatedMessages") === "true";
+};
+
+const getUpvotedMessageIds = () => {
+  const messageIds = localStorage.getItem("upvotedMessageIds");
+  return messageIds ? (JSON.parse(messageIds) as string[]) : [];
+};
+
+const setUpvotedMessageId = (messageId: string) => {
+  const messageIds = getUpvotedMessageIds();
+  localStorage.setItem(
+    "messageIds",
+    JSON.stringify([...messageIds, messageId]),
+  );
 };

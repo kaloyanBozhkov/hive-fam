@@ -60,3 +60,15 @@ export const deleteMessage = async (messageId: string) => {
     throw new Error("Failed to delete message");
   }
 };
+
+export const upvoteMessage = async (messageId: string) => {
+  try {
+    await db.chat_messages.update({
+      where: { id: messageId },
+      data: { likes: { increment: 1 } },
+    });
+  } catch (error) {
+    console.error("Error upvoting message:", error);
+    throw new Error("Failed to upvote message");
+  }
+};
