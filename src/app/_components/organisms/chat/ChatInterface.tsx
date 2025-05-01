@@ -432,7 +432,10 @@ export default function ChatInterface({
         </CardHeader>
         <CardContent>
           <Group className="justify-between gap-2">
-            <p>Translate messages:</p>
+            <p>
+              Translate messages{" "}
+              <span className="text-xs opacity-70">(beta)</span>
+            </p>
             <Switch
               id="translate-messages"
               checked={translatedMessages}
