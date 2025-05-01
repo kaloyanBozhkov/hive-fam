@@ -304,6 +304,7 @@ export default function ChatInterface({
                 }
 
                 const hasUpvoted = getUpvotedMessageIds().includes(message.id);
+                const isOwnMessage = getSentMessageIds().includes(message.id);
 
                 return (
                   <div
@@ -365,29 +366,42 @@ export default function ChatInterface({
                       })}
                     </div>
 
-                    <Group className="absolute bottom-0 right-0 translate-y-[50%] gap-1">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        type="button"
-                        onClick={
-                          hasUpvoted
-                            ? () => handleUpvoteMessage(message.id)
-                            : undefined
-                        }
-                        className="flex flex-col gap-1 rounded-full"
-                      >
-                        <ThumbsUpIcon
+                    {isApproved && (
+                      <Group className="absolute bottom-0 right-0 translate-y-[50%] gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          onClick={
+                            !hasUpvoted && !isOwnMessage
+                              ? () => handleUpvoteMessage(message.id)
+                              : undefined
+                          }
                           className={twMerge(
-                            "h-3 w-3",
-                            hasUpvoted ? "hidden" : "",
+                            "w-15 flex h-10 flex-row gap-1 rounded-full",
+                            hasUpvoted && "bg-green-100 text-green-500",
                           )}
-                        />{" "}
-                        {message.likes > 0 && (
-                          <span className="text-xs">{message.likes ?? 0}</span>
-                        )}
-                      </Button>
-                    </Group>
+                        >
+                          <ThumbsUpIcon
+                            className={twMerge(
+                              "h-3 w-3",
+                              hasUpvoted && "stroke-green-500",
+                            )}
+                          />{" "}
+                          {message.likes > 0 ? (
+                            <span className="text-xs">
+                              {message.likes ?? 0}
+                            </span>
+                          ) : (
+                            isOwnMessage && (
+                              <span className="text-xs">
+                                {message.likes ?? 0}
+                              </span>
+                            )
+                          )}
+                        </Button>
+                      </Group>
+                    )}
                   </div>
                 );
               })}
@@ -451,6 +465,7 @@ const toggleTranslation = (state: boolean) => {
 };
 
 const getTranslatedMessagesFlag = () => {
+  if (typeof window === "undefined") return false;
   return localStorage.getItem("translatedMessages") === "true";
 };
 
@@ -462,7 +477,7 @@ const getUpvotedMessageIds = () => {
 const setUpvotedMessageId = (messageId: string) => {
   const messageIds = getUpvotedMessageIds();
   localStorage.setItem(
-    "messageIds",
+    "upvotedMessageIds",
     JSON.stringify([...messageIds, messageId]),
   );
 };

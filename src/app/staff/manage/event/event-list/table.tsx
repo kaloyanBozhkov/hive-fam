@@ -158,13 +158,15 @@ export const EventList = ({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
+                <Link href={`/chat/${event.id}`}>View Chat</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link
                   href={`/staff/manage/event/event-sold-tickets/${event.id}`}
                 >
                   View Sold Tickets
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link
                   href={`/staff/manage/event/event-participants/${event.id}`}
