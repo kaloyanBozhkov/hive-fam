@@ -20,6 +20,7 @@ export const env = createEnv({
     AWS_BUCKET_NAME: z.string(),
     RESEND_API_KEY: z.string(),
     ABLY_API_KEY: z.string(),
+    OPENROUTER_API_KEY: z.string(),
   },
 
   /**
@@ -30,6 +31,9 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_GOOGLE_CLOUD_PROJECT_ID: z.string(),
+    NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY: z.string(),
+
     // NEXT_PUBLIC_AWS_REGION: z.string(),
   },
 
@@ -51,7 +55,11 @@ export const env = createEnv({
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     ABLY_API_KEY: process.env.ABLY_API_KEY,
-    // NEXT_PUBLIC_AWS_REGION: process.env.AWS_REGION,
+    NEXT_PUBLIC_GOOGLE_CLOUD_PROJECT_ID:
+      process.env.NEXT_PUBLIC_GOOGLE_CLOUD_PROJECT_ID,
+    NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY:
+      process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
