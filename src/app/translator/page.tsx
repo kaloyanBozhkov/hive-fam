@@ -225,7 +225,11 @@ export default function TranslatorPage() {
               {isListening ? "Stop Listening" : "Start Listening"}
             </Button>
 
-            <Button onClick={clearTranscript} variant="outline" className="hidden>
+            <Button
+              onClick={clearTranscript}
+              variant="outline"
+              className="hidden"
+            >
               Clear All
             </Button>
           </div>
