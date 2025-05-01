@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import {
   approveMessage,
   deleteMessage,
@@ -11,9 +11,9 @@ import Ably from "ably";
 import type { chat_messages } from "@prisma/client";
 import { Button } from "../../shadcn/Button.shadcn";
 import Group from "../../layouts/Group.layout";
-import { Crown, User2 } from "lucide-react";
+import { Crown } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import Stack from "../../layouts/Stack.layout";
+import { Switch } from "../../shadcn/Switch.shadcn";
 
 interface ChatInterfaceProps {
   eventId: string;
@@ -30,7 +30,9 @@ export default function ChatInterface({
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [translatedMessages, setTranslatedMessages] = useState(false);
+  const [translatedMessages, setTranslatedMessages] = useState(
+    getTranslatedMessagesFlag(),
+  );
 
   // Using RealtimeChannel from our declaration file
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,6 +222,17 @@ export default function ChatInterface({
     isVisibleMessage(message),
   );
 
+  const handleToggleTranslation = () => {
+    const newValue = !translatedMessages;
+    setTranslatedMessages(newValue);
+    toggleTranslation(newValue);
+
+    // Force Google Translate to reprocess the page
+    if (typeof window !== "undefined" && window.location) {
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="flex h-[70vh] flex-col rounded-lg border border-gray-200 bg-white shadow-md">
       <div className="flex-1 overflow-y-auto p-4">
@@ -313,22 +326,26 @@ export default function ChatInterface({
       </div>
 
       <div className="border-t border-gray-200 p-4">
+        <Group className="gap-2">
+          <p>Translate messages:</p>
+          <Switch
+            id="translate-messages"
+            checked={translatedMessages}
+            onCheckedChange={handleToggleTranslation}
+          />
+        </Group>
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            className="notranslate flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             disabled={isLoading}
           />
-          <button
-            type="submit"
-            disabled={isLoading || !newMessage.trim()}
-            className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:bg-blue-400"
-          >
+          <Button type="submit" disabled={isLoading || !newMessage.trim()}>
             {isLoading ? "Sending..." : "Send"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -349,3 +366,11 @@ const addSentMessageId = (messageId: string) => {
 };
 
 const APPROVED_MESSAGE_CONTENT = "~APPROVED~";
+
+const toggleTranslation = (state: boolean) => {
+  localStorage.setItem("translatedMessages", state.toString());
+};
+
+const getTranslatedMessagesFlag = () => {
+  return localStorage.getItem("translatedMessages") === "true";
+};
