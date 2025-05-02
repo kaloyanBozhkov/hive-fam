@@ -68,7 +68,7 @@ interface TranscriptEntry {
 }
 
 const WORD_TRANSLATION_THRESHOLD = 60;
-const SILENCE_DETECTION_TIMEOUT = 500;
+const SILENCE_DETECTION_TIMEOUT = 1000;
 
 export default function TranslatorPage() {
   const [isListening, setIsListening] = useState(false);
@@ -78,6 +78,7 @@ export default function TranslatorPage() {
   const [savedWords, setSavedWords] = useState<string>(
     getSpecialWords().join(","),
   );
+  const [delay, setDelay] = useState(getDelay());
   const [expandedSettings, setExpandedSettings] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,6 +87,9 @@ export default function TranslatorPage() {
   const processingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSpeechTimestampRef = useRef(Date.now());
   const specialWordsRef = useRef<HTMLInputElement>(null);
+  const delayRef = useRef<HTMLInputElement>(null);
+  const wordThresholdRef = useRef<HTMLInputElement>(null);
+  const [wordThreshold, setWordThreshold] = useState(getWordThreshold());
   const [pendingTranslationText, setPendingTranslationText] = useState<
     string | null
   >(null);
@@ -224,7 +228,7 @@ export default function TranslatorPage() {
         // Check if we've exceeded the word limit
         const wordCount =
           fullTranscript.split(/\s+/).length - lastProcessedLengthRef.current;
-        if (wordCount > WORD_TRANSLATION_THRESHOLD) {
+        if (wordCount > wordThreshold) {
           // Process immediately if we exceed word threshold
           void processNewContent(fullTranscript).catch(console.error);
         } else {
@@ -234,7 +238,7 @@ export default function TranslatorPage() {
             if (fullTranscript.length > lastProcessedLengthRef.current) {
               void processNewContent(fullTranscript).catch(console.error);
             }
-          }, SILENCE_DETECTION_TIMEOUT);
+          }, delay);
         }
       }
     };
@@ -313,7 +317,15 @@ export default function TranslatorPage() {
     if (specialWordsRef.current) {
       specialWordsRef.current.value = savedWords;
     }
-  }, [savedWords]);
+
+    if (delayRef.current) {
+      delayRef.current.value = delay.toString();
+    }
+
+    if (wordThresholdRef.current) {
+      wordThresholdRef.current.value = wordThreshold.toString();
+    }
+  }, [savedWords, delay, wordThreshold]);
 
   // Display the streamed text as it comes in
   useEffect(() => {
@@ -327,16 +339,11 @@ export default function TranslatorPage() {
     <>
       <Card className="">
         <CardHeader>
-          <CardTitle>Bulgarian to English Translator</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mx-auto py-6">
-            {error && (
-              <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-                {error}
-              </div>
-            )}
-
+          <Group className="w-full justify-between">
+            <CardTitle>
+              Bulgarian to English Translator{" "}
+              <span className="text-sm text-gray-500">(beta)</span>
+            </CardTitle>
             <div className="mb-6 flex gap-4">
               <Button
                 onClick={toggleListening}
@@ -353,6 +360,15 @@ export default function TranslatorPage() {
                 Clear All
               </Button>
             </div>
+          </Group>
+        </CardHeader>
+        <CardContent>
+          <div className="mx-auto">
+            {error && (
+              <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                {error}
+              </div>
+            )}
 
             <div
               ref={containerRef}
@@ -449,6 +465,54 @@ export default function TranslatorPage() {
               </Button>
             </Group>
           </div>
+          <div className="mb-4">
+            <label htmlFor="delay" className="mb-2 block text-sm font-medium">
+              Delay:
+            </label>
+            <Group className="justify-between gap-2">
+              <input
+                ref={delayRef}
+                id="delay"
+                type="number"
+                placeholder="E.g., 1000"
+                className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                disabled={isListening}
+              />
+              <Button
+                onClick={() => {
+                  if (!delayRef.current) return;
+                  setDelayLS(Number(delayRef.current.value));
+                  setDelay(Number(delayRef.current.value));
+                }}
+              >
+                Save
+              </Button>
+            </Group>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="delay" className="mb-2 block text-sm font-medium">
+              Word threshold:
+            </label>
+            <Group className="justify-between gap-2">
+              <input
+                ref={wordThresholdRef}
+                id="wordThreshold"
+                type="number"
+                placeholder="E.g., 1000"
+                className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                disabled={isListening}
+              />
+              <Button
+                onClick={() => {
+                  if (!wordThresholdRef.current) return;
+                  setWordThresholdLS(Number(wordThresholdRef.current.value));
+                  setWordThreshold(Number(wordThresholdRef.current.value));
+                }}
+              >
+                Save
+              </Button>
+            </Group>
+          </div>
         </CardContent>
       </Card>
     </>
@@ -464,4 +528,26 @@ const getSpecialWords = () => {
 const setSpecialWords = (words: string[]) => {
   if (typeof window === "undefined") return;
   localStorage.setItem("specialWords", JSON.stringify(words));
+};
+
+const setDelayLS = (delay: number) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("delay", JSON.stringify(delay));
+};
+
+const getDelay = () => {
+  if (typeof window === "undefined") return SILENCE_DETECTION_TIMEOUT;
+  const delay = localStorage.getItem("delay");
+  return delay ? JSON.parse(delay) : SILENCE_DETECTION_TIMEOUT;
+};
+
+const setWordThresholdLS = (wordThreshold: number) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("wordThreshold", JSON.stringify(wordThreshold));
+};
+
+const getWordThreshold = () => {
+  if (typeof window === "undefined") return WORD_TRANSLATION_THRESHOLD;
+  const wordThreshold = localStorage.getItem("wordThreshold");
+  return wordThreshold ? JSON.parse(wordThreshold) : WORD_TRANSLATION_THRESHOLD;
 };
