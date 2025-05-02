@@ -9,9 +9,6 @@ import {
   CardContent,
 } from "../_components/shadcn/Card.shadcn";
 import { twMerge } from "tailwind-merge";
-import { env } from "@/env";
-import { createOpenRouterChatCompletion } from "@/server/ai/llm/createOpenRouterChatCompletion";
-import { AIChatCompletionMessages } from "@/server/ai/llm/common";
 import Group from "../_components/layouts/Group.layout";
 import { useStreamedText } from "../_hooks/useStreamedText";
 
@@ -72,7 +69,6 @@ interface TranscriptEntry {
 
 const WORD_TRANSLATION_THRESHOLD = 60;
 const SILENCE_DETECTION_TIMEOUT = 500;
-const MIN_WORDS_NEEDED_TO_PROCESS = 3;
 
 export default function TranslatorPage() {
   const [isListening, setIsListening] = useState(false);
@@ -196,7 +192,7 @@ export default function TranslatorPage() {
       console.log(event.results);
       // Get the transcript from all results
       const fullTranscript = Array.from(event.results)
-        .map((result, i) => {
+        .map((result) => {
           if (!result || result.length === 0) return "";
           return result[0]?.transcript ?? "";
         })
@@ -215,7 +211,7 @@ export default function TranslatorPage() {
         setCurrentText("");
 
         // Process the new content immediately
-        processNewContent();
+        void processNewContent().catch(console.error);
       } else {
         // For interim results, show the current state
         setCurrentText(fullTranscript);
@@ -230,13 +226,13 @@ export default function TranslatorPage() {
           fullTranscript.split(/\s+/).length - lastProcessedLengthRef.current;
         if (wordCount > WORD_TRANSLATION_THRESHOLD) {
           // Process immediately if we exceed word threshold
-          processNewContent(fullTranscript);
+          void processNewContent(fullTranscript).catch(console.error);
         } else {
           // Set a new timeout to process the content after a silence period
           processingTimeoutRef.current = setTimeout(() => {
             // If we've reached here, there's been a pause in speech
             if (fullTranscript.length > lastProcessedLengthRef.current) {
-              processNewContent(fullTranscript);
+              void processNewContent(fullTranscript).catch(console.error);
             }
           }, SILENCE_DETECTION_TIMEOUT);
         }
@@ -245,7 +241,7 @@ export default function TranslatorPage() {
 
     // Extract the processing logic into a separate function
     const processNewContent = async (currentTranscript?: string) => {
-      const transcriptToUse = currentTranscript || finalTranscriptRef.current;
+      const transcriptToUse = currentTranscript ?? finalTranscriptRef.current;
 
       if (
         transcriptToUse &&
@@ -441,7 +437,6 @@ export default function TranslatorPage() {
               <Button
                 onClick={() => {
                   if (!specialWordsRef.current) return;
-                  const specials = getSpecialWords();
                   setSpecialWords(
                     specialWordsRef.current.value
                       .split(",")
@@ -463,7 +458,7 @@ export default function TranslatorPage() {
 const getSpecialWords = () => {
   if (typeof window === "undefined") return [];
   const specialWords = localStorage.getItem("specialWords");
-  return specialWords ? JSON.parse(specialWords) : [];
+  return specialWords ? (JSON.parse(specialWords) as string[]) : [];
 };
 
 const setSpecialWords = (words: string[]) => {

@@ -1,10 +1,20 @@
 import { env } from "@/env";
 import { AIChatCompletionMessages } from "@/server/ai/llm/common";
 import OpenAI from "openai";
+import { z } from "zod";
+
+const payloadSchema = z.object({
+  text: z.string(),
+  previousEntries: z.array(z.string()),
+  specialWordsJoined: z.string(),
+});
 
 export async function POST(req: Request) {
   try {
-    const { text, previousEntries, specialWordsJoined } = await req.json();
+    const response = (await req.json()) as unknown;
+
+    const { text, previousEntries, specialWordsJoined } =
+      payloadSchema.parse(response);
 
     if (!text || typeof text !== "string") {
       return new Response(JSON.stringify({ error: "Invalid text provided" }), {
@@ -48,7 +58,7 @@ export async function POST(req: Request) {
     const readableStream = new ReadableStream({
       async start(controller) {
         for await (const chunk of stream) {
-          const content = chunk.choices[0]?.delta?.content || "";
+          const content = chunk.choices[0]?.delta?.content ?? "";
           if (content) {
             controller.enqueue(encoder.encode(content));
           }

@@ -12,7 +12,7 @@ interface CreateOpenRouterChatCompletionProps {
   temperature?: number | null;
 }
 
-export const createOpenRouterChatCompletion = async ({
+export const createOpenRouterChatCompletion = async <T>({
   model = "x-ai/grok-3-beta",
   messages,
   userUuid,
@@ -27,7 +27,7 @@ export const createOpenRouterChatCompletion = async ({
     temperature,
   });
 
-  return JSON.parse(result.choices[0]?.message.content || "{}");
+  return JSON.parse(result.choices[0]?.message.content ?? "{}") as T;
 };
 
 let openRouterInstance: OpenAI | null = null;
