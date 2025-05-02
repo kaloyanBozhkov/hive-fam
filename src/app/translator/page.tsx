@@ -538,7 +538,7 @@ const setDelayLS = (delay: number) => {
 const getDelay = () => {
   if (typeof window === "undefined") return SILENCE_DETECTION_TIMEOUT;
   const delay = localStorage.getItem("delay");
-  return delay ? JSON.parse(delay) : SILENCE_DETECTION_TIMEOUT;
+  return delay ? (JSON.parse(delay) as number) : SILENCE_DETECTION_TIMEOUT;
 };
 
 const setWordThresholdLS = (wordThreshold: number) => {
@@ -549,5 +549,7 @@ const setWordThresholdLS = (wordThreshold: number) => {
 const getWordThreshold = () => {
   if (typeof window === "undefined") return WORD_TRANSLATION_THRESHOLD;
   const wordThreshold = localStorage.getItem("wordThreshold");
-  return wordThreshold ? JSON.parse(wordThreshold) : WORD_TRANSLATION_THRESHOLD;
+  return wordThreshold
+    ? (JSON.parse(wordThreshold) as number)
+    : WORD_TRANSLATION_THRESHOLD;
 };
