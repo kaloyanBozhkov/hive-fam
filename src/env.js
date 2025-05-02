@@ -53,10 +53,6 @@ export const env = createEnv({
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     ABLY_API_KEY: process.env.ABLY_API_KEY,
-    NEXT_PUBLIC_GOOGLE_CLOUD_PROJECT_ID:
-      process.env.NEXT_PUBLIC_GOOGLE_CLOUD_PROJECT_ID,
-    NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY:
-      process.env.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY,
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
   },
   /**
