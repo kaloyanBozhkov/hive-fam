@@ -10,5 +10,5 @@ export default function TranslatorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="">{children}</div>;
+  return <div className="notranslate">{children}</div>;
 }
