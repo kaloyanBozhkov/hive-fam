@@ -13,6 +13,7 @@ import { env } from "@/env";
 import { createOpenRouterChatCompletion } from "@/server/ai/llm/createOpenRouterChatCompletion";
 import { AIChatCompletionMessages } from "@/server/ai/llm/common";
 import Group from "../_components/layouts/Group.layout";
+import { useStreamedText } from "../_hooks/useStreamedText";
 
 // Type definitions for the Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -71,6 +72,7 @@ interface TranscriptEntry {
 
 const WORD_TRANSLATION_THRESHOLD = 60;
 const SILENCE_DETECTION_TIMEOUT = 500;
+const MIN_WORDS_NEEDED_TO_PROCESS = 3;
 
 export default function TranslatorPage() {
   const [isListening, setIsListening] = useState(false);
@@ -88,36 +90,48 @@ export default function TranslatorPage() {
   const processingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSpeechTimestampRef = useRef(Date.now());
   const specialWordsRef = useRef<HTMLInputElement>(null);
+  const [pendingTranslationText, setPendingTranslationText] = useState<
+    string | null
+  >(null);
+  const { streamResponse, isStreamingText, streamedText, onResetStreamedText } =
+    useStreamedText({
+      endpoint: "/api/translate",
+      onStreamTextFinished: (fullText) => {
+        if (pendingTranslationText) {
+          // Add the new entry to our list
+          setEntries((prev) => [
+            ...prev,
+            {
+              original: pendingTranslationText,
+              translated: fullText,
+              timestamp: Date.now(),
+            },
+          ]);
+          setPendingTranslationText(null);
+        }
+      },
+      onError: (error) => {
+        setError(error);
+        setPendingTranslationText(null);
+      },
+    });
 
   const translateText = async (text: string): Promise<string> => {
     try {
-      // Get the previous two entries for context if they exist
-      const previousEntries = entries.length > 3 ? entries.slice(-3) : entries;
+      if (!text.trim()) {
+        return text; // Return original text if it's empty or just whitespace
+      }
 
-      // Create message array for the chat completion
-      const messages: AIChatCompletionMessages[] = [
-        {
-          role: "system",
-          content: `You are a Bulgarian to English translator. Translate the Bulgarian text to English, maintaining the original meaning and nuance. 
-          The text you're translating is subtitles of a standup comedy dating show where up to 4 people are talking on stage.
-          The venue name is Hashtag and the city is Varna. Our show is called "Na Slqpo" or ""На Сляпо" which translates to "Blind Date".
-          Current conversation for context: ${previousEntries.map((entry) => entry.original).join("")}${text}
-          Text to translate: ${text}
-          Respond with ONLY the translated text in the shape of { translation: string }, no explanations or additional content. Translate only the "text to translate" part, not all the conversation. Keep in mind bulgarian sayings and idioms.`,
-        },
-      ];
-
-      // Call the OpenRouter API
-      const response = await createOpenRouterChatCompletion({
-        messages,
-        responseFormat: { type: "json_object" },
-        temperature: 0.1, // Low temperature for more consistent translations
+      setPendingTranslationText(text);
+      onResetStreamedText();
+      await streamResponse({
+        bodyJSON: JSON.stringify({
+          text,
+          specialWordsJoined: savedWords,
+          previousEntries: entries.slice(-3).map((entry) => entry.original),
+        }),
       });
-
-      console.log(response);
-
-      // Extract just the translated text from the response
-      return response.translation || text;
+      return streamedText; // Return the current streamed text, which will be updated as the stream progresses
     } catch (error) {
       console.error(
         "Translation error:",
@@ -246,18 +260,10 @@ export default function TranslatorPage() {
           // Update our processed point
           lastProcessedLengthRef.current = transcriptToUse.length;
 
-          // Also update the word count reference for threshold checking
-          const translatedText = await translateText(textToTranslate);
+          // Initiate the streaming translation
+          await translateText(textToTranslate);
 
-          // Add the new entry to our list
-          setEntries((prev) => [
-            ...prev,
-            {
-              original: textToTranslate,
-              translated: translatedText,
-              timestamp: Date.now(),
-            },
-          ]);
+          // The new entry will be added when the streaming is finished in onStreamTextFinished
         }
       }
     };
@@ -313,6 +319,14 @@ export default function TranslatorPage() {
     }
   }, [savedWords]);
 
+  // Display the streamed text as it comes in
+  useEffect(() => {
+    if (pendingTranslationText && isStreamingText && streamedText) {
+      // Show the streamed text as it's coming in as the current text
+      setCurrentText(streamedText);
+    }
+  }, [streamedText, isStreamingText, pendingTranslationText]);
+
   return (
     <>
       <Card className="">
@@ -357,15 +371,10 @@ export default function TranslatorPage() {
                   className={twMerge(
                     "mb-8",
                     // reverse the opacity
-                    ...(entries.length > 4
-                      ? [
-                          index === 0 && "opacity-40",
-                          index === 1 && "opacity-50",
-                          index === 2 && "opacity-60",
-                          index === 3 && "opacity-80",
-                          index === 4 && "opacity-100",
-                        ]
-                      : []),
+                    index === 0 && "opacity-40",
+                    index === 1 && "opacity-50",
+                    index === 2 && "opacity-60",
+                    index === 3 && "opacity-80",
                   )}
                 >
                   <div className="mb-4 text-[50px]  font-bold">
@@ -376,7 +385,17 @@ export default function TranslatorPage() {
                 </div>
               ))}
 
-              {!entries.length && (
+              {isStreamingText && pendingTranslationText && (
+                <div className="mb-8">
+                  <div className="mb-4 text-[50px] font-bold">
+                    <p className="notranslate leading-[50px]">
+                      {streamedText || "..."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {!entries.length && !isStreamingText && (
                 <div className="text-gray-500">
                   Speak in Bulgarian to see translation...
                 </div>
