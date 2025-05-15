@@ -9,10 +9,7 @@ import { createOrderTicketsAndSendEmail } from "@/server/tickets/createTickets";
 import type { OrderLineItemMetadata, OrderMetadata } from "./checkout_sessions";
 import { confirmPayoutsAccountLink } from "@/server/actions/stripe/getPayoutsAccountLink";
 import { createInvoice } from "@/server/queries/invoice/createInvoice";
-import {
-  formatAmountForStripe,
-  formatAmountFromStripe,
-} from "@/server/stripe/stripe.helpers";
+import { formatAmountFromStripe } from "@/server/stripe/stripe.helpers";
 
 const webhookSecret: string = env.STRIPE_WEBHOOK_SECRET;
 
@@ -150,6 +147,7 @@ const cors = Cors({
           break;
         }
         case "account.updated": {
+          console.log(`💵 Account updated`);
           const account = event.data.object;
           if (account.charges_enabled && account.details_submitted) {
             console.log(

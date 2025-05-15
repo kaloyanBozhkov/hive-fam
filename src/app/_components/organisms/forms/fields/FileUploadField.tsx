@@ -121,7 +121,7 @@ export const FileUploadField = <T extends FieldValues>({
                 )}
                 <Input
                   ref={fileRef}
-                  className={hasFileUploaded ? "hidden" : ""}
+                  className={hasFileUploaded ? "hidden" : "notranslate"}
                   type="file"
                   accept={accept}
                   onChange={handleChange}

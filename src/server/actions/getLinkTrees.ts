@@ -1,5 +1,5 @@
 import { db } from "@/server/db"; // Import your database instance
-import { LinkTreeData } from "@/app/staff/manage/admin/link-tree-list/table"; // Import the LinkTreeData type
+import type { LinkTreeData } from "@/app/staff/manage/admin/link-tree-list/table"; // Import the LinkTreeData type
 
 export const getLinkTrees = async (
   organizationId: string,
@@ -21,7 +21,7 @@ export const getLinkTrees = async (
         ...(linkTree.last_reset_at
           ? {
               created_at: {
-                gte: linkTree.last_reset_at as Date,
+                gte: linkTree.last_reset_at as unknown as Date,
               },
             }
           : {}),
