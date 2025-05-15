@@ -493,12 +493,13 @@ enum FontAwesomeIcon {
 }
 
 model link_tree {
-  id         String   @id @default(uuid())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  url        String
-  name       String   @unique
-  order      Int      @default(0)
+  id            String    @id @default(uuid())
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  url           String
+  name          String    @unique
+  order         Int       @default(0)
+  last_reset_at DateTime?
 
   button_color ButtonColor     @default(SECONDARY)
   button_icon  FontAwesomeIcon @default(LINK)

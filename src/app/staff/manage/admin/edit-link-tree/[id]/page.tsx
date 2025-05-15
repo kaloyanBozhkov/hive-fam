@@ -1,11 +1,12 @@
 import EditLinkTreeForm, {
-  linkTreeSchema,
+  type linkTreeSchema,
 } from "@/app/_components/organisms/forms/EditLinkTree.form";
 import { isAdminOrAbove } from "@/server/auth/roleGates";
 import { db } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { z } from "zod";
+import type { z } from "zod";
+import { resetMetrics } from "@/server/actions/linkTree/resetMetrics";
 
 const errorMessages: Record<string, string> = {
   P2002: "A link tree with this name already exists.",
@@ -63,5 +64,11 @@ export default async function EditLinkTree({
     throw new Error("Link tree not found");
   }
 
-  return <EditLinkTreeForm initialData={linkTree} onEdit={editLinkTree} />;
+  return (
+    <EditLinkTreeForm
+      initialData={linkTree}
+      onEdit={editLinkTree}
+      onResetMetrics={() => resetMetrics(linkTree.id)}
+    />
+  );
 }

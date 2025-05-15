@@ -9,37 +9,52 @@ export const getLinkTrees = async (
     where: {
       organization_id: organizationId,
     },
-    include: {
-      to_visits: {
-        select: {
-          created_at: true, // Assuming you have a timestamp for visits
-        },
-      },
-    },
     orderBy: {
       order: "asc",
     },
   });
 
+  const visits = await db.link_tree_visit.findMany({
+    where: {
+      OR: linkTrees.map((linkTree) => ({
+        link_tree_id: linkTree.id,
+        ...(linkTree.last_reset_at
+          ? {
+              created_at: {
+                gte: linkTree.last_reset_at as Date,
+              },
+            }
+          : {}),
+      })),
+    },
+    select: {
+      link_tree_id: true,
+      created_at: true,
+    },
+  });
+
   // Process the link trees to calculate visit counts
   return linkTrees.map((linkTree) => {
-    const visitsCount = linkTree.to_visits.length; // Total visits
-    const visitsLast24h = linkTree.to_visits.filter((visit) => {
+    const linkTreeVisits = visits.filter(
+      (visit) => visit.link_tree_id === linkTree.id,
+    );
+    const visitsCount = linkTreeVisits.length; // Total visits
+    const visitsLast24h = linkTreeVisits.filter((visit) => {
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       return new Date(visit.created_at) >= twentyFourHoursAgo;
     }).length;
 
-    const visitsLast72h = linkTree.to_visits.filter((visit) => {
+    const visitsLast72h = linkTreeVisits.filter((visit) => {
       const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000);
       return new Date(visit.created_at) >= seventyTwoHoursAgo;
     }).length;
 
-    const visitsLastWeek = linkTree.to_visits.filter((visit) => {
+    const visitsLastWeek = linkTreeVisits.filter((visit) => {
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
       return new Date(visit.created_at) >= oneWeekAgo;
     }).length;
 
-    const visitsLastMonth = linkTree.to_visits.filter((visit) => {
+    const visitsLastMonth = linkTreeVisits.filter((visit) => {
       const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return new Date(visit.created_at) >= oneMonthAgo;
     }).length;

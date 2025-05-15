@@ -13,7 +13,7 @@ import { getJWTUser } from "@/server/auth/getJWTUser";
 export default async function Manage() {
   const user = await getJWTUser();
   return (
-    <Stack className="min-h-[400px] gap-4">
+    <Stack className="notranslate min-h-[400px] gap-4">
       <Card className="">
         <CardHeader>
           <CardTitle>

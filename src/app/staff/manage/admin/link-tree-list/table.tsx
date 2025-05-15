@@ -12,10 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { deleteLinkTree } from "@/server/actions/deleteLinkTree";
+import { resetMetrics } from "@/server/actions/linkTree/resetMetrics";
 import type { ButtonColor, FontAwesomeIcon } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { useTransition, useState, useCallback } from "react";
 
@@ -36,13 +36,22 @@ export type LinkTreeData = {
 export const LinkTreeList = ({ data }: { data: LinkTreeData[] }) => {
   const [isPending, startTransition] = useTransition();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [resetPendingId, setResetPendingId] = useState<string | null>(null);
+  const [isResetting, startResetTransition] = useTransition();
 
   const handleDelete = useCallback((id: string) => {
     setPendingId(id);
     startTransition(async () => {
       await deleteLinkTree({ id });
       setPendingId(null);
-      revalidatePath("/staff/manage/admin/link-tree-list");
+    });
+  }, []);
+
+  const handleResetMetrics = useCallback((id: string) => {
+    setResetPendingId(id);
+    startResetTransition(async () => {
+      await resetMetrics(id);
+      setResetPendingId(null);
     });
   }, []);
 
@@ -114,6 +123,18 @@ export const LinkTreeList = ({ data }: { data: LinkTreeData[] }) => {
                 >
                   Edit Link
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleResetMetrics(linkTree.id)}>
+                {isResetting && resetPendingId === linkTree.id ? (
+                  <DotsLoader
+                    modifier="secondary"
+                    size="sm"
+                    className="m-auto"
+                  />
+                ) : (
+                  "Reset Metrics"
+                )}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
