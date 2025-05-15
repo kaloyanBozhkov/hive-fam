@@ -6,7 +6,6 @@ import { db } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import type { z } from "zod";
-import { resetMetrics } from "@/server/actions/linkTree/resetMetrics";
 
 const errorMessages: Record<string, string> = {
   P2002: "A link tree with this name already exists.",
@@ -64,11 +63,5 @@ export default async function EditLinkTree({
     throw new Error("Link tree not found");
   }
 
-  return (
-    <EditLinkTreeForm
-      initialData={linkTree}
-      onEdit={editLinkTree}
-      onResetMetrics={() => resetMetrics(linkTree.id)}
-    />
-  );
+  return <EditLinkTreeForm initialData={linkTree} onEdit={editLinkTree} />;
 }

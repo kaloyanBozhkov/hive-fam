@@ -45,14 +45,12 @@ const EditLinkTreeForm = ({
   className,
   initialData,
   onEdit,
-  onResetMetrics,
 }: {
   className?: string;
   initialData: z.infer<typeof linkTreeSchema>;
   onEdit: (
     linkTreeData: z.infer<typeof linkTreeSchema>,
   ) => Promise<{ success: boolean; error?: string }>;
-  onResetMetrics: () => void;
 }) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof linkTreeSchema>>({
@@ -72,14 +70,6 @@ const EditLinkTreeForm = ({
 
   return (
     <>
-      <Button
-        onClick={() => {
-          void onResetMetrics();
-          router.push("/staff/manage/admin/link-tree-list");
-        }}
-      >
-        Reset Metrics
-      </Button>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
