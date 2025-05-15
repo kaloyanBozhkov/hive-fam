@@ -1,13 +1,15 @@
+import { env } from "@/env";
 import { isAdminOrAbove, isRoleManagerOrAbove } from "@/server/auth/roleGates";
+import { getDomainFromOrgId } from "@/server/config";
 import { db } from "@/server/db";
 import { stripeCli } from "@/server/stripe/stripe";
-import { headers } from "next/headers";
 
 export async function getPayoutsAccountLink() {
   const user = await isAdminOrAbove();
-  const headersList = await headers();
-  const currentDomain = headersList.get("host");
-  const protocol = headersList.get("x-forwarded-proto");
+  const domain =
+    env.NODE_ENV === "development"
+      ? "localhost"
+      : getDomainFromOrgId(user.organization_id);
 
   const { stripe_account_id: account } = await db.staff.findFirstOrThrow({
     where: {
@@ -27,8 +29,8 @@ export async function getPayoutsAccountLink() {
 
   const accountLink = await stripeCli.accountLinks.create({
     account: account_id,
-    return_url: `${protocol}://${currentDomain}/staff/manage/admin/profits?confirmed=${account_id}`,
-    refresh_url: `${protocol}://${currentDomain}/staff/manage/admin/profits?refresh=true`,
+    return_url: `https://${domain}/staff/manage/admin/profits?confirmed=${account_id}`,
+    refresh_url: `https://${domain}/staff/manage/admin/profits?refresh=true`,
     type: "account_onboarding",
   });
 
