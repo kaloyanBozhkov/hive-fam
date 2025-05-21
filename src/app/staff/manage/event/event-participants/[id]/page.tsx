@@ -25,6 +25,17 @@ const approveParticipant = async (id: string, approved: boolean) => {
   });
 };
 
+const updateParticipantNotes = async (id: string, notes: string) => {
+  "use server";
+
+  await db.event_contestant.update({
+    where: { id },
+    data: {
+      notes,
+    },
+  });
+};
+
 export default async function EventParticipantsPage({
   params,
 }: {
@@ -69,6 +80,7 @@ export default async function EventParticipantsPage({
         data={event.contestants}
         deleteParticipant={deleteParticipant}
         approveParticipant={approveParticipant}
+        updateParticipantNotes={updateParticipantNotes}
         onRefresh={refresh}
       />
     </Stack>

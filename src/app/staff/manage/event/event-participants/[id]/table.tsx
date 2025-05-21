@@ -11,10 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { Switch } from "@/app/_components/shadcn/Switch.shadcn";
+import { NotesDialog } from "@/app/_components/molecules/NotesDialog.molecule";
 import { JsonValue } from "@prisma/client/runtime/library";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Copy, MoreHorizontal } from "lucide-react";
+import { Copy, MoreHorizontal, FileEdit } from "lucide-react";
 import { useTransition, useState, useCallback } from "react";
 
 export type EventParticipant = {
@@ -26,6 +27,7 @@ export type EventParticipant = {
   country: string;
   approved: boolean;
   created_at: Date;
+  notes?: string | null;
 
   // TODO show in modal or smth, table - readable
   custom_payload: JsonValue | null;
@@ -35,17 +37,22 @@ export const EventParticipantsTable = ({
   data,
   deleteParticipant,
   approveParticipant,
+  updateParticipantNotes,
   onRefresh,
 }: {
   data: EventParticipant[];
   deleteParticipant: (id: string) => Promise<void>;
   approveParticipant: (id: string, approved: boolean) => Promise<void>;
+  updateParticipantNotes: (id: string, notes: string) => Promise<void>;
   onRefresh: () => Promise<void>;
 }) => {
   const [, startTransition] = useTransition();
   const [pendingIds, setPendingIds] = useState<string[]>([]);
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [notesDialogOpen, setNotesDialogOpen] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<EventParticipant | null>(null);
 
   const handleApprove = useCallback(
     (id: string, approved: boolean) => {
@@ -69,6 +76,21 @@ export const EventParticipantsTable = ({
       });
     },
     [deletingIds, deleteParticipant, onRefresh],
+  );
+
+  const handleEditNotes = useCallback((participant: EventParticipant) => {
+    setSelectedParticipant(participant);
+    setNotesDialogOpen(true);
+  }, []);
+
+  const handleSaveNotes = useCallback(
+    async (notes: string) => {
+      if (selectedParticipant) {
+        await updateParticipantNotes(selectedParticipant.id, notes);
+        void (await onRefresh());
+      }
+    },
+    [selectedParticipant, updateParticipantNotes, onRefresh],
   );
 
   const copyEmailsToClipboard = useCallback(() => {
@@ -109,6 +131,32 @@ export const EventParticipantsTable = ({
       header: "Country",
     },
     {
+      accessorKey: "notes",
+      header: "Notes",
+      cell: ({ row }) => {
+        const notes = row.original.notes;
+        return (
+          <div className="flex items-center">
+            {notes ? (
+              <div className="max-w-[200px] truncate" title={notes}>
+                {notes}
+              </div>
+            ) : (
+              <span className="text-gray-400">No notes</span>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleEditNotes(row.original)}
+              className="ml-2"
+            >
+              <FileEdit className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "approved",
       header: "Approved",
       cell: ({ row }) => {
@@ -147,6 +195,9 @@ export const EventParticipantsTable = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleEditNotes(participant)}>
+                Edit Notes
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   const confirm = window.confirm(
@@ -187,6 +238,16 @@ export const EventParticipantsTable = ({
         </Button>
       </div>
       <DataTable columns={columns} data={data} />
+
+      {selectedParticipant && (
+        <NotesDialog
+          isOpen={notesDialogOpen}
+          onClose={() => setNotesDialogOpen(false)}
+          onSave={handleSaveNotes}
+          initialNotes={selectedParticipant.notes ?? ""}
+          title={`Edit Notes - ${selectedParticipant.name} ${selectedParticipant.surname}`}
+        />
+      )}
     </div>
   );
 };

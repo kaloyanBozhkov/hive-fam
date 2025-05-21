@@ -358,6 +358,7 @@ model event_contestant {
   country        String
   approved       Boolean @default(false)
   custom_payload Json?
+  notes          String?
 
   event    event  @relation(fields: [event_id], references: [id])
   event_id String
