@@ -17,10 +17,10 @@ export default async function EventListPage() {
   };
 
   return (
-    <Stack className="gap-4">
+    <Stack className="gap-4 p-4 md:p-6">
       <Group className="align-between w-full justify-between">
-        <h2 className="text-xl font-semibold">Event List</h2>
-        <Button asChild>
+        <h2 className="text-lg font-semibold md:text-xl">Event List</h2>
+        <Button asChild size="sm" className="md:size-default">
           <Link href="/staff/manage/event/add-event">Add Event</Link>
         </Button>
       </Group>

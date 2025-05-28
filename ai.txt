@@ -1,0 +1,30 @@
+about the product/app: an event and ticket management platform, clients see events and can buy tickets via stripe and event organisers can create events see sold tickets handle event details and managers or ticket scanners.
+
+Important:
+- atom components are located in src/_components/atoms/
+- also using shadcn, shadcn atoms located in src/_components/shadcn/
+- layouts components should be use dinstead of regular div with styling, good examples are <Stack /> instead of <div className="flex flex-col" /> etc.. these layout components are located in src/_components/layouts 
+- Note: the Stack and Group and other layouts components work with tailwind and className="" 
+
+Make use of the above when composing other components like molecules, organisms or pages. 
+- Molecule components are just display components without state or super simple state (on/off). Molecules live in src/_components/molecules/.
+  Example of a molecule is a Call to action section, which is made of mainly atoms - maybe a smaller molecule component too.
+- Organism coponents can be made of both molecules and atoms, but what mainly sets them apart is state complexity and side-effects, like calling CRUD hooks or callbacks.
+- Pages are the main Next.js app router pages
+
+Furthermore:
+- common utils can be found here: src/utils/common.ts
+- any prisma ORM db calls should be added in src/server/queries and imported in the server component using them
+- prefer using zustand for shared state management, place store failes in src/zustand/ 
+- any custom hooks should go in src/_hooks
+- the prisma schema is in ./prisma/schema.prisma and should always be considered when working on an organism or page or server action
+- any third party API implementation goes in src/services/
+- currently have s3, fal and stripe as third party API implementations
+
+Don't forget:
+- always consider dark / light mode as there's a theme
+- theme colors can be found in ./tailwind.config.ts
+- pay good attention on the primary/secondary/tertiary colors used in the theme when composing
+- always prefer reusing existing atoms/shadcn rather than creating new ones
+
+When responding with an answer think and ABSOLUTELY RETURN ONLY CODE, no bloat explanatory text - unless I asked explicitly for an explanation.
