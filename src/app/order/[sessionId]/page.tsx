@@ -57,7 +57,7 @@ export default async function OrderPage({
               <DownloadButton
                 selector="#tickets"
                 label={`Download ${ticketWord}`}
-                fileName={`${eventTitle ?? "event"}-${ticketWord}`}
+                fileName={`${eventTitle ?? "event"}-${ticketWord}.png`}
                 alsoHideSelector="[data-print='hide-info'], [data-print='hide-copy'], button"
               />
               <Button className="w-full shadow-md" variant="secondary">
