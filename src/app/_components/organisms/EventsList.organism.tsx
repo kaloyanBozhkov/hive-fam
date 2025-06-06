@@ -84,7 +84,7 @@ function categorizeAndSortEvents(events: Event[]): CategorizedEvents {
     date: new Date(event.date),
   }));
 
-  const rightNow = Date.now();
+  const rightNow = Date.now() + 12 * 60 * 60 * 1000; // Add 12 hours
 
   return {
     past: eventsParsed
