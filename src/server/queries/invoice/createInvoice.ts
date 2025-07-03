@@ -32,6 +32,20 @@ export const createInvoice = async ({
 
   assert(event.organization, "createInvoice - Event organization not found");
 
+  const existingInvoice = await db.invoice.findFirst({
+    where: {
+      event_id: eventId,
+      order_session_id: orderSessionId,
+    },
+  });
+
+  if (existingInvoice) {
+    console.log(
+      "Invoice already exists - ticket creation (next step) probably failed",
+    );
+    return existingInvoice.id;
+  }
+
   const invoice = await db.invoice.create({
     data: {
       event_id: eventId,

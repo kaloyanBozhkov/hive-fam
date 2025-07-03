@@ -29,6 +29,8 @@ export const createOrderTicketsAndSendEmail = async ({
     orderSessionId: checkoutSessionId,
   });
 
+  console.log("Ticket created");
+
   try {
     await sendOrderReceiptEmail({
       customerDetails,
