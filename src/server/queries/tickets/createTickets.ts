@@ -20,7 +20,9 @@ export const createTickets = async ({
   invocieId?: string; // unset if free ticket
 }) => {
   const participantEmail = customerDetails.email;
-  const [name, ...surname] = customerDetails.name.split(" ").filter((w) => w);
+  const [name, ...surname] = (customerDetails.name || "unknown")
+    .split(" ")
+    .filter((w) => w);
   const participantDetails = {
     email: participantEmail,
     name: name?.trim() ?? "unknown",
