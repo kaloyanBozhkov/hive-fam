@@ -14,6 +14,7 @@ import {
 import { deleteCustomQR } from "@/server/actions/qr/deleteCustomQR";
 import { resetCustomQRVisits } from "@/server/actions/qr/resetCustomQRVisits";
 import { fetchPostJSON, forceDownload } from "@/utils/common";
+import { generateQRCodeDataURL, viewQRCodeInNewTab } from "@/utils/qr";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import {
@@ -69,119 +70,42 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
     [router],
   );
 
-  const generateQRCode = useCallback(async (customQR: CustomQRData) => {
-    try {
-      const qrCodes = await fetchPostJSON<{ dataURL: string }[]>(
-        `/api/qr/getQRCodes`,
-        {
-          qrs: [{ urlContent: customQR.qr_contents }],
-          orgId: customQR.organization_id,
-        },
-      );
-      const qrCodeDataURL = qrCodes[0]?.dataURL;
-      if (qrCodeDataURL && typeof qrCodeDataURL === "string") {
-        return qrCodeDataURL;
-      } else {
-        throw new Error("Invalid QR code response format");
-      }
-    } catch (error) {
-      console.error("Error generating QR code:", error);
-      throw error;
-    }
-  }, []);
-
   const handleViewQR = useCallback(
     async (customQR: CustomQRData) => {
       try {
-        const qrCodeDataURL = await generateQRCode(customQR);
-        const newTab = window.open();
-        if (newTab) {
-          const description =
-            customQR.description || `Custom QR ${customQR.id}`;
-          newTab.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <title>QR Code - ${description}</title>
-              <style>
-                body {
-                  margin: 0;
-                  padding: 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  min-height: 100vh;
-                  background-color: #f5f5f5;
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                }
-                .container {
-                  background: white;
-                  padding: 30px;
-                  border-radius: 12px;
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                  text-align: center;
-                }
-                h1 {
-                  margin: 0 0 20px 0;
-                  color: #333;
-                  font-size: 24px;
-                }
-                img {
-                  max-width: 100%;
-                  height: auto;
-                  border: 1px solid #ddd;
-                  border-radius: 8px;
-                }
-                .info {
-                  margin-top: 20px;
-                  color: #666;
-                  font-size: 14px;
-                }
-                .url {
-                  word-break: break-all;
-                  background: #f8f9fa;
-                  padding: 8px 12px;
-                  border-radius: 4px;
-                  margin-top: 10px;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <h1>${description}</h1>
-                <img src="${qrCodeDataURL}" alt="QR Code" />
-                <div class="info">
-                  <p><strong>Forwards to:</strong></p>
-                  <div class="url">${customQR.forward_to_url}</div>
-                  <p style="margin-top: 15px;"><strong>Visits:</strong> ${customQR.visit_count}</p>
-                </div>
-              </div>
-            </body>
-          </html>
-        `);
-          newTab.document.close();
-        } else {
-          alert("Please allow popups to view QR code");
-        }
+        const qrCodeDataURL = await generateQRCodeDataURL(
+          customQR.qr_contents,
+          customQR.organization_id
+        );
+
+        viewQRCodeInNewTab({
+          id: customQR.id,
+          description: customQR.description,
+          forward_to_url: customQR.forward_to_url,
+          visit_count: customQR.visit_count,
+          qrCodeDataURL,
+        });
       } catch (error) {
         alert("Failed to generate QR code for viewing");
       }
     },
-    [generateQRCode],
+    [],
   );
 
   const handleDownload = useCallback(
     async (customQR: CustomQRData) => {
       try {
-        const qrCodeDataURL = await generateQRCode(customQR);
+        const qrCodeDataURL = await generateQRCodeDataURL(
+          customQR.qr_contents,
+          customQR.organization_id
+        );
         console.log("qrCodeDataURL", qrCodeDataURL);
         forceDownload(qrCodeDataURL, `${customQR.id}.png`);
       } catch (error) {
         alert("Failed to download QR code");
       }
     },
-    [generateQRCode],
+    [],
   );
 
   const columns: ColumnDef<CustomQRData>[] = [
