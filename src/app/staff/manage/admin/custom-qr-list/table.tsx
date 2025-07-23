@@ -13,7 +13,7 @@ import {
 } from "@/app/_components/shadcn/DropdownMenu.shadcn";
 import { deleteCustomQR } from "@/server/actions/qr/deleteCustomQR";
 import { resetCustomQRVisits } from "@/server/actions/qr/resetCustomQRVisits";
-import { fetchPostJSON, forceDownload } from "@/utils/common";
+import { forceDownload } from "@/utils/common";
 import { generateQRCodeDataURL, viewQRCodeInNewTab } from "@/utils/qr";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -115,7 +115,7 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
       cell: ({ row }) => {
         const description = row.original.description;
         return (
-          description || (
+          description ?? (
             <span className="italic text-gray-400">No description</span>
           )
         );
@@ -208,7 +208,7 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  const displayName = customQR.description || customQR.id;
+                  const displayName = customQR.description ?? customQR.id;
                   const confirm = window.confirm(
                     `Are you sure you want to delete this custom QR? "${displayName}"`,
                   );

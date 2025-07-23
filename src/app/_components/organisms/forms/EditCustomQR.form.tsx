@@ -43,7 +43,7 @@ const EditCustomQRForm = ({
     resolver: zodResolver(customQR),
     defaultValues: {
       id: initialData.id,
-      description: initialData.description || "",
+      description: initialData.description ?? "",
       forward_to_url: initialData.forward_to_url,
     },
   });

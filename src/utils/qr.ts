@@ -1,3 +1,5 @@
+import { fetchPostJSON } from "./common";
+
 export interface QRViewData {
   id: string;
   description?: string | null;
@@ -11,8 +13,8 @@ export interface QRViewData {
  * @param qrData - The QR code data to display
  */
 export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
-  const description = qrData.description || `QR Code ${qrData.id}`;
-  
+  const description = qrData.description ?? `QR Code ${qrData.id}`;
+
   // Create HTML content as a Blob
   const htmlContent = `
     <!DOCTYPE html>
@@ -101,12 +103,12 @@ export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
 
   try {
     // Create a Blob with the HTML content
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blob = new Blob([htmlContent], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    
+
     // Open the blob URL in a new tab
-    const newTab = window.open(url, '_blank');
-    
+    const newTab = window.open(url, "_blank");
+
     if (!newTab) {
       alert("Please allow popups to view QR code");
       URL.revokeObjectURL(url); // Clean up if failed to open
@@ -117,7 +119,7 @@ export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
       }, 1000);
     }
   } catch (error) {
-    console.error('Failed to open QR code viewer:', error);
+    console.error("Failed to open QR code viewer:", error);
     alert("Failed to open QR code viewer");
   }
 };
@@ -130,27 +132,18 @@ export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
  */
 export const generateQRCodeDataURL = async (
   qrContent: string,
-  organizationId: string
+  organizationId: string,
 ): Promise<string> => {
   try {
-    const response = await fetch('/api/qr/getQRCodes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const QRCodes = await fetchPostJSON<{ dataURL: string }[]>(
+      "/api/qr/getQRCodes",
+      {
         qrs: [{ urlContent: qrContent }],
         orgId: organizationId,
-      }),
-    });
+      },
+    );
+    const qrCodeDataURL = QRCodes[0]?.dataURL ?? QRCodes[0];
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const qrCodes = await response.json();
-    const qrCodeDataURL = qrCodes[0]?.dataURL || qrCodes[0]; // Handle both response formats
-    
     if (!qrCodeDataURL || typeof qrCodeDataURL !== "string") {
       throw new Error("Invalid QR code response format");
     }
@@ -160,4 +153,4 @@ export const generateQRCodeDataURL = async (
     console.error("Error generating QR code:", error);
     throw new Error("Failed to generate QR code");
   }
-}; 
+};
