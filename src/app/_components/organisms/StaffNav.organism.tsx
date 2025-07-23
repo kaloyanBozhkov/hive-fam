@@ -20,6 +20,7 @@ import {
   faTicketAlt,
   type IconDefinition,
   faMoneyBill,
+  faQrcode,
 } from "@fortawesome/free-solid-svg-icons";
 import Group from "../layouts/Group.layout";
 
@@ -107,6 +108,11 @@ export const LINKS: Record<
         label: "Banner List",
         href: "/staff/manage/admin/banner-list",
         icon: faImage,
+      },
+      {
+        label: "Custom QRs",
+        href: "/staff/manage/admin/custom-qr-list",
+        icon: faQrcode,
       },
       {
         label: "Organization Details",

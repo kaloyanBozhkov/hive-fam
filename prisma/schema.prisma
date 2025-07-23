@@ -109,13 +109,14 @@ model organization {
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
 
-  events       event[]
-  staff        staff[]
-  venue        venue[]
-  links        link[]
-  banner_slide banner_slide[]
-  link_tree    link_tree[]
-  invoices     invoice[]
+  events         event[]
+  staff          staff[]
+  venue          venue[]
+  links          link[]
+  banner_slide   banner_slide[]
+  link_tree      link_tree[]
+  invoices       invoice[]
+  custom_qr_code custom_qr_code[]
 }
 
 enum Currency {
@@ -558,4 +559,18 @@ model chat_messages {
 
   event    event  @relation(fields: [event_id], references: [id])
   event_id String
+}
+
+model custom_qr_code {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  description     String?
+  forward_to_url  String
+  visit_count     Int       @default(0)
+  last_visited_at DateTime?
+
+  organization    organization @relation(fields: [organization_id], references: [id])
+  organization_id String
 }
