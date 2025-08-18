@@ -33,10 +33,8 @@ const Banner = ({
         className,
       )}
     >
-      {(!isEmptyRender(title) ||
-        !isEmptyRender(subtitle) ||
-        !isEmptyRender(body) ||
-        !isEmptyRender(content)) && (
+      {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+      {Boolean(title || subtitle) && (
         <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
       )}
       <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3 -sm:m-auto">
