@@ -32,7 +32,9 @@ const Banner = ({
         className,
       )}
     >
-      <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
+      {Boolean(title ?? subtitle) && (
+        <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
+      )}
       <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3 -sm:m-auto">
         {subtitle && (
           <p className="font-regular p-text notranslate text-white">
