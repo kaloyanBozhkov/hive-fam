@@ -27,7 +27,7 @@ const infoBanner = z
     id: z.string(),
     type: z.literal("INFO"),
     subtitle: z.string().optional().nullable(),
-    title: z.string().min(1, "Title is required"),
+    title: z.string().optional().nullable(),
     content: z.string().optional().nullable(),
     background_data_url: z.string().min(1, "Background image is required"),
     background_video_url: z.string().url().optional().nullable(),

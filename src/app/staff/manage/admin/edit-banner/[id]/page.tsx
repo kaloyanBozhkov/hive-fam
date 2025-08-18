@@ -20,7 +20,7 @@ type InfoBannerData = {
   type: "INFO";
   order: number;
   subtitle?: string | null;
-  title: string;
+  title?: string | null;
   content?: string | null;
   background_data_url: string;
   background_video_url?: string | null;

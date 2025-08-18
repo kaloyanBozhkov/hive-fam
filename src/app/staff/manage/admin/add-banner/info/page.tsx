@@ -13,8 +13,8 @@ const errorMessages: Record<string, string> = {
 };
 
 async function addInfoBanner(bannerData: {
-  subtitle: string;
-  title: string;
+  subtitle?: string | null;
+  title?: string | null;
   content: string;
   background_data_url: string;
   background_video_url?: string | null;

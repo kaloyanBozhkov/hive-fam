@@ -25,6 +25,7 @@ const Banner = ({
   actionParticipantsForEventButtonText?: string;
   secondaryActionButtonText?: string;
 }) => {
+  console.log(title, subtitle);
   return (
     <div
       className={twMerge(

@@ -21,8 +21,8 @@ import { FileUploadField } from "./fields/FileUploadField";
 import TextEditor from "../../molecules/lexical/TextEditor";
 
 const infoBanner = z.object({
-  subtitle: z.string().min(1, "Subtitle is required"),
-  title: z.string().min(1, "Title is required"),
+  subtitle: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
   content: z.string().min(1, "Content is required"),
   background_data_url: z.string().min(1, "Background image is required"),
   background_video_url: z.string().optional().nullable(),
