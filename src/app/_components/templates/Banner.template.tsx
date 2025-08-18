@@ -5,6 +5,7 @@ import { Button } from "../shadcn/Button.shadcn";
 import RichTextReader from "../molecules/lexical/RichTextReader";
 import Link from "next/link";
 import Group from "../layouts/Group.layout";
+import { isEmptyRender } from "@/lib/utils";
 
 const Banner = ({
   title,
@@ -25,7 +26,6 @@ const Banner = ({
   actionParticipantsForEventButtonText?: string;
   secondaryActionButtonText?: string;
 }) => {
-  console.log(title, subtitle);
   return (
     <div
       className={twMerge(
@@ -33,7 +33,10 @@ const Banner = ({
         className,
       )}
     >
-      {Boolean(title ?? subtitle) && (
+      {(!isEmptyRender(title) ||
+        !isEmptyRender(subtitle) ||
+        !isEmptyRender(body) ||
+        !isEmptyRender(content)) && (
         <div className="my-[20px] hidden h-[1px] w-full bg-white md:block" />
       )}
       <div className="grid grid-cols-1 sm:auto-rows-min sm:items-start md:grid-cols-3 -sm:m-auto">
