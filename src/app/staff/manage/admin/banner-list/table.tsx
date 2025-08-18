@@ -23,7 +23,7 @@ export type BannerSlide = {
   type: BannerSlideType;
   order: number;
   info_slide?: {
-    title: string;
+    title: string | null;
     subtitle: string | null;
   } | null;
   album_slide?: {
