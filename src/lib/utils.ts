@@ -34,12 +34,16 @@ export function isEmptyRender(node: ReactNode): boolean {
 
   if (isValidElement(node)) {
     if (node.type === Fragment) {
-      return isEmptyRender(node.props.children);
+      return isEmptyRender(
+        (node.props as ReactNode & { children: ReactNode }).children,
+      );
     }
 
     // Optionally recurse into element's children
     if ("children" in node.props) {
-      return isEmptyRender(node.props.children);
+      return isEmptyRender(
+        (node.props as ReactNode & { children: ReactNode }).children,
+      );
     }
 
     return false;
