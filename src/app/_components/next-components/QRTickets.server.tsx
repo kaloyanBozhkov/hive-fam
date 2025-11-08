@@ -14,6 +14,7 @@ const getEventInfo = async (eventId: string) => {
       title: true,
       date: true,
       end_date: true,
+      time_zone: true,
       venue: {
         select: {
           name: true,
@@ -74,6 +75,7 @@ const QRTicketsServer = async ({
       eventDate={event.date}
       eventEndDate={event.end_date}
       eventLocation={`${event.venue.street_addr}, ${event.venue.city}`}
+      eventTimeZone={event.time_zone}
     />
   );
 };

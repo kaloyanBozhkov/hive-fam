@@ -156,6 +156,7 @@ const EventCard = ({
               ticketTypes={event.ticket_types}
               eventDate={event.date}
               eventEndDate={event.end_date}
+              eventTimeZone={event.time_zone}
             />
           )}
           {!isPast && (

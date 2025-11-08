@@ -21,6 +21,7 @@ const QRTickets = ({
   eventDate,
   eventLocation,
   eventEndDate,
+  eventTimeZone
 }: {
   qrCodes: {
     dataURL: string;
@@ -31,6 +32,7 @@ const QRTickets = ({
   eventDate: Date;
   eventLocation?: string;
   eventEndDate?: Date | null;
+  eventTimeZone?: string | null;
 }) => {
   return (
     <Stack className="gap-4">
@@ -68,6 +70,7 @@ const QRTickets = ({
                     eventDate={eventDate}
                     eventEndDate={eventEndDate}
                     eventLocation={eventLocation}
+                    eventTimeZone={eventTimeZone}
                   />
                 </div>
                 {withShare && (

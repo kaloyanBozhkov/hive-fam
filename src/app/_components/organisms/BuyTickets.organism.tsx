@@ -29,6 +29,7 @@ const BuyTickets = ({
   eventDate,
   eventLocation,
   eventEndDate,
+  eventTimeZone,
   isModalMode = false,
 }: {
   className?: string;
@@ -40,6 +41,7 @@ const BuyTickets = ({
   eventDate: Date;
   eventLocation?: string;
   eventEndDate?: Date | null;
+  eventTimeZone?: string | null;
   isModalMode?: boolean;
 }) => {
   return (
@@ -69,6 +71,7 @@ const BuyTickets = ({
                 eventDate={eventDate}
                 eventLocation={eventLocation}
                 eventEndDate={eventEndDate}
+                eventTimeZone={eventTimeZone}
               />
             </DialogTitle>
             {isEventFree ? (

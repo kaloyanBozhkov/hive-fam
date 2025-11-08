@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import Stack from "../layouts/Stack.layout";
 import DateCard from "./DateCard.molecule";
 import { twMerge } from "tailwind-merge";
@@ -13,6 +12,7 @@ export const EventInfoCard = ({
   eventEndDate,
   eventLocation,
   eventTimeZone,
+  eventVenueName,
   withCardWrapper = false,
 }: {
   eventName: string;
@@ -22,6 +22,7 @@ export const EventInfoCard = ({
   eventTimeZone?: string | null;
   className?: string;
   withCardWrapper?: boolean;
+  eventVenueName?: string;
 }) => {
   // Function to format the date range
   const formatEventDate = (startDate: Date, endDate: Date) => {
@@ -52,6 +53,11 @@ export const EventInfoCard = ({
             eventEndDate ?? new Date(eventDate.getTime() + 7 * 60 * 60 * 1000),
           )}
         </p>
+        {eventVenueName && (
+          <p className="text-[13px] font-light leading-[100%] text-gray-500">
+            {eventVenueName}
+          </p>
+        )}
         {eventLocation && (
           <p className="text-[13px] font-light leading-[100%] text-gray-500">
             {eventLocation}

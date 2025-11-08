@@ -41,7 +41,8 @@ const FullScreenEvent = ({
             eventName={event.title}
             eventDate={event.date}
             eventEndDate={event.end_date}
-            eventLocation={event.venue.street_addr}
+            eventLocation={`${event.venue.street_addr}, ${event.venue.city}`}
+            eventVenueName={event.venue.name}
             eventTimeZone={event.time_zone}
           />
         </div>
@@ -80,6 +81,8 @@ const FullScreenEvent = ({
               ticketTypes={event.ticket_types}
               eventDate={event.date}
               eventEndDate={event.end_date}
+              eventTimeZone={event.time_zone}
+              eventLocation={event.venue.street_addr}
             />
           )}
           {!isPast && (

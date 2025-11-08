@@ -213,6 +213,7 @@ export const RapBattleParticipantSignUp = ({
             eventDate={event.date}
             eventEndDate={event.end_date}
             eventLocation={event.venue.street_addr}
+            eventTimeZone={event.time_zone}
           />
           {event.poster_media.length > 0 && (
             <Stack className="relative gap-3">
