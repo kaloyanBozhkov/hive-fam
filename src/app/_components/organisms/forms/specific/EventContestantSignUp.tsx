@@ -107,7 +107,6 @@ export const EventContestantSignUp = ({
             eventDate={event.date}
             eventEndDate={event.end_date}
             eventLocation={event.venue.street_addr}
-            eventTimeZone={event.time_zone}
           />
           {event.poster_media.length > 0 && (
             <Stack className="relative gap-3">
@@ -166,8 +165,23 @@ export const EventContestantSignUp = ({
         <Stack>
           <CardHeader>
             <CardTitle>
-              Fill in these fields and we&apos;ll get in touch with you for next
-              steps
+              <Stack className="gap-y-4">
+                <div className="md:hidden">
+                  <EventInfoCard
+                    eventName={event.title}
+                    eventDate={event.date}
+                    eventEndDate={event.end_date}
+                    eventLocation={`${event.venue.street_addr}, ${event.venue.city}`}
+                    eventTimeZone={event.time_zone}
+                    eventVenueName={event.venue.name}
+                    withCardWrapper
+                  />
+                </div>
+                <span>
+                  Fill in these fields and we&apos;ll get in touch with you for
+                  next steps
+                </span>
+              </Stack>
             </CardTitle>
           </CardHeader>
           <CardContent>
