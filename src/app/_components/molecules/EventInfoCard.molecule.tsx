@@ -41,6 +41,7 @@ export const EventInfoCard = ({
     >
       <DateCard
         date={eventDate}
+        timeZone={eventTimeZone}
         className="mb-0 size-[40px] min-w-[40px] items-center justify-center p-0"
         dateClassName="text-[22px] leading-[100%]"
         monthClassName="text-[14px] leading-[100%]"

@@ -29,7 +29,7 @@ const DateCard = ({
     >
       <p
         className={twMerge(
-          "font-rex-bold text-[16px] leading-[105%] text-white/90",
+          "font-rex-bold text-[16px] leading-[105%] text-white/90 max-w-[4ch] truncate",
           monthClassName,
         )}
       >
