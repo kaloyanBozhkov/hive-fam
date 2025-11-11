@@ -8,7 +8,7 @@ export const DOMAIN_CONFIG = {
   "www.murmurlive.eu": "49490378-3860-4a63-b2b0-845af1235487",
   "www.znp.show": "8b72337a-3532-4098-b474-444c14743d61",
   localhost: "fb0c634b-eb4d-4880-8321-a1dece7944ea", // "8914a26d-c7b9-4aba-8783-fcafa0eb93c7",
-  "192.168.1.12": "fa014162-757e-45b0-a46a-2335c06c09c1", // "8914a26d-
+  "192.168.1.12": "fa014162-757e-45b0-a46a-2335c06c09c1",
 };
 
 export const getDomainFromOrgId = (orgId: string) => {

@@ -337,7 +337,7 @@ const EditOrganizationForm = ({
               <FormItem className="flex flex-row flex-wrap items-stretch justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">
-                    With Baground Image/Effect
+                    With Background Image/Effect
                   </FormLabel>
                   <FormDescription>
                     This will set a bg effect to the whole website.
@@ -423,10 +423,10 @@ const EditOrganizationForm = ({
                   <FormItem className="flex flex-col flex-wrap items-stretch justify-between gap-4 rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">
-                        Background Opacity
+                        Background Size
                       </FormLabel>
                       <FormDescription>
-                        This will set the opacity of the background image.
+                        This will set the size of the background image.
                       </FormDescription>
                     </div>
                     <div className="basis-full flex-wrap">
