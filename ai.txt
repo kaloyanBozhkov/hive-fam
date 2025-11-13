@@ -28,3 +28,27 @@ Don't forget:
 - always prefer reusing existing atoms/shadcn rather than creating new ones
 
 When responding with an answer think and ABSOLUTELY RETURN ONLY CODE, no bloat explanatory text - unless I asked explicitly for an explanation.
+
+
+
+
+
+
+
+WHAT WE NEED TO BUILD:
+
+- landing page for main SaaS
+- auth, for main org owners
+- sub system (free tier -> website is via our domain, paid tier -> u can use ur own website (just set X nameservers))
+- dashbboard/account area for users to see their websites (1 for free tier, unlimited for paid)
+- per website see statistics (page visits, sales etc..) and be able to manage (currently the /staf/manage page of each website is this -> could link to there?)
+- account settings for org owner -> unsub etc..
+- customizable main/secondary button colors
+
+
+NICE 2 HAVES:
+- seats per event mapping when booking (event seats type vs any spot)
+- collaborators -> dasboard for each collaborator to track how many sales via their link
+- layouts: different layouts of event cards & pages (not colors)
+- simple shop page to allow websites to also sell stuff
+- dashbaord for org owner/admin to track sales stuff + role for ecommerce manager

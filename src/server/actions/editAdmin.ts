@@ -4,7 +4,7 @@ import { type Role, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { updateUser } from "../queries/user/updateUser";
 import { encryptPassword } from "../queries/user/createUser";
-import { isKoko } from "../auth/roleGates";
+import { isAdminOrAbove } from "../auth/roleGates";
 
 const errorMessages: Record<string, string> = {
   P2002: "This email is already in use.",
@@ -24,7 +24,7 @@ export async function editAdmin(staffData: {
   phone: string;
 }) {
   try {
-    await isKoko();
+    await isAdminOrAbove();
 
     const staff = await updateUser({
       ...staffData,
