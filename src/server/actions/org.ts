@@ -18,9 +18,12 @@ export const getOrgId = async () => {
   // Get domain from request headers
   const headersList = await headers();
   const host = headersList.get("host") ?? "";
-  const domainName = host.split(":")[0]! as keyof typeof DOMAIN_CONFIG;
+  const domainName = host.split(":")[0]!;
+  const domainNamePArsed = (
+    domainName.includes("www.") ? domainName.split("www.")[1] : domainName
+  ) as keyof typeof DOMAIN_CONFIG;
   const domainID =
-    domainName in DOMAIN_CONFIG ? DOMAIN_CONFIG[domainName] : null;
+    domainNamePArsed in DOMAIN_CONFIG ? DOMAIN_CONFIG[domainNamePArsed] : null;
 
   orgId = orgId ?? domainID ?? env.TMP_ORG_ID;
 
