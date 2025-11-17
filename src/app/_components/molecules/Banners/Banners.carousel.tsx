@@ -104,7 +104,7 @@ const Banners = ({
         >
           <CarouselContent className="h-full w-full">
             {slideContent.map((slide, idx) => (
-              <CarouselItem key={idx} className="h-full">
+              <CarouselItem key={idx} className="h-auto">
                 {slide}
               </CarouselItem>
             ))}
