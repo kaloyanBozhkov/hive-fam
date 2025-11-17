@@ -12,7 +12,11 @@ export const DOMAIN_CONFIG = {
 };
 
 export const getDomainFromOrgId = (orgId: string) => {
-  return Object.entries(DOMAIN_CONFIG).find(([, id]) => id === orgId)?.[0];
+  const domain = Object.entries(DOMAIN_CONFIG).find(
+    ([, id]) => id === orgId,
+  )?.[0];
+  if (!domain) return domain;
+  return domain.includes("www.") ? domain : "www." + domain;
 };
 
 // test fa014162-757e-45b0-a46a-2335c06c09c0
