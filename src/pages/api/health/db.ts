@@ -12,5 +12,5 @@ export default async function handler(
       .status(500)
       .json({ error: "Database connection failed", domain: req.headers.host });
   }
-  res.status(200).json({ message: "OK" });
+  res.status(200).json({ message: "OK", domain: req.headers.host });
 }
