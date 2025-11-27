@@ -4,11 +4,15 @@ This is the mothership project — a centralized platform designed to deploy and
 🚀 Deployed Projects ("Ships")
 Below are live instances powered by this system:
 
+🌐 znpshow.com
+
 🌐 naslqpo.com
 
 🌐 kempwestent.com
 
 🌐 urbanspotlight.com
+
+// killed 
 
 🌐 mothmankiller.com
 
