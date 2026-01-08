@@ -1,6 +1,13 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { HexColorPicker, RgbColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "./Popover.shadcn";
@@ -18,12 +25,14 @@ interface ColorPickerProps {
 
 const parseRgba = (value: string) => {
   if (!value) return { r: 0, g: 0, b: 0, a: 1 };
-  const match = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+  const match = value.match(
+    /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/,
+  );
   if (match) {
     return {
-      r: parseInt(match[1] || "0"),
-      g: parseInt(match[2] || "0"),
-      b: parseInt(match[3] || "0"),
+      r: parseInt(match[1] ?? "0"),
+      g: parseInt(match[2] ?? "0"),
+      b: parseInt(match[3] ?? "0"),
       a: match[4] ? parseFloat(match[4]) : 1,
     };
   }
@@ -35,7 +44,16 @@ const ColorPicker = forwardRef<
   Omit<ButtonProps, "value" | "onChange" | "onBlur"> & ColorPickerProps
 >(
   (
-    { disabled, value, onChange, onBlur, name, className, withOpacity = false, ...props },
+    {
+      disabled,
+      value,
+      onChange,
+      onBlur,
+      name,
+      className,
+      withOpacity = false,
+      ...props
+    },
     forwardedRef,
   ) => {
     const ref = useForwardedRef(forwardedRef);
@@ -76,7 +94,9 @@ const ColorPicker = forwardRef<
         } else {
           const newRgba = { ...color, a: localRgba.a };
           setLocalRgba(newRgba);
-          debouncedOnChange(`rgba(${color.r}, ${color.g}, ${color.b}, ${newRgba.a})`);
+          debouncedOnChange(
+            `rgba(${color.r}, ${color.g}, ${color.b}, ${newRgba.a})`,
+          );
         }
       },
       [debouncedOnChange, localRgba.a],
@@ -112,7 +132,11 @@ const ColorPicker = forwardRef<
             <div />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full" onPointerUp={handlePickerEnd} onPointerLeave={handlePickerEnd}>
+        <PopoverContent
+          className="w-full"
+          onPointerUp={handlePickerEnd}
+          onPointerLeave={handlePickerEnd}
+        >
           {withOpacity ? (
             <>
               <RgbColorPicker color={localRgba} onChange={handlePickerChange} />
