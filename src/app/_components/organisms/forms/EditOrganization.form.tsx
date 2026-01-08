@@ -835,7 +835,7 @@ const EditOrganizationForm = ({
               <Stack className="gap-1">
                 <h3 className="text-lg font-semibold">Theme Colors</h3>
                 <FormDescription>
-                  Customize button colors for your organization's theme
+                  Customize button colors for your organization&apos;s theme
                 </FormDescription>
               </Stack>
               <Button
