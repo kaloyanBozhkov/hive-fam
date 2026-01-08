@@ -15,6 +15,13 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../shadcn/Select.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,6 +38,12 @@ const infoBanner = z
     content: z.string().optional().nullable(),
     background_data_url: z.string().min(1, "Background image is required"),
     background_video_url: z.string().url().optional().nullable(),
+    background_image_position: z
+      .enum(["CENTER", "TOP", "BOTTOM"])
+      .default("CENTER"),
+    background_video_position: z
+      .enum(["CENTER", "TOP", "BOTTOM"])
+      .default("CENTER"),
     order: z.number().int().min(0),
     action_participants_for_event_id: z.string().optional().nullable(),
     action_participants_for_event_button_text: z
@@ -78,6 +91,11 @@ const EditInfoBannerForm = ({
   });
 
   const handleSubmit = (data: z.infer<typeof infoBanner>) => {
+    console.log("Form data being submitted:", {
+      background_image_position: data.background_image_position,
+      background_video_position: data.background_video_position,
+    });
+
     // Check payload size (2MB = 2,097,152 bytes)
     const payloadSize = new Blob([JSON.stringify(data)]).size;
     const maxSize = 2097152; // 2MB
@@ -217,6 +235,50 @@ const EditInfoBannerForm = ({
                     className="mt-2 max-h-40 object-contain"
                   />
                 )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="background_image_position"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Background Image Position</FormLabel>
+                <Select onChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="CENTER">Center</SelectItem>
+                    <SelectItem value="TOP">Top</SelectItem>
+                    <SelectItem value="BOTTOM">Bottom</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="background_video_position"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Background Video Position</FormLabel>
+                <Select onChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="CENTER">Center</SelectItem>
+                    <SelectItem value="TOP">Top</SelectItem>
+                    <SelectItem value="BOTTOM">Bottom</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

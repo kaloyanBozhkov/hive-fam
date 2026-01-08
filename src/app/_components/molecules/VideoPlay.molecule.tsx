@@ -2,8 +2,23 @@
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-const VideoPlay = ({ className, src }: { className?: string; src: string }) => {
+const VideoPlay = ({
+  className,
+  src,
+  position = "CENTER",
+}: {
+  className?: string;
+  src: string;
+  position?: "CENTER" | "TOP" | "BOTTOM";
+}) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  const positionClass =
+    position === "TOP"
+      ? "object-top"
+      : position === "BOTTOM"
+        ? "object-bottom"
+        : "object-center";
 
   return (
     <video
@@ -13,7 +28,7 @@ const VideoPlay = ({ className, src }: { className?: string; src: string }) => {
       muted
       playsInline
       className={twMerge(
-        `z-10 h-full w-full object-cover object-center ${isVideoLoaded ? "" : "hidden"}`,
+        `z-10 h-full w-full object-cover ${positionClass} ${isVideoLoaded ? "" : "hidden"}`,
         className,
       )}
       controls={false}

@@ -8,12 +8,16 @@ const InfoBanner = ({
   content,
   backgroundSrc,
   bgVideoSrc,
+  bgImagePosition = "CENTER",
+  bgVideoPosition = "CENTER",
   actionParticipantsForEventId,
   actionParticipantsForEventButtonText,
   secondaryActionButtonText,
 }: {
   backgroundSrc: string;
   bgVideoSrc?: string;
+  bgImagePosition?: "CENTER" | "TOP" | "BOTTOM";
+  bgVideoPosition?: "CENTER" | "TOP" | "BOTTOM";
   title: string;
   subtitle?: string;
   content?: string;
@@ -21,6 +25,12 @@ const InfoBanner = ({
   actionParticipantsForEventButtonText?: string;
   secondaryActionButtonText?: string;
 }) => {
+  const imagePositionClass =
+    bgImagePosition === "TOP"
+      ? "object-top"
+      : bgImagePosition === "BOTTOM"
+        ? "object-bottom"
+        : "object-center";
   return (
     <div className="relative z-0 h-full w-full">
       <Banner
@@ -36,13 +46,13 @@ const InfoBanner = ({
       />
       {/* bg */}
       <div className="absolute inset-0 -z-10">
-        {bgVideoSrc && <VideoPlay src={bgVideoSrc} />}
+        {bgVideoSrc && <VideoPlay src={bgVideoSrc} position={bgVideoPosition} />}
         <Image
           src={backgroundSrc}
           alt="landing banner background"
           width={1920}
           height={1280}
-          className="absolute inset-0 -z-10 m-auto h-full w-full object-cover object-center"
+          className={`absolute inset-0 -z-10 m-auto h-full w-full object-cover ${imagePositionClass}`}
           priority
         />
       </div>

@@ -13,7 +13,8 @@ const errorMessages: Record<string, string> = {
   P2003: "Invalid input data.",
   P2025: "Unable to update banner.",
   P2028: "Database transaction error. Please try again.",
-  "413": "Data size exceeds 2MB limit. Please use a smaller image or compress it.",
+  "413":
+    "Data size exceeds 2MB limit. Please use a smaller image or compress it.",
   default: "An unexpected error occurred. Please try again.",
 };
 
@@ -26,6 +27,8 @@ type InfoBannerData = {
   content?: string | null;
   background_data_url: string;
   background_video_url?: string | null;
+  background_image_position: "CENTER" | "TOP" | "BOTTOM";
+  background_video_position: "CENTER" | "TOP" | "BOTTOM";
   action_participants_for_event_id?: string | null;
   secondary_action_button_text?: string | null;
   action_participants_for_event_button_text: string;
@@ -76,6 +79,8 @@ async function editBanner(bannerData: BannerData) {
             content: bannerData.content,
             background_data_url: bannerData.background_data_url,
             background_video_url: bannerData.background_video_url,
+            background_image_position: bannerData.background_image_position,
+            background_video_position: bannerData.background_video_position,
             action_participants_for_event_id:
               bannerData.action_participants_for_event_id ?? null,
             secondary_action_button_text:
@@ -113,12 +118,15 @@ async function editBanner(bannerData: BannerData) {
     console.error("Failed to edit banner:", error);
 
     let errorMessage = errorMessages.default;
-    
+
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       errorMessage = errorMessages[error.code] ?? errorMessages.default;
     } else if (error instanceof Error) {
       // Check for API errors (like 413 body size limit)
-      if (error.message.includes("exceeded") && error.message.includes("limit")) {
+      if (
+        error.message.includes("exceeded") &&
+        error.message.includes("limit")
+      ) {
         errorMessage = errorMessages["413"];
       } else if (error.message === "Banner not found") {
         errorMessage = "Banner not found.";
@@ -155,6 +163,8 @@ const getInitialData = async (id: string) => {
       content: banner.info_slide.content,
       background_data_url: banner.info_slide.background_data_url,
       background_video_url: banner.info_slide.background_video_url,
+      background_image_position: banner.info_slide.background_image_position,
+      background_video_position: banner.info_slide.background_video_position,
       action_participants_for_event_id:
         banner.info_slide.action_participants_for_event_id,
       action_participants_for_event_button_text:

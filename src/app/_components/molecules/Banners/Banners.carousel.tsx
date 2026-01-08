@@ -20,6 +20,8 @@ export type BannerSlide =
       content: string;
       bgSrc: string;
       bgVideoSrc?: string;
+      bgImagePosition?: "CENTER" | "TOP" | "BOTTOM";
+      bgVideoPosition?: "CENTER" | "TOP" | "BOTTOM";
       actionParticipantsForEventId?: string;
       actionParticipantsForEventButtonText?: string;
       secondaryActionButtonText?: string;
@@ -69,6 +71,8 @@ const Banners = ({
                 content={slide.content}
                 backgroundSrc={slide.bgSrc}
                 bgVideoSrc={slide.bgVideoSrc}
+                bgImagePosition={slide.bgImagePosition}
+                bgVideoPosition={slide.bgVideoPosition}
                 actionParticipantsForEventId={
                   slide.actionParticipantsForEventId
                 }

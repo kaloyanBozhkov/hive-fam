@@ -18,6 +18,8 @@ const getSlies = async () => {
           subtitle: true,
           background_data_url: true,
           background_video_url: true,
+          background_image_position: true,
+          background_video_position: true,
           action_participants_for_event_id: true,
           action_participants_for_event_button_text: true,
           secondary_action_button_text: true,
@@ -49,6 +51,8 @@ const getSlies = async () => {
       ...album_slide,
       bgVideoSrc: info_slide?.background_video_url,
       bgSrc: info_slide?.background_data_url,
+      bgImagePosition: info_slide?.background_image_position,
+      bgVideoPosition: info_slide?.background_video_position,
       coverSrc: album_slide?.cover_data_url,
       actionParticipantsForEventId:
         info_slide?.action_participants_for_event_id,

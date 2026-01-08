@@ -14,6 +14,13 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../shadcn/Select.shadcn";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,6 +33,8 @@ const infoBanner = z.object({
   content: z.string().min(1, "Content is required"),
   background_data_url: z.string().min(1, "Background image is required"),
   background_video_url: z.string().optional().nullable(),
+  background_image_position: z.enum(["CENTER", "TOP", "BOTTOM"]).default("CENTER"),
+  background_video_position: z.enum(["CENTER", "TOP", "BOTTOM"]).default("CENTER"),
   order: z.number().int().min(0),
 });
 
@@ -56,11 +65,24 @@ const AddInfoBannerForm = ({
       content: "",
       background_data_url: "",
       background_video_url: null,
+      background_image_position: "CENTER",
+      background_video_position: "CENTER",
       order: currentMaxOrder + 1,
     },
   });
 
   const handleSubmit = async (data: z.infer<typeof infoBanner>) => {
+    // Check payload size (2MB = 2,097,152 bytes)
+    const payloadSize = new Blob([JSON.stringify(data)]).size;
+    const maxSize = 2097152; // 2MB
+
+    if (payloadSize > maxSize) {
+      form.setError("background_data_url", {
+        message: `Total data size (${(payloadSize / 1048576).toFixed(2)}MB) exceeds 2MB limit. Please use a smaller image or compress it.`,
+      });
+      return;
+    }
+
     const latestData = { ...data };
 
     startTransition(async () => {
@@ -69,7 +91,7 @@ const AddInfoBannerForm = ({
         form.reset();
         router.push("/staff/manage/admin/banner-list");
       } else {
-        form.setError("title", { message: result.error });
+        form.setError("background_data_url", { message: result.error });
       }
     });
   };
@@ -77,6 +99,16 @@ const AddInfoBannerForm = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (warn if > 1.5MB as base64 encoding increases size by ~33%)
+      const fileSizeInMB = file.size / 1048576;
+      if (fileSizeInMB > 1.5) {
+        form.setError("background_data_url", {
+          message: `Warning: Image size (${fileSizeInMB.toFixed(2)}MB) may exceed 2MB limit after encoding. Consider using a smaller image.`,
+        });
+      } else {
+        form.clearErrors("background_data_url");
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -182,6 +214,56 @@ const AddInfoBannerForm = ({
                     className="mt-2 max-h-40 object-contain"
                   />
                 )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="background_image_position"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Background Image Position</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="CENTER">Center</SelectItem>
+                    <SelectItem value="TOP">Top</SelectItem>
+                    <SelectItem value="BOTTOM">Bottom</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="background_video_position"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Background Video Position</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="CENTER">Center</SelectItem>
+                    <SelectItem value="TOP">Top</SelectItem>
+                    <SelectItem value="BOTTOM">Bottom</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

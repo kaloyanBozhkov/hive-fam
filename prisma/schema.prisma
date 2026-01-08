@@ -22,6 +22,12 @@ enum BannerSlideType {
   ALBUM
 }
 
+enum BackgroundPosition {
+  CENTER
+  TOP
+  BOTTOM
+}
+
 model album_slide {
   id             String         @id @default(uuid())
   link           String
@@ -33,12 +39,14 @@ model album_slide {
 }
 
 model info_slide {
-  id                   String  @id @default(uuid())
-  subtitle             String?
-  title                String?
-  content              String?
-  background_data_url  String
-  background_video_url String?
+  id                         String             @id @default(uuid())
+  subtitle                   String?
+  title                      String?
+  content                    String?
+  background_data_url        String
+  background_video_url       String?
+  background_image_position  BackgroundPosition @default(CENTER)
+  background_video_position  BackgroundPosition @default(CENTER)
 
   action_participants_for_event             event?  @relation(fields: [action_participants_for_event_id], references: [id])
   action_participants_for_event_id          String?

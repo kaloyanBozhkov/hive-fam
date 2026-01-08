@@ -9,6 +9,7 @@ const errorMessages: Record<string, string> = {
   P2002: "A banner with this order already exists.",
   P2003: "Invalid input data.",
   P2025: "Unable to create banner.",
+  "413": "Data size exceeds 2MB limit. Please use a smaller image or compress it.",
   default: "An unexpected error occurred. Please try again.",
 };
 
@@ -18,6 +19,8 @@ async function addInfoBanner(bannerData: {
   content: string;
   background_data_url: string;
   background_video_url?: string | null;
+  background_image_position: "CENTER" | "TOP" | "BOTTOM";
+  background_video_position: "CENTER" | "TOP" | "BOTTOM";
   order: number;
 }) {
   "use server";
@@ -35,6 +38,8 @@ async function addInfoBanner(bannerData: {
           content: bannerData.content,
           background_data_url: bannerData.background_data_url,
           background_video_url: bannerData.background_video_url,
+          background_image_position: bannerData.background_image_position,
+          background_video_position: bannerData.background_video_position,
         },
       });
 
@@ -58,8 +63,14 @@ async function addInfoBanner(bannerData: {
     console.error("Failed to add info banner:", error);
 
     let errorMessage = errorMessages.default;
+    
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       errorMessage = errorMessages[error.code] ?? errorMessages.default;
+    } else if (error instanceof Error) {
+      // Check for API errors (like 413 body size limit)
+      if (error.message.includes("exceeded") && error.message.includes("limit")) {
+        errorMessage = errorMessages["413"];
+      }
     }
 
     return { success: false, error: errorMessage };
