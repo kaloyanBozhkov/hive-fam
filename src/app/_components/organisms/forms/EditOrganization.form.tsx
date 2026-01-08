@@ -15,7 +15,7 @@ import {
 } from "../../shadcn/Form.shadcn";
 import { Button } from "../../shadcn/Button.shadcn";
 import { Input } from "../../shadcn/Input.shadcn";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../../shadcn/Textarea.shadcn";
 import { FileUploadField } from "./fields/FileUploadField";
@@ -36,6 +36,28 @@ import Group from "../../layouts/Group.layout";
 import { PreviewLastSavedQRCode } from "../../molecules/PreviewLastSavedQRCode";
 import { TaxCalculationType } from "@prisma/client";
 import { TaxCalculationTypeToLabel } from "@/utils/pricing";
+
+// Default theme colors from globals.css (rgba format for opacity support)
+const DEFAULT_THEME_COLORS = {
+  primary_bg: "rgba(15, 23, 42, 1)",
+  primary_hover_bg: "rgba(10, 15, 26, 1)",
+  primary_text: "rgba(241, 245, 249, 1)",
+  secondary_bg: "rgba(241, 245, 249, 1)",
+  secondary_hover_bg: "rgba(226, 232, 240, 1)",
+  secondary_text: "rgba(15, 23, 42, 1)",
+  outline_bg: "rgba(255, 255, 255, 1)",
+  outline_hover_bg: "rgba(241, 245, 249, 1)",
+  outline_text: "rgba(0, 0, 0, 1)",
+  ghost_bg: "rgba(0, 0, 0, 0)",
+  ghost_hover_bg: "rgba(241, 245, 249, 1)",
+  ghost_text: "rgba(0, 0, 0, 1)",
+  link_bg: "rgba(0, 0, 0, 0)",
+  link_hover_bg: "rgba(0, 0, 0, 0)",
+  link_text: "rgba(15, 23, 42, 1)",
+  destructive_bg: "rgba(239, 68, 68, 1)",
+  destructive_hover_bg: "rgba(220, 38, 38, 1)",
+  destructive_text: "rgba(241, 245, 249, 1)",
+};
 
 const organization = z
   .object({
@@ -59,6 +81,24 @@ const organization = z
       .default(TaxCalculationType.TAX_ADDED_TO_PRICE_ON_CHECKOUT),
     default_language: z.string().default("en"),
     with_google_translations: z.boolean().default(true),
+    theme_primary_bg: z.string().optional().nullable(),
+    theme_primary_hover_bg: z.string().optional().nullable(),
+    theme_primary_text: z.string().optional().nullable(),
+    theme_secondary_bg: z.string().optional().nullable(),
+    theme_secondary_hover_bg: z.string().optional().nullable(),
+    theme_secondary_text: z.string().optional().nullable(),
+    theme_outline_bg: z.string().optional().nullable(),
+    theme_outline_hover_bg: z.string().optional().nullable(),
+    theme_outline_text: z.string().optional().nullable(),
+    theme_ghost_bg: z.string().optional().nullable(),
+    theme_ghost_hover_bg: z.string().optional().nullable(),
+    theme_ghost_text: z.string().optional().nullable(),
+    theme_link_bg: z.string().optional().nullable(),
+    theme_link_hover_bg: z.string().optional().nullable(),
+    theme_link_text: z.string().optional().nullable(),
+    theme_destructive_bg: z.string().optional().nullable(),
+    theme_destructive_hover_bg: z.string().optional().nullable(),
+    theme_destructive_text: z.string().optional().nullable(),
   })
   .transform((data) => {
     if (data.tax_calculation_type === TaxCalculationType.TAX_HIDDEN_IN_PRICE) {
@@ -104,7 +144,49 @@ const EditOrganizationForm = ({
 
   const form = useForm<z.infer<typeof organization>>({
     resolver: zodResolver(organization),
-    defaultValues: initialData,
+    defaultValues: {
+      ...initialData,
+      theme_primary_bg:
+        initialData.theme_primary_bg ?? DEFAULT_THEME_COLORS.primary_bg,
+      theme_primary_hover_bg:
+        initialData.theme_primary_hover_bg ??
+        DEFAULT_THEME_COLORS.primary_hover_bg,
+      theme_primary_text:
+        initialData.theme_primary_text ?? DEFAULT_THEME_COLORS.primary_text,
+      theme_secondary_bg:
+        initialData.theme_secondary_bg ?? DEFAULT_THEME_COLORS.secondary_bg,
+      theme_secondary_hover_bg:
+        initialData.theme_secondary_hover_bg ??
+        DEFAULT_THEME_COLORS.secondary_hover_bg,
+      theme_secondary_text:
+        initialData.theme_secondary_text ?? DEFAULT_THEME_COLORS.secondary_text,
+      theme_outline_bg:
+        initialData.theme_outline_bg ?? DEFAULT_THEME_COLORS.outline_bg,
+      theme_outline_hover_bg:
+        initialData.theme_outline_hover_bg ??
+        DEFAULT_THEME_COLORS.outline_hover_bg,
+      theme_outline_text:
+        initialData.theme_outline_text ?? DEFAULT_THEME_COLORS.outline_text,
+      theme_ghost_bg:
+        initialData.theme_ghost_bg ?? DEFAULT_THEME_COLORS.ghost_bg,
+      theme_ghost_hover_bg:
+        initialData.theme_ghost_hover_bg ?? DEFAULT_THEME_COLORS.ghost_hover_bg,
+      theme_ghost_text:
+        initialData.theme_ghost_text ?? DEFAULT_THEME_COLORS.ghost_text,
+      theme_link_bg: initialData.theme_link_bg ?? DEFAULT_THEME_COLORS.link_bg,
+      theme_link_hover_bg:
+        initialData.theme_link_hover_bg ?? DEFAULT_THEME_COLORS.link_hover_bg,
+      theme_link_text:
+        initialData.theme_link_text ?? DEFAULT_THEME_COLORS.link_text,
+      theme_destructive_bg:
+        initialData.theme_destructive_bg ?? DEFAULT_THEME_COLORS.destructive_bg,
+      theme_destructive_hover_bg:
+        initialData.theme_destructive_hover_bg ??
+        DEFAULT_THEME_COLORS.destructive_hover_bg,
+      theme_destructive_text:
+        initialData.theme_destructive_text ??
+        DEFAULT_THEME_COLORS.destructive_text,
+    },
   });
 
   const handleSubmit = (data: z.infer<typeof organization>) => {
@@ -116,6 +198,27 @@ const EditOrganizationForm = ({
         form.setError("name", { message: result.error });
       }
     });
+  };
+
+  const handleResetThemeColors = () => {
+    form.setValue("theme_primary_bg", DEFAULT_THEME_COLORS.primary_bg);
+    form.setValue("theme_primary_hover_bg", DEFAULT_THEME_COLORS.primary_hover_bg);
+    form.setValue("theme_primary_text", DEFAULT_THEME_COLORS.primary_text);
+    form.setValue("theme_secondary_bg", DEFAULT_THEME_COLORS.secondary_bg);
+    form.setValue("theme_secondary_hover_bg", DEFAULT_THEME_COLORS.secondary_hover_bg);
+    form.setValue("theme_secondary_text", DEFAULT_THEME_COLORS.secondary_text);
+    form.setValue("theme_outline_bg", DEFAULT_THEME_COLORS.outline_bg);
+    form.setValue("theme_outline_hover_bg", DEFAULT_THEME_COLORS.outline_hover_bg);
+    form.setValue("theme_outline_text", DEFAULT_THEME_COLORS.outline_text);
+    form.setValue("theme_ghost_bg", DEFAULT_THEME_COLORS.ghost_bg);
+    form.setValue("theme_ghost_hover_bg", DEFAULT_THEME_COLORS.ghost_hover_bg);
+    form.setValue("theme_ghost_text", DEFAULT_THEME_COLORS.ghost_text);
+    form.setValue("theme_link_bg", DEFAULT_THEME_COLORS.link_bg);
+    form.setValue("theme_link_hover_bg", DEFAULT_THEME_COLORS.link_hover_bg);
+    form.setValue("theme_link_text", DEFAULT_THEME_COLORS.link_text);
+    form.setValue("theme_destructive_bg", DEFAULT_THEME_COLORS.destructive_bg);
+    form.setValue("theme_destructive_hover_bg", DEFAULT_THEME_COLORS.destructive_hover_bg);
+    form.setValue("theme_destructive_text", DEFAULT_THEME_COLORS.destructive_text);
   };
 
   const handleFileChange = (
@@ -726,6 +829,356 @@ const EditOrganizationForm = ({
               </FormItem>
             )}
           />
+          {/* Theme Colors Section */}
+          <Stack className="gap-4 rounded-lg border p-4">
+            <Group className="items-center justify-between">
+              <Stack className="gap-1">
+                <h3 className="text-lg font-semibold">Theme Colors</h3>
+                <FormDescription>
+                  Customize button colors for your organization's theme
+                </FormDescription>
+              </Stack>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleResetThemeColors}
+              >
+                Reset All
+              </Button>
+            </Group>
+
+            {/* Primary */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Primary</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_primary_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_primary_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_primary_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+
+            {/* Secondary */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Secondary</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_secondary_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_secondary_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_secondary_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+
+            {/* Outline */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Outline</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_outline_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_outline_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_outline_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+
+            {/* Ghost */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Ghost</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_ghost_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_ghost_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_ghost_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+
+            {/* Link */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Link</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_link_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_link_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_link_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+
+            {/* Destructive */}
+            <Stack className="gap-2 rounded-md border p-3">
+              <Label className="font-semibold">Destructive</Label>
+              <Group className="gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme_destructive_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_destructive_hover_bg"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hover Background</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="theme_destructive_text"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Text</FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          withOpacity
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Group>
+            </Stack>
+          </Stack>
+
           <input type="hidden" {...form.register("id")} />
           <Button
             type="submit"

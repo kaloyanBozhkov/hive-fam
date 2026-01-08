@@ -78,10 +78,6 @@ model link {
   organization_id String
 }
 
-enum ThemeColors {
-  DARK_GREEN
-  DARK_BLUE
-}
 
 enum TaxCalculationType {
   TAX_HIDDEN_IN_PRICE
@@ -112,8 +108,26 @@ model organization {
   with_google_translations Boolean            @default(true)
   link_tree_description    String?
 
-  // TODO add theme
-  theme_colors ThemeColors @default(DARK_GREEN)
+  // Theme customization
+  theme_primary_bg         String?
+  theme_primary_hover_bg   String?
+  theme_primary_text       String?
+  theme_secondary_bg       String?
+  theme_secondary_hover_bg String?
+  theme_secondary_text     String?
+  theme_outline_bg         String?
+  theme_outline_hover_bg   String?
+  theme_outline_text       String?
+  theme_ghost_bg           String?
+  theme_ghost_hover_bg     String?
+  theme_ghost_text         String?
+  theme_link_bg            String?
+  theme_link_hover_bg      String?
+  theme_link_text          String?
+  theme_destructive_bg     String?
+  theme_destructive_hover_bg String?
+  theme_destructive_text   String?
+  
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
 

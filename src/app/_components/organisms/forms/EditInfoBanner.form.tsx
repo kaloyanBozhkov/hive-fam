@@ -91,11 +91,6 @@ const EditInfoBannerForm = ({
   });
 
   const handleSubmit = (data: z.infer<typeof infoBanner>) => {
-    console.log("Form data being submitted:", {
-      background_image_position: data.background_image_position,
-      background_video_position: data.background_video_position,
-    });
-
     // Check payload size (2MB = 2,097,152 bytes)
     const payloadSize = new Blob([JSON.stringify(data)]).size;
     const maxSize = 2097152; // 2MB

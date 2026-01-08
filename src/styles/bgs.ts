@@ -395,4 +395,5 @@ export const BGS = [
   "woven.png",
   "xv.png",
   "zig-zag.png",
+  "hearts.png",
 ];

@@ -21,11 +21,11 @@ const TimeCard = ({
   return (
     <Stack
       className={twMerge(
-        "min-w-[60px] items-center rounded-md bg-green-800 p-2",
+        "min-w-[60px] items-center rounded-md p-2 [background:var(--theme-primary-bg,hsl(var(--primary)))]",
         className,
       )}
     >
-      <p className="notranslate font-rex-bold text-[16px] leading-[105%] text-white/90">
+      <p className="notranslate font-rex-bold text-[16px] leading-[105%] [color:var(--theme-primary-text,hsl(var(--primary-foreground)))] opacity-90">
         {format(formattedDate, "HH:mm")}
       </p>
     </Stack>

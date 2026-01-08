@@ -23,13 +23,13 @@ const DateCard = ({
   return (
     <Stack
       className={twMerge(
-        "min-w-[60px] items-center rounded-md bg-green-800 p-2",
+        "min-w-[60px] items-center rounded-md p-2 [background:var(--theme-primary-bg,hsl(var(--primary)))]",
         className,
       )}
     >
       <p
         className={twMerge(
-          "font-rex-bold text-[16px] leading-[105%] text-white/90 max-w-[4ch] truncate",
+          "font-rex-bold text-[16px] leading-[105%] max-w-[4ch] truncate [color:var(--theme-primary-text,hsl(var(--primary-foreground)))] opacity-90",
           monthClassName,
         )}
       >
@@ -37,7 +37,7 @@ const DateCard = ({
       </p>
       <p
         className={twMerge(
-          "font-rex-bold text-[30px] leading-[105%] text-white",
+          "font-rex-bold text-[30px] leading-[105%] [color:var(--theme-primary-text,hsl(var(--primary-foreground)))]",
           dateClassName,
         )}
       >
