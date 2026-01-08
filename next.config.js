@@ -8,6 +8,9 @@ await import("./src/env.js");
 const config = {
   experimental: {
     esmExternals: true, // Enable ES Modules external resolution
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   images: {
     remotePatterns: [

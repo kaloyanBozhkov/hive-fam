@@ -1,3 +1,4 @@
+@import "@koko420/react-components/styles.css";
 @import "./fonts.css";
 @tailwind base;
 @tailwind components;

@@ -21,7 +21,7 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { Fragment, useCallback, useMemo, useState } from "react";
-import DotsLoader from "../atoms/DotsLoader.atom";
+import { DotsLoader } from "@koko420/react-components";
 import { cartCheckout } from "@/utils/stripe/checkout.helpers";
 import type { Currency } from "@prisma/client";
 import type { EventTicketType } from "@/utils/types.common";

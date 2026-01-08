@@ -12,6 +12,8 @@ const errorMessages: Record<string, string> = {
   P2002: "A banner with this order already exists.",
   P2003: "Invalid input data.",
   P2025: "Unable to update banner.",
+  P2028: "Database transaction error. Please try again.",
+  "413": "Data size exceeds 2MB limit. Please use a smaller image or compress it.",
   default: "An unexpected error occurred. Please try again.",
 };
 
@@ -111,8 +113,16 @@ async function editBanner(bannerData: BannerData) {
     console.error("Failed to edit banner:", error);
 
     let errorMessage = errorMessages.default;
+    
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       errorMessage = errorMessages[error.code] ?? errorMessages.default;
+    } else if (error instanceof Error) {
+      // Check for API errors (like 413 body size limit)
+      if (error.message.includes("exceeded") && error.message.includes("limit")) {
+        errorMessage = errorMessages["413"];
+      } else if (error.message === "Banner not found") {
+        errorMessage = "Banner not found.";
+      }
     }
 
     return { success: false, error: errorMessage };

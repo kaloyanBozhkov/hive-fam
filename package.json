@@ -25,6 +25,7 @@
     "@google-cloud/speech": "^7.0.1",
     "@google-cloud/translate": "^9.0.1",
     "@hookform/resolvers": "^3.9.0",
+    "@koko420/react-components": "0.0.4",
     "@mantine/core": "^7.17.0",
     "@mantine/hooks": "^7.17.0",
     "@mantine/tiptap": "^7.17.0",

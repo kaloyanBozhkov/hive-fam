@@ -37,14 +37,14 @@ const keyframes = {
       transform: "scale(0)",
     },
   },
-  "move-24px": {
-    "0%": {
-      transform: "translate(0, 0)",
-    },
-    "100%": {
-      transform: "translate(24px, 0)",
-    },
-  },
+  // "move-24px": {
+  //   "0%": {
+  //     transform: "translate(0, 0)",
+  //   },
+  //   "100%": {
+  //     transform: "translate(24px, 0)",
+  //   },
+  // },
   rotate: {
     "0%": {
       transform: "rotate(0deg)",

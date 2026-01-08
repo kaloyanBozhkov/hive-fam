@@ -53,12 +53,23 @@ const EditAlbumBannerForm = ({
   });
 
   const handleSubmit = (data: z.infer<typeof albumBanner>) => {
+    // Check payload size (2MB = 2,097,152 bytes)
+    const payloadSize = new Blob([JSON.stringify(data)]).size;
+    const maxSize = 2097152; // 2MB
+
+    if (payloadSize > maxSize) {
+      form.setError("cover_data_url", {
+        message: `Total data size (${(payloadSize / 1048576).toFixed(2)}MB) exceeds 2MB limit. Please use a smaller image or compress it.`,
+      });
+      return;
+    }
+
     startTransition(async () => {
       const result = await onEdit(data);
       if (result.success) {
         router.push("/staff/manage/admin/banner-list");
       } else {
-        form.setError("album_name", { message: result.error });
+        form.setError("cover_data_url", { message: result.error });
       }
     });
   };
@@ -66,6 +77,16 @@ const EditAlbumBannerForm = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (warn if > 1.5MB as base64 encoding increases size by ~33%)
+      const fileSizeInMB = file.size / 1048576;
+      if (fileSizeInMB > 1.5) {
+        form.setError("cover_data_url", {
+          message: `Warning: Image size (${fileSizeInMB.toFixed(2)}MB) may exceed 2MB limit after encoding. Consider using a smaller image.`,
+        });
+      } else {
+        form.clearErrors("cover_data_url");
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
