@@ -84,6 +84,7 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
           forward_to_url: customQR.forward_to_url,
           visit_count: customQR.visit_count,
           qrCodeDataURL,
+          qr_contents: customQR.qr_contents,
         });
       } catch (error) {
         alert("Failed to generate QR code for viewing");

@@ -6,6 +6,7 @@ export interface QRViewData {
   forward_to_url: string;
   visit_count: number;
   qrCodeDataURL: string;
+  qr_contents?: string;
 }
 
 /**
@@ -92,6 +93,7 @@ export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
           <h1>${description}</h1>
           <img src="${qrData.qrCodeDataURL}" alt="QR Code" />
           <div class="info">
+            ${qrData.qr_contents ? `<p><strong>Embedded URL:</strong></p><div class="url">${qrData.qr_contents}</div>` : ""}
             <p><strong>Forwards to:</strong></p>
             <div class="url">${qrData.forward_to_url}</div>
             <p class="stat"><strong>Total Visits:</strong> ${qrData.visit_count}</p>
