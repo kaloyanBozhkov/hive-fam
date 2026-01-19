@@ -130,11 +130,13 @@ export const viewQRCodeInNewTab = (qrData: QRViewData): void => {
  * Generates QR code data URL using the organization's QR API
  * @param qrContent - The content to encode in the QR code
  * @param organizationId - The organization ID for branding
+ * @param skipBranding - If true, returns raw QR without logo
  * @returns Promise resolving to the QR code data URL
  */
 export const generateQRCodeDataURL = async (
   qrContent: string,
   organizationId: string,
+  skipBranding = false,
 ): Promise<string> => {
   try {
     const QRCodes = await fetchPostJSON<{ dataURL: string }[]>(
@@ -142,6 +144,7 @@ export const generateQRCodeDataURL = async (
       {
         qrs: [{ urlContent: qrContent }],
         orgId: organizationId,
+        skipBranding,
       },
     );
     const qrCodeDataURL = QRCodes[0]?.dataURL ?? QRCodes[0];

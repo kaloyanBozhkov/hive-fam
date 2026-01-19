@@ -11,6 +11,7 @@ const getQRCodesSchema = z.object({
     }),
   ),
   orgId: z.string().uuid(),
+  skipBranding: z.boolean().optional(),
 });
 
 // is obsolete as we can generate in component itself -> server actions!
@@ -19,11 +20,15 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const { qrs, orgId } = getQRCodesSchema.parse(req.body);
+    const { qrs, orgId, skipBranding } = getQRCodesSchema.parse(req.body);
     const org = await getOrg(orgId);
     const qrCodes = await generateQRDataURLs(qrs, undefined, org);
-    const brandedQRCodes = await brandQRCodes(qrCodes, org);
-    res.status(200).json(brandedQRCodes);
+    if (skipBranding) {
+      res.status(200).json(qrCodes);
+    } else {
+      const brandedQRCodes = await brandQRCodes(qrCodes, org);
+      res.status(200).json(brandedQRCodes);
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ error: error.errors });

@@ -22,6 +22,7 @@ import {
   MoreHorizontal,
   RotateCcw,
   Eye,
+  EyeOff,
   Edit,
   Trash2,
 } from "lucide-react";
@@ -71,16 +72,17 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
   );
 
   const handleViewQR = useCallback(
-    async (customQR: CustomQRData) => {
+    async (customQR: CustomQRData, raw = false) => {
       try {
         const qrCodeDataURL = await generateQRCodeDataURL(
           customQR.qr_contents,
-          customQR.organization_id
+          customQR.organization_id,
+          raw
         );
 
         viewQRCodeInNewTab({
           id: customQR.id,
-          description: customQR.description,
+          description: raw ? `${customQR.description ?? "QR"} (Raw)` : customQR.description,
           forward_to_url: customQR.forward_to_url,
           visit_count: customQR.visit_count,
           qrCodeDataURL,
@@ -169,6 +171,10 @@ export const CustomQRList = ({ data }: { data: CustomQRData[] }) => {
               <DropdownMenuItem onClick={() => handleViewQR(customQR)}>
                 <Eye className="mr-2 h-4 w-4" />
                 View QR Code
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleViewQR(customQR, true)}>
+                <EyeOff className="mr-2 h-4 w-4" />
+                View Raw QR (No Logo)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDownload(customQR)}>
                 <Download className="mr-2 h-4 w-4" />
