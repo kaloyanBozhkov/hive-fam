@@ -7,6 +7,7 @@ import { Button } from "@/app/_components/shadcn/Button.shadcn";
 import {
   getPayoutsAccountLink,
   refreshPayoutsAccountLink,
+  syncPayoutsAccountStatus,
 } from "@/server/actions/stripe/getPayoutsAccountLink";
 import { getPayoutsSignInLink } from "@/server/actions/stripe/getPayoutsSignInLink";
 import { redirect } from "next/navigation";
@@ -66,6 +67,7 @@ export default async function ProfitsPage({
     redirect("/staff/manage/admin/profits");
   }
   if (confirmed) {
+    await syncPayoutsAccountStatus(confirmed);
     redirect("/staff/manage/admin/profits");
   }
 

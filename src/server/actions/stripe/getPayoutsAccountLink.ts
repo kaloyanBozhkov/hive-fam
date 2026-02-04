@@ -72,3 +72,11 @@ export async function confirmPayoutsAccountLink(account_id: string) {
     data: { stripe_account_setup: true },
   });
 }
+
+export async function syncPayoutsAccountStatus(account_id: string) {
+  const account = await stripeCli.accounts.retrieve(account_id);
+
+  if (account.charges_enabled && account.details_submitted) {
+    await confirmPayoutsAccountLink(account_id);
+  }
+}
