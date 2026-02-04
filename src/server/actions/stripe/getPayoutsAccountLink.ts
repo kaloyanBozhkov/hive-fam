@@ -6,10 +6,11 @@ import { stripeCli } from "@/server/stripe/stripe";
 
 export async function getPayoutsAccountLink() {
   const user = await isAdminOrAbove();
-  const domain =
-    env.NODE_ENV === "development"
-      ? "localhost"
-      : getDomainFromOrgId(user.organization_id);
+  const isDev = env.NODE_ENV === "development";
+  const domain = isDev
+    ? "localhost:3000"
+    : getDomainFromOrgId(user.organization_id);
+  const protocol = isDev ? "http" : "https";
 
   const { stripe_account_id: account } = await db.staff.findFirstOrThrow({
     where: {
@@ -29,8 +30,8 @@ export async function getPayoutsAccountLink() {
 
   const accountLink = await stripeCli.accountLinks.create({
     account: account_id,
-    return_url: `https://${domain}/staff/manage/admin/profits?confirmed=${account_id}`,
-    refresh_url: `https://${domain}/staff/manage/admin/profits?refresh=true`,
+    return_url: `${protocol}://${domain}/staff/manage/admin/profits?confirmed=${account_id}`,
+    refresh_url: `${protocol}://${domain}/staff/manage/admin/profits?refresh=true`,
     type: "account_onboarding",
   });
 
