@@ -6,6 +6,9 @@ import { db } from "@/server/db";
 import { getOrgId } from "@/server/actions/org";
 import { BannerWrapper } from "./_components/templates/BannerWrapper.template";
 import { calcualteTicketPrice } from "@/utils/pricing";
+import { REVALIDATE } from "@/server/config";
+
+export const revalidate = REVALIDATE.HOME_PAGE;
 
 const getEvents = async (orgId: string) => {
   const events = await db.event.findMany({
