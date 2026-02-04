@@ -1,6 +1,11 @@
-// ISR revalidation times (in seconds)
+// ISR revalidation times (in seconds) - REFERENCE ONLY
+// Next.js requires literal values in pages, can't import these
+// Update values here AND in the corresponding page.tsx files:
+// - src/app/page.tsx (HOME_PAGE)
+// - src/app/event/[id]/page.tsx (EVENT_PAGE)
+// - src/app/links/page.tsx (LINKS_PAGE)
 export const REVALIDATE = {
-  EVENT_PAGE: 60, // incl ticket availability updates
+  EVENT_PAGE: 60,
   LINKS_PAGE: 60,
   HOME_PAGE: 60,
 } as const;

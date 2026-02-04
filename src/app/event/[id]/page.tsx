@@ -7,9 +7,9 @@ import Link from "next/link";
 import { isPastEvent } from "@/utils/specific";
 import { calcualteTicketPrice } from "@/utils/pricing";
 import assert from "assert";
-import { REVALIDATE } from "@/server/config";
 
-export const revalidate = REVALIDATE.EVENT_PAGE;
+// ISR: see REVALIDATE in @/server/config for reference values
+export const revalidate = 60;
 
 const getEvent = async (id: string) => {
   const { poster_media, ticket_types, sold_tickets, organization, ...event } =

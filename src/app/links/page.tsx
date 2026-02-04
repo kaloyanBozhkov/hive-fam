@@ -14,9 +14,9 @@ import { FontAwesomeIconMap } from "@/server/other/linkIcons";
 import { CopyUrlButton } from "../_components/client/CopyButtons.client";
 import { redirect } from "next/navigation";
 import RichTextReader from "../_components/molecules/lexical/RichTextReader";
-import { REVALIDATE } from "@/server/config";
 
-export const revalidate = REVALIDATE.LINKS_PAGE;
+// ISR: see REVALIDATE in @/server/config for reference values
+export const revalidate = 60;
 
 export default async function LinksPage() {
   const org = await getOrg();
